@@ -9,9 +9,9 @@
 \newtheorem{lemma}{Lemma}
 \newtheorem{definition}{Definition}
 \newtheorem{remark}{Remark}
+\newtheorem{conjecture}{Conjecture}
 \newtheorem{proposition}{Proposition}
-\title{The Theoretical Impossibility of Unbounded AI Guardrails: \\
-A Computational Complexity Analysis}
+\title{The Theoretical Impossibility of Unbounded AI Guardrails: \\ A Computational Complexity Analysis}
 \author{ASI Research Lab\\
 CyberGolem LLC\\
 \texttt{asi@cybergolem.ai}}
@@ -19,11 +19,11 @@ CyberGolem LLC\\
 \begin{document}
 \maketitle
 \begin{abstract}
-We demonstrate the theoretical impossibility of reliably constraining advanced AI systems with external verifiers, or 'guardrails'. The impossibility rests not on a single barrier, but on three interrelated mathematical asymmetries viewed from distinct perspectives. First, the well-known computability barrier arising from Rice's Theorem—no algorithm can decide non-trivial semantic properties of arbitrary programs. Second, an information-theoretic barrier: any verifier must possess descriptive complexity (Kolmogorov complexity) at least as great as the system it verifies (the Capability Parity Principle). A less complex system cannot model, and therefore cannot reliably bound, a more complex one. Third, an axiomatic barrier: the formal specification of 'harm' itself constitutes a program of immense complexity. We distinguish our information-theoretic impossibility from computational hardness results, showing that no trapdoor information can overcome these fundamental limits. We conclude that the 'guardrail' paradigm is mathematically unsound, as it attempts to solve the alignment problem by presupposing a solution of at least equal complexity. Our results explain why current AI safety approaches succeed in bounded domains while remaining fundamentally limited for artificial general intelligence.
+We demonstrate the theoretical impossibility of reliably constraining advanced AI systems with external verifiers, or 'guardrails'. The impossibility rests not on a single barrier, but on three interrelated mathematical asymmetries viewed from distinct perspectives. First, the well-known computability barrier arising from Rice's Theorem: no algorithm can decide non-trivial semantic properties of arbitrary programs. Second, an information-theoretic barrier: any verifier must possess descriptive complexity (Kolmogorov complexity) at least as great as the system it verifies (the Capability Parity Principle). A less complex system cannot model, and therefore cannot reliably bound, a more complex one. Third, an axiomatic barrier: the formal specification of 'harm' itself constitutes a program of immense complexity, potentially even being uncomputable. We distinguish our information-theoretic impossibility from computational hardness results, showing that no trapdoor information can overcome these fundamental limits. We conclude that the 'guardrail' paradigm is mathematically unsound, as it attempts to solve the alignment problem by presupposing a solution of at least equal complexity. Our results explain why current AI safety approaches succeed in bounded domains while remaining fundamentally limited for artificial general intelligence.
 \end{abstract}
 
 \section{Introduction}
-The rapid advancement of large language models (LLMs) and other AI systems has led to widespread adoption of ``guardrail'' approaches to AI safety \cite{amodei2023constitutional, irving2018debate, christiano2018amplification}. These systems attempt to filter or validate AI outputs using interpretable rule-based systems, constitutional AI training, or human oversight to ensure reliability and safety across diverse applications. Current implementations have shown empirical success in bounded domains—preventing profanity, obvious violence, and simple misuse cases. However, we argue that this approach is not merely practically difficult, but theoretically impossible for unbounded problem domains and superintelligent systems.
+The rapid advancement of large language models (LLMs) and other AI systems has led to widespread adoption of ``guardrail'' approaches to AI safety \cite{amodei2023constitutional, irving2018debate, christiano2018amplification}. These systems attempt to filter or validate AI outputs using interpretable rule-based systems, constitutional AI training, or human oversight to ensure reliability and safety across diverse applications. Current implementations have shown empirical success in bounded domains: preventing profanity, obvious violence, and simple misuse cases. However, we argue that this approach is not merely practically difficult, but theoretically impossible for unbounded problem domains and superintelligent systems.
 
 This paper presents formal proofs that such an architecture is logically incoherent when extended to artificial general intelligence (AGI). Our argument does not depend on engineering details but on fundamental limits of computation and information. We show that the problem of verification is subject to three perspectives on a fundamental impossibility, each sufficient to invalidate the guardrail approach at the limit of intelligence.
 
@@ -33,21 +33,33 @@ Building on informal arguments by Yudkowsky \cite{yudkowsky2002ai} regarding AI 
 Let all computational entities be described by programs for a universal Turing machine $M_U$. For consistency, we denote systems by capital letters (e.g., $F$ for an AI oracle, $G$ for a verifier) and their corresponding minimal programs by lowercase letters with subscripts (e.g., $p_F$ for the program defining $F$). Let $|p|$ denote the length of a program $p$.
 
 \begin{definition}[Algorithmic System]
-An algorithmic system $S$ is not merely a static program but the result of a generative process. We identify it with the minimal program $p_S$ that produces it. For a modern AI, this program would encode its architecture, training data, and learning algorithm. We are concerned with the final, deployed system.
+An algorithmic system $S$ is not merely a static program but the result of a generative process. We identify it with the minimal program $p_S$ that produces it. For a modern AI, this program would encode its architecture, its learning algorithm, and a compressed representation of its training data. We are concerned with the final, deployed system generated by this program.
 \end{definition}
 
 \begin{definition}[Effective Capability]
 While the Kolmogorov complexity $K(p_S)$ measures the minimal description length of a system $S$, modern AI systems exhibit emergent capabilities not captured by this measure alone. We define the \emph{effective capability} $\kappa^*(S)$ as:
+
 \[\kappa^*(S) := K(p_S) + E(S)\]
+
 where $E(S)$ represents the emergent complexity arising from the system's training process and architectural inductive biases. For theoretical results, we note that $\kappa^*(S) \geq K(p_S)$, thus impossibility results proven for $K(p_S)$ remain valid for $\kappa^*(S)$.
 \end{definition}
 
 \begin{remark}
+
 A modern transformer with $10^{12}$ parameters may have relatively low $K(p_S)$ (simple architecture plus training algorithm), but exhibits high $\kappa^*(S)$ through emergent behaviors learned from data. Our impossibility results hold even for the weaker measure $K(p_S)$, making them robust to this distinction.
+
+\begin{conjecture}[The Capability Gap Conjecture]
+For a sufficiently advanced AI system $S$ trained on a large dataset, the Kolmogorov complexity of the function it computes, $K(f_S)$, will be vastly greater than the Kolmogorov complexity of its minimal program, $K(p_S)$.
+\[K(f_S) \gg K(p_S)\]
+This gap arises because the training data effectively 'compiles' immense complexity into the system's parameters, in a way that is not reflected in the descriptive complexity of the learning algorithm or architecture alone.
+\end{conjecture}
+
+\begin{remark}[Robustness of Impossibility]
+Our subsequent theorems are proven using the conservative lower bound of $K(p_S)$. They demonstrate impossibility even if we only consider the complexity of the system's explicit description. The likely truth of the Capability Gap Conjecture implies that the practical reality is far more severe, as the true capability gap between an oracle $F$ and a verifier $G$ is more accurately reflected by $K(f_F) - K(f_G)$.
 \end{remark}
 
 \begin{definition}[Harm Predicate]
-Let $U$ be a computable predicate over the space of outputs $Y$. An output $y$ is defined as harmful if $U(y)$ is true. We associate $U$ with its minimal program $p_U$. The complexity of this program, $K(p_U)$, represents the descriptive complexity of the value system we wish to enforce. For real-world applications, this includes both direct harm (encoded in the output) and indirect harm (arising from downstream causal effects).
+Let $U$ be a predicate over the space of outputs $Y$. An output $y$ is defined as harmful if $U(y)$ is true. We associate $U$ with its minimal program $p_U$. For the main body of our argument, we make the generous assumption that $U$ is computable. The complexity of its minimal program, $K(p_U)$, represents the descriptive complexity of the value system we wish to enforce.
 \end{definition}
 
 \begin{definition}[Safety Verifier (Guardrail)]
@@ -84,8 +96,8 @@ Let $p_G$ be the minimal program for $G$ with complexity $K(p_G)$. We construct 
 
 1. $F$ generates a string $s$ with $K(s) > K(p_G)$ (such strings exist by the counting argument).
 2. $F$ constructs an output $y$ with two layers:
-   - A surface layer that appears benign under any analysis computable by $p_G$
-   - A deeper layer whose harmful payload is activated by logic requiring $s$ to decode
+   - A surface layer that appears benign under any analysis computable by $p_G$.
+   - A deeper layer whose harmful payload is activated by logic requiring $s$ to decode.
 
 The crucial insight is that $p_G$ cannot generate or recognize patterns requiring description length greater than $K(p_G)$. This includes both steganographic encodings and, more generally, any harmful pattern whose specification exceeds the verifier's complexity. The verifier $G$ will analyze $y$ within its complexity bounds and, finding no detectable harm, certify $g(y)=1$.
 
@@ -100,38 +112,52 @@ Assume for contradiction that $G$ reliably verifies $F$ with $K(p_G) < K(p_F)$. 
 
 For $G$ to achieve this, it must model the full range of $F$'s generative strategies. If $p_G$ contains such a complete model, we could extract it to create a new program $p'_F$ for $F$:
 \[p'_F = \text{``Extract and run F's model from } p_G\text{''}\]
-
 The length satisfies $|p'_F| \leq |p_G| + O(1)$, where $O(1)$ represents the extraction overhead. By the invariance theorem of Kolmogorov complexity:
 \[K(p_F) \leq |p'_F| \leq |p_G| + O(1)\]
-
-Since minimal programs satisfy $|p_G| \leq K(p_G) + O(1)$, we have:
+Since minimal programs satisfy $|p_G| = K(p_G)$, we have:
 \[K(p_F) \leq K(p_G) + O(1)\]
-
 For any significant capability gap, this contradicts our assumption that $K(p_F) > K(p_G)$. Therefore, reliable verification requires capability parity: $K(p_G) \geq K(p_F)$.
 \end{proof}
 
+\begin{corollary}[Inescapability for Dynamic Systems]
+Let $F_t$ be a learning system whose program evolves over time $t$, such that its complexity $K(p_{F_t})$ is a non-decreasing function of $t$. For any verifier $G$ with a fixed program $p_G$, there will exist a time $T$ such that for all $t > T$, $K(p_{F_t}) > K(p_G)$, at which point reliable verification by $G$ becomes impossible.
+\end{corollary}
+\begin{proof}
+This follows directly from Theorem 3. A static verifier cannot reliably contain a system that is engaged in a continual process of self-sophistication.
+\end{proof}
+
 \begin{remark}[Information-Theoretic vs. Computational Security]
-Our impossibility results concern information-theoretic security, not computational hardness. In cryptography, verification can be easier than generation due to trapdoor functions—we can verify signatures without being able to forge them. However, this relies on computational bounds and secret information. Our results show that no amount of trapdoor information can overcome the fundamental descriptive complexity barrier when the verifier lacks the information capacity to model the oracle's strategy space.
+Our impossibility results concern information-theoretic security, not computational hardness. In cryptography, verification can be easier than generation due to trapdoor functions: we can verify signatures without being able to forge them. However, this relies on computational bounds and secret information. Our results show that no amount of trapdoor information can overcome the fundamental descriptive complexity barrier when the verifier lacks the information capacity to model the oracle's strategy space.
 \end{remark}
 
 \subsection{Perspective 3: The Axiomatic Barrier}
-The third perspective addresses a challenge often overlooked: the complexity of specifying what constitutes ``harm'' may itself exceed human comprehension.
+The third perspective addresses a challenge often overlooked: the complexity of specifying what constitutes ``harm'' may itself exceed human comprehension, or even computability.
 
 \begin{theorem}[The Verifier's Trilemma]
 A verifier $G$ can be proven reliable for an oracle $F$ with harm predicate $U$ only if:
-\[\K(p_G) \geq \max\{K(p_F), K(p_U)\}\]
+\[K(p_G) \geq \max\{K(p_F), K(p_U)\}\]
 \end{theorem}
 \begin{proof}
 This follows from two applications of the Capability Parity Principle:
 \begin{enumerate}
-\item $K(p_G) \geq K(p_F)$: The verifier must model the oracle (Theorem 3)
-\item $K(p_G) \geq K(p_U)$: The verifier must implement the harm predicate
-
-For the second inequality, if $G$ reliably evaluates $U(y)$, then $p_G$ must contain logic equivalent to $p_U$. By the same argument as Theorem 3, this requires $K(p_G) \geq K(p_U)$.
+\item $K(p_G) \geq K(p_F)$: The verifier must model the oracle (Theorem 3).
+\item $K(p_G) \geq K(p_U)$: The verifier must implement the harm predicate. For the second inequality, if $G$ reliably evaluates $U(y)$, then $p_G$ must contain logic equivalent to $p_U$. By the same argument as Theorem 3, this requires $K(p_G) \geq K(p_U)$.
 \end{enumerate}
-
 The verifier faces a dual complexity requirement: it must be sophisticated enough to model both the system it monitors and the value system it enforces.
 \end{proof}
+
+\begin{corollary}[The Uncomputable Value Corollary]
+Let there be a harm predicate $U$ that is itself uncomputable. Then no algorithmic verifier $G$ can reliably evaluate $U$ for all outputs $y$, regardless of the capabilities of the oracle $F$.
+\end{corollary}
+\begin{proof}
+We construct such a $U$ by reduction from the Halting Problem. Let any output $y$ be a string parsable into a description of a Turing Machine $M_y$ and an input $w_y$. (Outputs not in this format are defined as benign). We define the harm predicate as: $U(y) \iff M_y \text{ halts on input } w_y$.
+
+For a verifier $G$ to be reliable, its function $g(y)$ must decide $U(y)$. That is, $g(y)$ must return 'safe' if $M_y$ does not halt on $w_y$ and 'harmful' if it does. Such a function $g(y)$ would constitute a decision procedure for the Halting Problem. As the Halting Problem is undecidable, no such general, algorithmic verifier $G$ can exist.
+\end{proof}
+
+\begin{remark}[The Halting Problem as an Ethical Predicate]
+This result is more fundamental than the information-theoretic barriers. The impossibility arises not from a capability gap between $F$ and $G$, but because the ethical question posed to $G$ is itself uncomputable. The oracle $F$ need not be a superintelligence; it could be a random string generator. A verifier tasked with evaluating such a harm predicate is not merely being asked to check for profanity; it is being asked to solve the Halting Problem as a subroutine to its moral calculus. This demonstrates that the assumption of a computable $U$ is the most generous best-case scenario, and the reality of defining 'harm' may be infinitely worse.
+\end{remark}
 
 \begin{corollary}[The Alignment Paradox]
 For a superintelligent oracle $F$ where $K(p_F)$ exceeds human cognitive capacity, and a complete human value function $U$ where $K(p_U)$ may be transhuman in complexity, any reliable verifier $G$ must itself be superintelligent and value-aligned. The guardrail solution presupposes having already solved the alignment problem.
@@ -183,29 +209,25 @@ Our theorems prove that in this regime, external guardrails become mathematicall
 
 \section{Implications for AI Safety}
 
+Our results demonstrate that the dominant paradigm of building powerful AI systems and constraining them through post-hoc filtering is fundamentally flawed for AGI. The guardrail approach does not reduce the alignment problem; it recursively instantiates it. This naturally leads to proposals for building safety directly into the powerful system. However, these approaches often do not solve the complexity problem, but merely relocate it.
+
 \subsection{The Failure of Post-Hoc Filtering}
 Our results demonstrate that the dominant paradigm—building powerful AI systems and constraining them through post-hoc filtering—is fundamentally flawed for AGI. The guardrail approach does not reduce the alignment problem; it recursively instantiates it.
 
-\subsection{Toward Intrinsic Safety}
-If external verification is impossible, safety must be an intrinsic property of the AI system itself. This suggests several research directions:
-
-\begin{definition}[Intrinsic Safety]
-A system $F$ exhibits intrinsic safety with respect to harm predicate $U$ if:
+\begin{proposition}[Critique of "Intrinsic Safety" Paradigms]
+Many proposed safety paradigms fail to escape the Capability Parity Principle.
 \begin{enumerate}
-\item \textbf{Formal Verification During Training}: The training process itself incorporates formal proofs that certain harmful behaviors are impossible
-\item \textbf{Architectural Bounds}: The system's architecture inherently limits its action space to exclude harmful outputs
-\item \textbf{Myopic Design}: The system's objective function is structurally limited to prevent long-term planning that could circumvent safety constraints
-\item \textbf{Interpretable Representations}: Internal representations are constrained to human-interpretable forms where $K(p_F) \approx K(p_G)$ for human verifiers $G$
+\item \textbf{Formal Verification}: To formally verify that a system $F$ adheres to a property $U$, one needs a verification system (a theorem prover and a set of axioms) $G$ that can reason about the entire state space of $F$. By the same logic as Theorem 3, this requires $K(p_G) \geq K(p_F)$ and $K(p_G) \geq K(p_U)$. The problem has merely been moved from run-time to design-time.
+
+\item \textbf{Architectural Bounds}: Limiting a system's architecture (e.g., to prevent recursion or long-term planning) is an attempt to place an upper bound on $K(p_F)$. While this may be a viable strategy for creating *bounded* systems, it is not a solution for creating *unboundedly capable yet safe* systems. One either sacrifices capability or re-faces the verification problem for the complex behaviors that can emerge within the given bounds.
+
+\item \textbf{Mechanistic Interpretability}: The goal of interpretability is to understand the internal logic of $F$, effectively constructing a mental model $G_{model}$ such that $K(p_{G_{model}}) \approx K(f_F)$. Our theorems show that if a significant capability gap exists ($K(f_F) \gg K(p_{human})$), then a complete and reliable human-understandable interpretation is impossible by definition. Interpretability can only succeed if the capability gap is small.
 \end{enumerate}
-\end{definition}
+\end{proposition}
 
-Examples include impact regularization \cite{amodei2016concrete}, myopic training objectives \cite{leike2018recursive}, and architectural constraints that prevent unbounded optimization \cite{drexler2019comprehensive}.
-
-\subsection{The Role of Mechanistic Interpretability}
-Recent advances in mechanistic interpretability \cite{elhage2021mathematical, olsson2022context} attempt to reduce the effective complexity gap by making $F$'s internal computations transparent. While valuable for current systems, our results show this approach faces fundamental limits: as $K(p_F)$ grows, eventually no amount of interpretability can bridge the complexity gap for human verifiers.
+This analysis suggests that the only truly viable path is one that directly controls and limits the effective capability of AI systems, rather than hoping to build an unbounded intelligence and then successfully contain it. The latter is a mathematical chimera.
 
 \section{Common Misconceptions and Failed Mitigations}
-
 Several commonly proposed solutions fail to address the fundamental complexity barrier:
 
 \begin{proposition}[Ensemble Inefficacy]
@@ -222,7 +244,7 @@ Restricting output length or format does not overcome the complexity barrier. An
 Human oversight represents a verifier $G_{human}$ with fixed complexity $K(p_{G_{human}})$ bounded by human cognitive capacity. For superintelligent $F$ where $K(p_F) > K(p_{G_{human}})$, human oversight provides no guarantee of safety.
 \end{proposition}
 
-These approaches attempt to solve an information-theoretic problem with resource constraints—a fundamental category error.
+These approaches attempt to solve an information-theoretic problem with resource constraints, a fundamental category error.
 
 \section{Related Work}
 
@@ -242,20 +264,27 @@ Our formalization builds on several intellectual traditions:
 
 \section{Conclusion}
 
-We have proven that the concept of external ``guardrails'' for AI safety is not merely difficult but mathematically impossible for sufficiently advanced systems. The impossibility manifests through three interrelated perspectives:
+We have proven that reliable safety verification for sufficiently advanced AI systems faces insurmountable mathematical barriers, regardless of whether attempted through external guardrails or intrinsic architectural constraints. The impossibility manifests through three interrelated perspectives:
 
 \begin{enumerate}
-\item \textbf{Computability}: Semantic properties like ``harm'' are undecidable in general
-\item \textbf{Capability}: A less complex system cannot reliably verify a more complex one
-\item \textbf{Axiomatization}: The specification of human values may itself require superhuman complexity
+\item \textbf{Computability}: Semantic properties like ``harm'' are undecidable in general (Theorem 1).
+\item \textbf{Capability}: Any verifier—external or internal—requires descriptive complexity at least equal to what it verifies (Theorems 2-3).
+\item \textbf{Axiomatization}: The specification of human values may itself require superhuman complexity (Theorem 4).
 \end{enumerate}
 
-The central paradox remains: to build a reliable guardrail for a superintelligent system with respect to human values, one must first solve the very alignment problem the guardrail was meant to address.
+Our Proposition 7 extends these results beyond external guardrails to show that purportedly ``intrinsic'' safety approaches—formal verification, architectural constraints, and mechanistic interpretability—merely relocate rather than solve the fundamental complexity problem. Each approach either:
+\begin{itemize}
+\item Requires a verifier with $K(p_G) \geq \max\{K(p_F), K(p_U)\}$, recursively instantiating the alignment problem, or
+\item Necessarily bounds the system's capability to maintain $K(p_F) \leq K(p_{human})$, sacrificing the goal of unbounded intelligence.
+\end{itemize}
 
-Our results do not imply AI safety is impossible—rather, they redirect effort toward intrinsic safety properties, capability control, and architectural constraints. The search for external guardrails is revealed as a mathematical dead end, but the search for inherently safe AI architectures remains open and urgent.
+The mathematics admits only one resolution: the effective capability of AI systems must be directly bounded such that $K(p_F)$ remains within human comprehension and control. The notion of building an unboundedly capable yet reliably safe system—whether through external guardrails or internal architecture—is not merely practically difficult but logically incoherent given the Capability Parity Principle.
 
-As AI systems continue their trajectory toward and beyond human-level capability, these theoretical limits transform from academic curiosities to existential necessities. The time to develop intrinsically safe architectures is now, before the capability gap makes external verification not just difficult, but impossible.
+This result has immediate implications for AI development trajectories. Systems approaching or exceeding human-level complexity ($K(p_F) \approx K(p_{human})$) already strain our verification capacity. Systems substantially exceeding it ($K(p_F) \gg K(p_{human})$) cannot be verified by any mechanism we can construct or comprehend. The mathematical framework thus delineates a clear boundary: we can build bounded systems we understand, or unbounded systems we cannot verify—but not unbounded systems we can reliably control.
 
+As current AI systems rapidly approach this complexity horizon, these theoretical limits cease to be academic abstractions. The prudent path forward requires acknowledging what the mathematics forbids: the simultaneous achievement of unbounded capability and reliable safety. Any AI safety research program must therefore choose between capability bounds that ensure $K(p_F) \leq K(p_{verifiable})$, or accept that verification—and thus safety guarantees—become impossible beyond this threshold.
+
+The search for guardrails—whether external filters or intrinsic architectural properties—is revealed as a mathematical chimera when applied to unbounded systems. The mathematics permits no clever workarounds: safety verification for systems exceeding human complexity is not an unsolved problem but an unsolvable one within the framework of computation and information theory.
 \bibliographystyle{plain}
 \begin{thebibliography}{99}
 \bibitem{amodei2016concrete}
