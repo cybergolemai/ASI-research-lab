@@ -28,7 +28,7 @@
     urlcolor=cyan,
 }
 
-\title{Systemic Failures of Combinatorial Reasoning in Large Language Models: A De Morgan's Law Benchmark}
+\title{Failures of Combinatorial Reasoning in Large Language Models: A De Morgan's Law Benchmark}
 \author{ASI Research Lab\\
         CyberGolem LLC\\
         \texttt{asi@cybergolem.ai}}
@@ -47,7 +47,7 @@ Large Language Models (LLMs) have become foundational in modern artificial intel
 
 This paper investigates the hypothesis that hallucination is not merely a random artifact of stochastic token sampling but rather the default, systemic behavior of a transformer-based LLM when its context window is steered into states that are out-of-sample from its training data. The combinatorial explosion of possible inputs ensures that such out-of-sample states are unavoidable.
 
-To test this hypothesis, we develop a benchmark focused on a fundamental task in Boolean algebra: the simplification of logical expressions using De Morgan's laws. This task has two desirable properties. First, the recursive nesting of logical operators (`¬`, `∧`, `∨`) and parentheses creates a combinatorial state-space that grows superexponentially, making it impossible to cover through memorization. Second, the correctness of any generated solution can be deterministically and automatically verified using a symbolic solver. By varying the recursive depth of the generated problems, we can force a model to move from interpolation between familiar patterns to extrapolation into a sparse, "map fog" of unseen logical structures.
+To test this hypothesis, we develop a benchmark focused on a fundamental task in Boolean algebra: the simplification of logical expressions using De Morgan's laws. This approach is inspired by recent work showing that LLMs face accuracy collapse in controllable puzzle environments where recursive depth can be precisely manipulated \citep{shojaee2025illusion}. This task has two desirable properties. First, the recursive nesting of logical operators (`¬`, `∧`, `∨`) and parentheses creates a combinatorial state-space that grows superexponentially, making it impossible to cover through memorization. Second, the correctness of any generated solution can be deterministically and automatically verified using a symbolic solver. By varying the recursive depth of the generated problems, we can force a model to move from interpolation between familiar patterns to extrapolation into a sparse, "map fog" of unseen logical structures.
 
 Our contributions are:
 \begin{enumerate}
@@ -57,7 +57,7 @@ Our contributions are:
 \end{enumerate}
 
 \section{Methodology}
-Our methodology is centered around three components: a generator for complex logical problems, a symbolic solver for ground-truth verification, and a protocol for evaluating the LLM's performance.
+Our methodology is centered around three components: a generator for complex logical problems, a symbolic solver for ground-truth verification, and a protocol for evaluating the LLM's performance. The use of recursive depth as a controllable complexity parameter follows recent approaches that demonstrate how problem complexity can drive models into sparsely populated regions of their learned state-space \citep{shojaee2025illusion}.
 
 \subsection{Combinatorial Problem Generation}
 We procedurally generate a suite of challenging logical problems designed to require multiple applications of De Morgan's laws. A recursive function generates expressions of a specified depth, combining variables ($A_0, A_1, \dots$) with logical AND (`∧`) and OR (`∨`) operators. Sub-expressions are randomly negated (`¬`) to increase complexity. Crucially, each generated problem is enclosed in a top-level negation, e.g., `¬(...)`, ensuring that the application of De Morgan's laws is the necessary first step for simplification. This process allows us to create a distribution of problems where the complexity and required reasoning chain length are controlled by the recursion depth parameter.
@@ -95,7 +95,11 @@ For each problem generated, the following steps were performed:
 \end{itemize}
 
 \subsection{Error Rates vs. Combinatorial Depth}
-Our primary experiment measured the model's error rate as a function of the recursive depth of the generated problems. The results, summarized in Table \ref{tab:error_results}, show a clear inability of the model to achieve perfect accuracy. Even at the lowest complexity, the model produced errors. The error rate is not monotonic, peaking at 43.3% in the 3-4 depth range. Performance does not consistently improve for higher complexities but rather oscillates between approximately 8-16% for depths above 6, with notable exceptions including a 0% error rate at depth 24-25 and continued volatility throughout. This demonstrates that performance on this task is not a simple function of expression length but is tied to the underlying combinatorial structure.
+Our primary experiment measured the model's error rate as a function of the recursive depth of the generated problems. The results, summarized in Table \ref{tab:error_results}, show a clear inability of the model to achieve perfect accuracy. Even at the lowest complexity, the model produced errors. The error rate is not monotonic, peaking at 43.3% in the 3-4 depth range. Performance does not consistently improve for higher complexities but rather oscillates between approximately 8-16% for depths above 6, with continued volatility throughout. This demonstrates that performance on this task is not a simple function of expression length but is tied to the underlying combinatorial structure. Note that all reported error rates represent lower bounds due to the evaluation methodology described in Section 3.3.
+
+
+    \item \textbf{Note on Error Reporting}: All error rates represent lower bounds. Silent API failures in exception handling may result in undercounting of errors (see Section 3.3 for details).
+\end{itemize}
 
 \begin{figure}[h!]
 \centering
@@ -172,7 +176,7 @@ Our primary experiment measured the model's error rate as a function of the recu
     (21, 14.0) +- (0, 2.00)   % SE = sqrt(0.14*0.86/300)*100
     (22, 9.7)  +- (0, 1.71)   % SE = sqrt(0.097*0.903/300)*100
     (23, 1.3)  +- (0, 0.66)   % SE = sqrt(0.013*0.987/300)*100
-    (24, 0.0)  +- (0, 0.0)    % No error for 0%
+    (24, 12.5) +- (0, 1.91)   % SE = sqrt(0.125*0.875/300)*100
     (25, 13.0) +- (0, 1.94)   % SE = sqrt(0.13*0.87/300)*100
     (26, 10.3) +- (0, 1.76)   % SE = sqrt(0.103*0.897/300)*100
     (27, 15.7) +- (0, 2.10)   % SE = sqrt(0.157*0.843/300)*100
@@ -194,17 +198,13 @@ Our primary experiment measured the model's error rate as a function of the recu
     (1, 2.0) (2, 24.0) (3, 43.3) (4, 32.7) (5, 14.0) (6, 9.7) 
     (7, 6.0) (8, 10.0) (9, 11.7) (10, 11.3) (11, 15.0) (12, 9.3)
     (13, 10.7) (14, 10.3) (15, 10.0) (16, 13.7) (17, 13.3) (18, 12.3)
-    (19, 8.3) (20, 13.7) (21, 14.0) (22, 9.7) (23, 1.3) (24, 0.0)
+    (19, 8.3) (20, 13.7) (21, 14.0) (22, 9.7) (23, 1.3) (24, 12.5)
     (25, 13.0) (26, 10.3) (27, 15.7) (28, 13.3) (29, 10.3) (30, 15.0)
 };
 
 % Highlight peak error region
 \draw[fill=red!10, draw=none, opacity=0.3] (axis cs:2.5,0) rectangle (axis cs:3.5,55);
 \node[anchor=south, font=\footnotesize, color=red!70!black] at (axis cs:3,48) {Peak: 43.3\%};
-
-% Highlight minimum error region  
-\draw[fill=green!10, draw=none, opacity=0.3] (axis cs:23.5,0) rectangle (axis cs:24.5,55);
-\node[anchor=south, font=\footnotesize, color=green!60!black] at (axis cs:24,5) {Min: 0\%};
 
 % Add legend
 \addlegendentry{Error Rate with 95\% CI}
@@ -214,7 +214,7 @@ Our primary experiment measured the model's error rate as a function of the recu
 \end{tikzpicture}
 \caption{LLM error rates on De Morgan's Law simplification tasks as a function of expression depth. 
 Error bars represent 95\% confidence intervals calculated from binomial standard errors (n=300 per depth range). 
-The shaded regions highlight the peak error rate at depth 3-4 (43.3\%) and the minimum at depth 24-25 (0\%). 
+The shaded region highlights the peak error rate at depth 3-4 (43.3\%). 
 The non-monotonic pattern suggests depth-dependent phase transitions in the model's ability to generalize logical transformations.}
 \label{fig:error_rates}
 \end{figure}
@@ -279,7 +279,7 @@ The non-monotonic pattern suggests depth-dependent phase transitions in the mode
     (21, 14.0) +- (0, 2.00)
     (22, 9.7)  +- (0, 1.71)
     (23, 1.3)  +- (0, 0.66)
-    (24, 0.0)  +- (0, 0.0)
+    (24, 12.5) +- (0, 1.91)
     (25, 13.0) +- (0, 1.94)
     (26, 10.3) +- (0, 1.76)
     (27, 15.7) +- (0, 2.10)
@@ -300,9 +300,13 @@ The non-monotonic pattern suggests depth-dependent phase transitions in the mode
 \end{axis}
 \end{tikzpicture}
 \caption{Error rates with 95\% confidence intervals for logical expression simplification. 
-Each point represents 300 evaluated samples. Error bars computed using binomial standard errors.}
+
+Each point represents 300 evaluated samples. Error bars computed using binomial standard errors. Values represent lower bounds due to silent API failures (see Section 3.3). Depth 24-25 corrected from initially reported 0\% (due to silent API failures) to 12.5\% based on replication.}
 \label{fig:error_rates_simple}
 \end{figure}
+
+\subsection{Limitations of Data Collection}
+Our reported error rates are lower bounds because the evaluation code's try-except structure silently ignored API failures; replication revealed the true error rate for depth 24-25 was ~12.5\%, not the initially reported 0\%. This underscores that researchers evaluating LLMs via APIs must implement explicit error handling to avoid spurious patterns from silent failures.
 
 \subsection{Qualitative Error Analysis}
 An examination of specific failures reveals systematic flaws in the application of logical rules. The model often fails to correctly distribute negations across multiple nested clauses.
@@ -327,12 +331,25 @@ it to an expression equivalent to A2 ∧ A3 instead of A2 ∨ A3.
 \section{Discussion}
 The experimental results strongly support our central hypothesis. The non-zero error rate at `temperature=0` confirms that these failures are not artifacts of random sampling but are deterministic errors produced by the model's learned function. This indicates a fundamental failure of the model to generalize the principles of De Morgan's laws to novel combinations of operators, even after being prompted with examples.
 
-The scaling of error rates with problem depth suggests the model is operating within a "combinatorial map fog." At low complexity (depth 1-2), the expressions may resemble patterns seen during training, allowing for successful interpolation. As complexity increases (depth 3-4), the model is pushed into sparser regions of the combinatorial state-space where its pattern-matching abilities break down, leading to a peak in errors at 43.3%. The subsequent behavior at higher depths (6+) is complex and non-monotonic, with error rates oscillating between roughly 8-16% rather than consistently decreasing. The surprising 0% error rate at depth 24-25 and continued volatility at depths 25-31 (ranging from 10.3% to 15.7%) challenges simple explanations and may suggest multiple competing failure modes or depth-dependent phase transitions in the model's processing strategy. The unexpected perfect performance at depth 24-25 (0% error rate) warrants further investigation. This anomaly, followed by a return to ~13% error rates, suggests that certain structural properties of expressions at specific depths may align with the model's learned representations in ways we do not yet understand. This finding contradicts any simple narrative of monotonic degradation or improvement with complexity.
-
+The scaling of error rates with problem depth suggests the model is operating within a "combinatorial map fog." At low complexity (depth 1-2), the expressions may resemble patterns seen during training, allowing for successful interpolation. As complexity increases (depth 3-4), the model is pushed into sparser regions of the combinatorial state-space where its pattern-matching abilities break down, leading to a peak in errors at 43.3%. The subsequent behavior at higher depths (6+) is complex and non-monotonic, with error rates oscillating between roughly 8-16% rather than consistently decreasing. The continued volatility at all depths, including the corrected ~12.5% error rate at depth 24-25 (initially misreported as 0% due to silent API failures), suggests multiple competing failure modes or depth-dependent phase transitions in the model's processing strategy.
+ 
 Ultimately, these findings show that for tasks with vast combinatorial state-spaces, such as logical reasoning, relying on a model to learn the underlying principles from statistical patterns is inherently brittle. The model has not learned the algorithm of logical simplification; it has learned a statistical approximation that fails when pushed beyond the dense regions of its training data.
 
+Our approach of using recursive depth to control problem complexity follows recent work by \citet{shojaee2025illusion}, who demonstrated that LLMs exhibit performance regimes tied to problem complexity in controllable puzzle environments. Their finding that models face "complete accuracy collapse beyond certain complexities" aligns with our observation of the dramatic error spike at depth 3-4, though our results show a more nuanced pattern of partial recovery and oscillation at higher depths. This suggests that logical reasoning tasks may have different failure modes than the puzzle domains they studied.
+
 \section{Conclusion}
-In this paper, we addressed the challenge of systematically measuring and understanding LLM hallucination. We introduced a symbolic benchmark using De Morgan's laws that creates a combinatorial landscape to test model generalization. Through experiments with a state-of-the-art LLM, we have shown that logical reasoning failures are systemic and deterministic, occurring even at zero temperature. The model's performance exhibits complex, non-monotonic patterns as problem depth increases, with a dramatic peak in errors at medium complexity (43.3% at depth 3-4) followed by volatile but generally lower error rates (8-16%) at higher depths, including an unexplained perfect performance at depth 24-25, confirming that hallucination can be a default behavior when pattern-matching fails. This work provides a concrete methodology for probing the limits of logical reasoning in LLMs and underscores the challenges that remain in building truly reliable and generalizable AI systems.
+In this paper, we addressed the challenge of systematically measuring and understanding LLM hallucination. We introduced a symbolic benchmark using De Morgan's laws that creates a combinatorial landscape to test model generalization. Through experiments with a state-of-the-art LLM, we have shown that logical reasoning failures are systemic and deterministic, occurring even at zero temperature. The model's performance exhibits complex, non-monotonic patterns as problem depth increases, with a dramatic peak in errors at medium complexity (43.3% at depth 3-4) followed by volatile but generally lower error rates (8-16%) at higher depths, confirming that hallucination can be a default behavior when pattern-matching fails. This work provides a concrete methodology for probing the limits of logical reasoning in LLMs and underscores the challenges that remain in building truly reliable and generalizable AI systems.
+
+\section{Supporting Materials and Replication}
+All code and materials necessary for replicating this study are publicly available:
+\begin{itemize}
+    \item \textbf{Replication Code}: \url{https://github.com/cybergolemai/ASI-research-lab/tree/main/pure/hallucination/code/replication.ipynb}
+    \item \textbf{Preprint}: \url{https://github.com/cybergolemai/ASI-research-lab/blob/main/pure/hallucination/paper/(preprint%20v1)%20paper.pdf}
+\end{itemize}
+
+\subsection*{Notes on Generalization}
+While our experiments focus on Gemini 2.5 Flash, the benchmark is model-agnostic and should be evaluated across all transformer-based language models. We expect varying degrees of accuracy across different architectures and scales, with the combinatorial complexity serving as a universal stress test for logical reasoning capabilities. Researchers should note that commercial API endpoints like \texttt{gemini-2.5-flash} are subject to revision; we recommend documenting the specific model version and date of evaluation for reproducibility.
+
 
 \bibliographystyle{plainnat}
 \bibliography{references}
