@@ -1,6 +1,6 @@
 # More Compute, More Confusion: The Scaling Trap of Inference-Time Reasoning
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cybergolemai/ASI-research-lab/tree/main/pure/wide-vs-deep-TTC/code/CyberGolem_Blog_Wide_vs_Deep_Inference.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/cybergolemai/ASI-research-lab/blob/main/applied/wide-vs-deep-TTC/code/CyberGolem_Blog_Wide_vs_Deep_Inference.ipynb)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains the code and analysis for an experiment designed to test a critical hypothesis in AI efficiency: can smaller, VRAM-friendly models unlock the complex reasoning capabilities of their larger cousins by being granted significantly more computational time at inference?
