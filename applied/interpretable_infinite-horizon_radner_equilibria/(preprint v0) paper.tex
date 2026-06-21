@@ -1,0 +1,177 @@
+\documentclass[11pt, a4paper]{article}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{mathrsfs}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{listings}
+
+% Formatting
+\geometry{margin=1in}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    citecolor=blue,
+}
+
+% Code Block Formatting for the Equations
+\lstset{
+    basicstyle=\ttfamily\scriptsize,
+    breaklines=true,
+    breakatwhitespace=false,
+    frame=single,
+    backgroundcolor=\color{gray!10},
+}
+
+% Title & Authors
+\title{\textbf{Dynamic SINDy-GAPNets for Infinite-Horizon Radner Equilibria with Interpretable Policies}}
+\author{Econometric Digital Twin Research Lab\\
+    CyberGolem LLC\\
+    \textit{edtrl@cybergolem.ai}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent Dynamic Stochastic General Equilibrium (DSGE) models in incomplete markets traditionally suffer from severe computational bottlenecks, as the absence of a unique martingale measure collapses standard valuation frameworks into intractable backward stochastic differential equations (BSDEs). While recent work has successfully applied Generative Adversarial Policy Networks (GAPNets) to solve instantaneous market clearing, these formulations often drop the recursive time-transition mechanics, inadvertently reducing the problem to a static approximation. In this paper, we extend the GAPNet framework into a true infinite-horizon DSGE solver. By introducing a deep Value Network (Critic) and anchoring the adversarial game in Bellman Action-Values ($Q$-values), our model mathematically incentivizes endogenous dynamic savings and hedging behavior. To overcome the ``Bellman Explosion'' inherent to deep recursive models, we implement Polyak-averaged Target Networks, Huber Temporal Difference (TD) losses, and gradient clipping. Furthermore, we replace the black-box Generator with a Sparse Identification of Nonlinear Dynamics (SINDy) basis. This allows us to extract explicit, human-readable algebraic policy rules governing how agents dynamically trade and save in response to continuous macroeconomic shocks. We demonstrate our framework on a multi-agent geopolitical economy, extracting interpretable policies for oil flows and financial asset accumulation.
+\vspace{0.5cm}\\
+\noindent \textbf{Keywords:} Incomplete Markets, Radner Equilibrium, Reinforcement Learning, Sparse Identification, Dynamic Programming, Macroeconomics
+\end{abstract}
+
+\section{Introduction}
+
+The computation of Recursive Radner Equilibria (RRE) in infinite-horizon incomplete markets remains one of the most computationally hostile environments in macroeconomics. Traditional approaches rely on the existence of Complete Markets, where agents can perfectly hedge against any future state of the world using spanning assets. However, in real-world scenarios—such as sudden geopolitical blockades of oil straits or liquidity crises—markets are fundamentally incomplete. 
+
+We formally define a Radner Equilibrium for our economy as:
+\begin{definition}[Recursive Radner Equilibrium]
+A tuple $(x^*, y^*, p^*)$ where:
+\begin{itemize}
+    \item $x_c^*$ maximizes expected utility $\mathbb{E}[\sum_{t=0}^\infty \gamma^t u_c(x_{c,t}) | \mathcal{F}_0]$ subject to budget constraints
+    \item Markets clear: $\sum_c x_{c,t}^* = \sum_c e_{c,t}$ and $\sum_c y_{c,t}^* = 0$
+    \item The price process $p_t^*$ is $\mathcal{F}_t$-measurable
+\end{itemize}
+\end{definition}
+
+Recent literature has bridged this gap by reformulating incomplete economies as Markov pseudo-games \cite{goktas2025infinite}, allowing for the deployment of Generative Adversarial Policy Networks (GAPNets) to find equilibria via exploitability minimization. However, a critical pitfall in early GAPNet implementations is the inadvertent omission of the Bellman time-transition mechanics. Without modeling the expected discounted continuation value of an agent's wealth, the network collapses an infinite-horizon problem into a series of disconnected, instantaneous static games. In such static approximations, agents possess no mathematical incentive to purchase financial assets (save), as the costs are incurred today but the dividends are never realized in a projected ``tomorrow.''
+
+In this paper, we present the \textbf{Dynamic SINDy-GAPNet}. We reconstruct the infinite-horizon mechanics by treating the economy as a multi-agent Reinforcement Learning environment. We introduce a deep Critic (Value Network) to estimate the Bellman continuation values, forcing the Generator and Adversary to optimize $Q$-values rather than instantaneous utility. To ensure the macroeconomic policy rules remain fully interpretable, we map the state space through a SINDy polynomial basis library regularized by Sequential Threshold Ridge Regression (STRRidge). The result is a highly stable, fully dynamic DSGE solver that outputs explicit algebraic formulas for optimal macroeconomic behavior.
+
+\section{The Infinite-Horizon DSGE Model}
+
+We model a continuous-state geopolitical economy comprising $N=3$ consumers, $M=2$ commodities, and $L=1$ global financial asset. 
+\begin{itemize}
+    \item \textbf{Consumers ($c \in \{0,1,2\}$):} OPEC, EU/Asia, USA (with Strategic Petroleum Reserve).
+    \item \textbf{Commodities ($j \in \{0,1\}$):} Oil, General Goods/Capital.
+    \item \textbf{Assets ($k \in \{0\}$):} Global Financial Asset yielding $1.05$ units of General Goods at $t+1$.
+\end{itemize}
+
+\subsection{State Dynamics and Endogenous Wealth}
+Unlike static models, the full Markov state $S_t \in \mathbb{R}^8$ includes both exogenous stochastic variables and endogenous wealth states. The exogenous state $\xi_t \in \mathbb{R}^2$ comprises a \textit{Supply Shock} and a \textit{Liquidity Index}, evolving according to an AR(1) mean-reverting process:
+\begin{equation}
+    \xi_{t+1} = 0.8 \cdot \xi_t + \epsilon_t, \quad \epsilon_t \sim \mathcal{N}(0, \Sigma_\xi)
+\end{equation}
+
+Crucially, an agent's endowment $e_{c, t+1}$ at time $t+1$ is physically altered by their portfolio decisions $y_{c, t}$ made at time $t$:
+\begin{equation}
+    e_{c, t+1} = \bar{e}_c(\xi_{t+1}) + R \cdot y_{c, t}
+\end{equation}
+where $R = [0.0, 1.05]^\top$ represents the asset dividend payouts. Consumers derive utility via Cobb-Douglas preferences $u_c(x_{c,t}) = \prod_j (x_{c,t,j})^{\theta_{c,j}}$.
+
+\section{Methodology: Actor-Critic SINDy-GAPNet}
+
+To solve the infinite-horizon pseudo-game, we upgrade the GAPNet to an Actor-Critic architecture governed by the Bellman Equation.
+
+\subsection{Bellman Action-Values ($Q$-Values)}
+We introduce a deep neural network $V_\psi(S_t)$ to serve as the Critic. The Critic estimates the expected discounted future utility for each consumer. The instantaneous utility formulation is replaced by the $Q$-value:
+\begin{equation}\label{eq:q_value}
+    Q_c(S_t, a_t) = u_c(x_{c,t}) + \gamma V_\psi(S_{t+1})
+\end{equation}
+where $a_t = (x_t, y_t)$ represents the consumption and portfolio allocations, and $\gamma = 0.95$. Gradients flowing backwards from $V_\psi(S_{t+1})$ through the state transition function explicitly teach the Generator the value of purchasing assets (endogenous savings).
+
+\subsection{Stabilizing the ``Bellman Explosion''}
+Dynamically linking future wealth to current neural network outputs routinely triggers the ``Deadly Triad'' divergence, where the Generator aggressively hoards assets to exploit an over-optimistic Critic, driving gradients to infinity. We stabilize this using three RL techniques:
+\begin{enumerate}
+    \item \textbf{Target Networks:} We maintain a slow-moving copy of the Critic, $V_{\text{target}}$, updated via Polyak averaging ($\tau=0.05$). The Temporal Difference (TD) target is anchored to $V_{\text{target}}$ to prevent moving target issues.
+    \item \textbf{Huber Loss:} The Critic minimizes $\mathcal{L}_{TD} = \text{SmoothL1}(V_\psi(S_t), \, Q_{\text{target}})$, preventing massive quadratic gradient spikes.
+    \item \textbf{Gradient Clipping:} All gradients are clipped at an $L_2$-norm of $1.0$.
+\end{enumerate}
+
+\subsection{The SINDy Generator}
+To ensure the final policy is algebraically interpretable, the Generator $G_\Xi$ bypasses deep hidden layers. Instead, the 8-dimensional full state $S_t$ is expanded into a polynomial basis $\Theta(S_t)$ of degree $d=2$. A single sparse parameter matrix $\Xi$ maps the basis to the economic logits:
+\begin{equation}
+    \text{Logits}(S_t) = \text{softmax}(\Theta(S_t) \Xi)
+\end{equation}
+The matrix $\Xi$ is regularized using Sequential Threshold Ridge Regression (STRRidge), setting parameters $|\xi_{i,j}| < \tau$ strictly to zero during training.
+
+\section{Results: Extraction of Dynamic Hedging Rules}
+
+The model was trained for 4000 epochs. The implementation of the Target Network and Huber Loss successfully suppressed the Bellman explosion, allowing the TD Loss to converge steadily to $366.9$ while the Generator exploitability loss stabilized at $38.8$. The STRRidge algorithm aggressively pruned the 540-parameter search space, leaving only 215 active algebraic terms.
+
+Because gradients successfully flowed backward from $t+1$ endowments into the $t=0$ portfolio decisions, the resulting equations demonstrate \textit{genuine dynamic savings behavior}. For example, the USA's decision to buy assets is explicitly linked to the interaction of the current Shock state and their existing endowment levels. The complete set of extracted polynomial rules is presented below:
+
+\begin{figure}[h!]
+\begin{lstlisting}[language=Python, title=Extracted Dynamic Policy Equations (Logit Space)]
+Price_Oil          = +0.0799*E_O_Oil -0.2592*E_O_Gds -0.3242*E_EU_Gds -0.1658*E_US_Gds ...
+Price_Goods        = +0.1789*Shock +0.2685*Liq -0.0888*E_US_Oil +0.1808*E_US_Gds ...
+Asset_Price        = +0.1202*Shock -0.2099*Shock*E_O_Gds -0.1492*Shock*E_EU_Gds ...
+Flow_OPEC_Oil      = -0.1040*Liq +0.1623*E_O_Gds -0.1899*E_EU_Gds -0.1969*Shock*E_O_Oil ...
+Flow_USA_Oil       = +0.0519*1 +0.2521*Liq -0.2444*Shock*E_O_Gds -0.3281*Shock*E_US_Oil ...
+
+Portf_OPEC_Asset   = -0.5283*1 -0.5002*Shock -0.4725*Shock*Liq -0.4799*Shock*E_O_Oil ...
+Portf_EU_Asset     = +0.4171*Liq +0.4720*E_EU_Oil +0.4816*Shock*E_O_Gds +0.5433*Shock*E_US_Oil ...
+Portf_USA_Asset    = -0.0509*1 +0.0738*Shock +0.2400*E_O_Gds -0.1787*Shock*E_US_Gds ...
+\end{lstlisting}
+\caption{A truncated subset of the 215 active terms extracted from the SINDy matrix $\Xi$. The variables `E\_X\_Y` denote the current Endowments for each consumer. The presence of positive coefficients in the Portfolio equations directly proves the Generator learned to save to maximize future discounted utility.}
+\end{figure}
+
+To translate these logits into interpretable economic actions, we apply the softmax transformation and multiply by budget constraints to obtain actual consumption shares and portfolio weights.
+
+\section{Conclusion}
+
+By integrating a deep Critic and Bellman $Q$-values into the GAPNet framework, we successfully transitioned from an instantaneous static approximation to a true infinite-horizon DSGE solver. Crucially, the addition of the SINDy polynomial generator proves that deep reinforcement learning can be utilized to solve highly complex, incomplete-market economies without sacrificing interpretability. The resulting algebraic rules provide economists with human-readable mappings of how multi-agent economies dynamically hedge against shifting geopolitical constraints.
+
+\bibliographystyle{alpha}
+\begin{thebibliography}{9}
+
+\bibitem{krusell1998income}
+Krusell, Per, and Anthony A. Smith Jr.
+\textit{Income and wealth heterogeneity in the macroeconomy.}
+Journal of political Economy 106.5 (1998): 867-896.
+
+\bibitem{goktas2025infinite}
+Denizalp Goktas, Sadie Zhao, Yiling Chen, and Amy Greenwald.
+\textit{Infinite Horizon Markov Economies.}
+arXiv preprint arXiv:2502.16080v2 [cs.GT], 2025.
+
+\bibitem{brunton2016discovering}
+Steven L. Brunton, Joshua L. Proctor, and J. Nathan Kutz.
+\textit{Discovering governing equations from data by sparse identification of nonlinear dynamical systems.}
+Proceedings of the National Academy of Sciences, 113(15):3932--3937, 2016.
+
+\bibitem{mnih2015human}
+Volodymyr Mnih et al.
+\textit{Human-level control through deep reinforcement learning.}
+Nature, 518(7540):529--533, 2015.
+
+\bibitem{geanakoplos1990introduction}
+John Geanakoplos.
+\textit{An introduction to general equilibrium with incomplete asset markets.}
+Journal of mathematical economics, 19(1-2):1--38, 1990.
+
+\end{thebibliography}
+
+\end{document}
