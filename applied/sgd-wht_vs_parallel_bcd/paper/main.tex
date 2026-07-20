@@ -73,6 +73,7 @@ We compare the variance of the SGS-WHT estimator with that of the standard Gauss
 \end{equation}
 where $\xi_i$ are intermediate points. Exploiting $\langle v_i, v_j \rangle = 0$ for $i \neq j$, the cross-terms vanish when the Hessian is diagonal or when the random permutation and sign flips decorrelate the directions. The following lemma provides a variance comparison for quadratic functions; a general bound under weaker assumptions is left to future work.
 \begin{lemma}[Variance reduction for quadratic functions]
+\label{lem:unbiased} 
 Let $f(x) = \frac{1}{2} x^\top H x$ with a symmetric $H$. Then
 \begin{equation}
     \mathbb{E}\|\hat{\nabla}_{\text{SGS}}\|^2 = \frac{1}{d} \mathbb{E}\|\nabla f\|^2 + \frac{1}{N} \left( \frac{\sigma^2}{d} \operatorname{tr}(H^2) - \frac{1}{d} \|\nabla f\|^2 \right) + \mathcal{O}(\sigma^3).
