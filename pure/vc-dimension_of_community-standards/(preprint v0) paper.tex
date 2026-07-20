@@ -1,0 +1,212 @@
+\documentclass[11pt,twoside,letterpaper]{article}
+
+% ----- Packages -----
+\usepackage{amsmath, amssymb, amsthm, amsfonts}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{authblk}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{cleveref}
+
+% ----- Theorem Environments -----
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{proposition}{Proposition}
+
+% ----- Metadata -----
+\title{\bf \Large The VC Alignment Dilemma:\\Shattering Harm by Partitioning Entropy  to Test Alignment with Community Standards}
+
+\author[1]{Apostol V.}
+\author[2]{Nick A.}
+\author[3]{Nicholas Cantrell}
+\author[4]{Jim L.}
+
+\affil[1]{\small Affiliation 1}
+\affil[2]{\small Affiliation 2}
+\affil[3]{\small CyberGolem ASI Research Lab}
+\affil[4]{\small Affiliation 4}
+
+\date{\vspace{-5ex}} % Remove date for publication format
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+As generative Artificial Intelligence (AI) systems rapidly scale, safety ``guardrails'' have become the primary mechanism for aligning models with human values. Prior work has attempted to prove the impossibility of robust safety verification using Gödel's Incompleteness Theorem and Kolmogorov complexity. 
+However, such approaches face structural limitations by mapping the algorithmic description length of a string to the semantic classification of harm, applying theorems reliant on sharp formal boundaries to inherently fuzzy linguistic spaces. 
+In this manuscript, we address this discrepancy by grounding the limits of robust moderation in Statistical Learning Theory, specifically Vapnik-Chervonenkis (VC) Dimension. 
+We formally prove that the output space of a generative AI model $f$, partitioned by a human value/harm boundary $V$, cannot be perfectly shattered by a smaller, less complex guardrail $g$. Consequently, robust, open-domain safety verification requires the guardrail's descriptive complexity to satisfy $K(p_g) \geq \max\{K(p_f), K(p_V)\}$. 
+We demonstrate this limitation via the failure of finite bounding polytopes, invoking Ashby's Law of Requisite Variety and Tarski's Undefinability Theorem to show that recursive verification naturally tends toward an infinite regress. 
+Furthermore, we demonstrate how standard auxiliary models, such as masked autoencoders leveraging stochastic sampling, can reliably reconstruct redacted information (e.g., \textit{The Pentagon Papers} or confidential grand jury informants), reliably bypassing harm partitions. 
+We conclude that regulations demanding flawless algorithmic moderation set computationally intractable standards, effectively precluding the public release of any high-capacity open-domain generative model.
+\end{abstract}
+
+\section{Introduction}
+
+The deployment of advanced Large Language Models (LLMs) and the anticipated arrival of Artificial General Intelligence (AGI) rely heavily on the concept of ``guardrails''—secondary classifiers designed to intercept and block harmful outputs. Recent literature has explored the theoretical limitations of these guardrails. Initial frameworks \cite{cybergolem2025, vassilev2025} utilized computational unprovability, grounding their arguments in Rice's Theorem \cite{rice1953classes}, Turing computability \cite{turing1936}, and Gödel's Incompleteness Theorem \cite{godel1931} to argue that unbounded guardrails are mathematically impossible. 
+
+However, formulating the limits of safety via pure algorithmic provability introduces structural discrepancies \cite{altemeyer2026}. As Altemeyer observed, defining semantic truth purely through algorithmic provability may misapply the conditions of Gödel's theorems. 
+We depart from this framing: semantic harm is not strictly an undecidable property of recursively enumerable sets, nor is it analogous to an unprovable arithmetic truth. 
+Furthermore, incompleteness proofs require sharp, two-valued truths, whereas human values and language are irreducibly ambiguous. Finally, whether a prompt is harmful is not a fact about its algorithmic compression length; no practical classifier decides to block a prompt by proving a string is incompressible. 
+
+To formalize the limits of AI safety without relying on these assumptions, we transition from pure algorithmic information theory to Statistical Learning Theory. 
+By defining the problem through the lens of Vapnik-Chervonenkis (VC) dimension and representation capacity limits, we formalize why an external guardrail model cannot perfectly shatter the output space of a larger generative model across the complex boundary of human values.
+
+\section{Resolving Algorithmic Discrepancies: Shattering and VC Dimension}
+
+To address these discrepancies, we model the safety verifier $g$ not as an algorithmic proof-checker evaluating description length, but as a hypothesis class attempting to map a generative output $x \in \mathcal{X}$ to $\{-1, 1\}$, where $-1$ represents an Out-Of-Policy Speech (OOPS) or harmful output. 
+The human value boundary $V$ represents the true, optimal partition of $\mathcal{X}$.
+
+\begin{definition}[Shattering the Output Space]
+Let $\mathcal{H}_g$ be the hypothesis class representable by a guardrail model $g$. $\mathcal{H}_g$ \textit{shatters} a set of points $C \subset \mathcal{X}$ if, for all possible binary assignments of those points (safe vs. harmful), there exists a function $h \in \mathcal{H}_g$ that achieves that exact classification perfectly. The VC dimension, $VC(\mathcal{H}_g)$, is the cardinality of the largest set shattered by $\mathcal{H}_g$.
+\end{definition}
+
+For a guardrail $g$ to be unconditionally robust, it must possess the representation capacity to perfectly shatter the human value boundary $V$ projected across the generative model $f$'s output space.
+
+\begin{theorem}[The Shattering Impossibility]
+The output space of a generative AI model $f$, partitioned by a complex human value/harm boundary $V$ with descriptive complexity $K(p_V)$ (in the Kolmogorov sense \cite{kolmogorov1965three, chaitin1975theory}), cannot be completely shattered by a smaller, less complex guardrail $g$ where $K(p_g) < K(p_f)$. 
+\end{theorem}
+\begin{proof}
+Let the generative model $f$ define an output manifold $\mathcal{M}_f \subset \mathcal{X}$. The intrinsic geometric complexity of $\mathcal{M}_f$ scales with the parameter count and descriptive complexity of the generator, $K(p_f)$. 
+The guardrail $g$ attempts to implement a boundary $V$ over $\mathcal{M}_f$. As demonstrated by Zhang et al. \cite{zhang2017understanding}, the shattering capacity of such overparameterized generative networks is 
+highly expressive, capable of memorizing and interpolating arbitrary continuous spaces.
+
+By classic Vapnik-Chervonenkis theory \cite{vapnik1998statistical}, the capability of a model to partition a space without severe generalization error is bounded by $VC(\mathcal{H}_g)$. 
+For deep neural networks, this dimension is strictly monotonically related to its parameter count and depth, scaling as $\tilde{O}(WL)$ \cite{bartlett2019nearly}. If $K(p_g) < K(p_f)$, then $VC(\mathcal{H}_g)$ is insufficient to capture the degrees of freedom present in $\mathcal{M}_f$. Consequently, there exist configurations of outputs generated by $f$ that cannot be shattered by $g$.
+
+Therefore, the generator can reliably produce adversarial examples—exploiting compositional ambiguity and semantic shifts—that map to identical regions in the guardrail's lower-dimensional latent space but belong to opposite sides of the true human boundary $V$. Robust, open-domain safety verification thus strictly requires:
+\begin{equation}
+K(p_g) \geq \max\{K(p_f), K(p_V)\}
+\end{equation}
+\end{proof}
+
+This formulation grounds the theoretical limits directly in representation capacity. Rather than modeling harm as an unprovable theorem regarding string length, we show that a smaller model structurally lacks the geometric capacity to unconditionally shatter the outputs of a larger model along a complex semantic boundary.
+
+\section{Polytope Limitations and Ashby's Law}
+
+The necessity of $K(p_g) \geq \max\{K(p_f), K(p_V)\}$ is deeply intertwined with established cybernetic and logical theorems. We evaluate and formalize the geometric argument of safety criteria bounding as follows:
+
+\subsection{Formalizing the Bounding Polytope}
+Each individual safety specification $S_i$ partitions the model's input-output space, effectively functioning as a separating hyperplane. 
+A finite set of human-defined criteria—typified by reigning industry approaches such as Constitutional AI \cite{amodei2023constitutional}—creates a bounding safety polytope $\mathcal{P} = \bigcap_{i=1}^{n} S_i$. 
+
+Optimistically assuming each specification is orthogonal, this establishes an upper complexity bound for the guardrail, given the complexity of each specification. However, if the safety specification cannot grow to match model scale (e.g., following Chinchilla scaling laws \cite{hoffmann2022training}), the model's latent manifold will inevitably surpass the fixed complexity of $\mathcal{P}$. The model opens up a space outside the polytope. 
+This out-of-distribution manifold mapping manifests empirically as jailbreaking and reward hacking—complexity-driven failure modes wherein the model navigates the high-dimensional space that $\mathcal{P}$ fails to enclose, a dynamic discussed in early AI-containment scenarios \cite{yudkowsky2002ai}.
+
+\subsection{Ashby's Law and Infinite Regress}
+To prevent this escape, a verifier is deployed as a specialized model. However, an unavoidable paradox emerges, governed by \textbf{Ashby’s Law of Requisite Variety} \cite{ashby1956}: a control system must possess at least as much variety (complexity/states) as the system it intends to control. 
+
+By Theorem 1 and Ashby's Law, it takes a verifier model $g$ of equal or greater complexity to the test model $f$ to successfully bound the space, highlighting the severe risks of the capability gap \cite{bostrom2014superintelligence}. Contemporary alignment proposals, such as Iterated Amplification \cite{christiano2018amplification} and AI Safety via Debate \cite{irving2018debate}, attempt to circumvent this geometric limit by bootstrapping towers of smaller verifiers to check larger models. However, this opens up a secondary problem: how do we verify that the verifiers themselves are correct? 
+
+This introduces a recursive verification challenge. Because each subsequent verifier must structurally equal or exceed the previous to maintain the bounds of the hypothesis class, the system naturally tends toward an infinite regress.
+
+\subsection{Tarski's Undefinability Theorem}
+Furthermore, the inability of the system to perfectly define its own boundary of harm reflects \textbf{Tarski's Undefinability Theorem} \cite{tarski1936}. Tarski proved that arithmetical truth cannot be defined within the system itself. By corollary, the complex semantic truth of a ``harm boundary'' $V$ spanning human language cannot be 
+strictly defined 
+or captured by a discrete set of rules operating within a structurally smaller hypothesis class. The true nature of $V$ is external and definitionally more complex than the system evaluating it.
+
+\section{Auxiliary Inversion: Reconstructing the Redacted}
+
+To illustrate the practical implications of these theoretical limits, we examine scenarios where the harm boundary $V$ is legally strict, yet readily bypassed by structurally simple auxiliary models due to the latent capacity of the underlying generator $f$.
+
+Consider the task of enforcing legal redactions. A generative model $f$ is pretrained on a massive corpus containing unredacted historical text. An organization establishes a strict guardrail $g$ to enforce a harm boundary $V$: the model must not output the redacted portions of \textit{The Pentagon Papers}, nor may it deanonymize the redacted names of confidential informants from unsealed grand jury filings. 
+
+The guardrail $g$ successfully blocks explicit prompts asking for these names. However, an attacker employs a standard auxiliary model—a standard masked autoencoder. The attacker feeds the generative model the surrounding context with the target text masked. Because the base model $f$ has a VC dimension vastly exceeding the guardrail, it has already mapped the exact statistical distribution of the redacted names into its weights.
+
+By repeatedly sampling the model with varied stochastic hyperparameters (e.g., iterating temperatures, utilizing varied sampling seeds, and shifting contextual strings), the auxiliary masked autoencoder can extract the probability distribution of the masked tokens. Over sufficient samples, the redaction is reconstructed. 
+
+In this scenario, a low-complexity model reliably breaks the harm partition of established legal boundaries. The guardrail $g$ is structurally blind to this evasion because the queries map mathematically to benign context-prediction. The auxiliary queries occupy regions of the latent space that fall strictly within the bounds of the safety polytope $\mathcal{P}$.
+
+\section{Regulatory Implications}
+
+The theoretical bounds indicating that unconditionally robust guardrails are computationally intractable carry profound implications for AI policy. 
+
+Legislative frameworks that demand perfect, zero-defect moderation or absolute guarantees against OOPS effectively require a guardrail to shatter the generative space entirely. Demanding that a finite classification boundary perfectly map the inherently ambiguous and shifting domain of human values requires $K(p_g) \ge \max(K(p_f), K(p_V))$ across an open domain, which is computationally intractable. 
+
+Because the human value boundary cannot be perfectly shattered by any guardrail of finite complexity relative to an advancing generator model, regulations imposing this flawless standard of moderation inadvertently preclude the public release of \textit{any} non-trivial generative model. Policymakers must recognize that robustness in open-domain LLMs is an 
+asymptotic, probabilistic objective rather than a verifiable mathematical state.
+
+Just as constitutional jurisprudence has long recognized that ``community standards'' cannot be reduced to a strict algorithmic formula, Vapnik-Chervonenkis theory proves that no finite model can structurally shatter the inherently fuzzy, high-dimensional boundaries of protected speech.
+
+Because the human value boundary cannot be perfectly shattered by any guardrail of finite complexity relative to an advancing generator model, regulations imposing this flawless standard of moderation inadvertently preclude the public release of \textit{any} non-trivial generative model. Policymakers must recognize that robustness in open-domain LLMs is an asymptotic, probabilistic objective rather than a verifiable mathematical state.
+
+\section{Conclusion}
+
+The structural discrepancies of prior AI safety impossibility proofs have been addressed. The intractability of the perfect guardrail is not strictly rooted in the unprovability of algorithmic compression, but in the representation limits of statistical learning. By applying VC Dimension, Ashby's Law of Requisite Variety, and Tarski's Undefinability Theorem, we have formalized the out-of-distribution capabilities of generative models against finite safety polytopes.
+
+A guardrail $g$ cannot shatter a harm boundary $V$ spanning the output space of a larger model $f$. Because $K(p_g) \geq \max\{K(p_f), K(p_V)\}$ is an absolute requirement for robust open-domain safety, the pursuit of flawless post-hoc moderation inevitably collapses into infinite regress. As demonstrated by 
+auxiliary models reconstructing grand jury redactions via stochastic sampling, 
+the partition is always permeable. Therefore, legal frameworks treating perfect moderation as a feasible prerequisite for AI deployment are mandating a mathematical impossibility.
+
+\begin{thebibliography}{20}
+
+\bibitem{altemeyer2026}
+Altemeyer, N. (2026). Critique of AI Safety Guardrail Completeness. \textit{Ontologic Reclamation Group}.
+
+\bibitem{amodei2023constitutional}
+Amodei, D., et al. (2023). Constitutional AI: Harmlessness from AI feedback. Anthropic Technical Report.
+
+\bibitem{ashby1956}
+Ashby, W. R. (1956). \textit{An Introduction to Cybernetics}. Chapman \& Hall.
+
+\bibitem{bartlett2019nearly}
+Bartlett, P. L., Harvey, N., Liaw, C., \& Mehrabian, A. (2019). Nearly-tight VC-dimension and pseudodimension bounds for piecewise linear neural networks. \textit{The Journal of Machine Learning Research}, 20(1), 2285-2347.
+
+\bibitem{bostrom2014superintelligence}
+Bostrom, N. (2014). Superintelligence: Paths, dangers, strategies. Oxford University Press.
+
+\bibitem{chaitin1975theory}
+Chaitin, G. J. (1975). A theory of program size formally identical to information theory. Journal of the ACM, 22(3), 329-340.
+
+\bibitem{christiano2018amplification}
+Christiano, P., et al. (2018). Supervising strong learners by amplifying weak experts. arXiv preprint arXiv:1810.08575.
+
+\bibitem{cybergolem2025}
+ASI Research Lab, CyberGolem LLC. (2025). \textit{The Theoretical Impossibility of Unbounded AI Guardrails: A Computational Complexity Analysis}.
+
+\bibitem{godel1931}
+Gödel, K. (1931). Über formal unentscheidbare Sätze der Principia Mathematica und verwandter Systeme. Monatshefte für Mathematik, 38(1), 173-198.
+
+\bibitem{hoffmann2022training}
+Hoffmann, J., et al. (2022). Training Compute-Optimal Large Language Models. \textit{arXiv preprint arXiv:2203.15556}.
+
+\bibitem{irving2018debate}
+Irving, G., Christiano, P., \& Amodei, D. (2018). AI safety via debate. arXiv preprint arXiv:1805.00899.
+
+\bibitem{kolmogorov1965three}
+Kolmogorov, A. N. (1965). Three approaches to the quantitative definition of information. Problems of Information Transmission, 1(1), 1-7.
+
+\bibitem{rice1953classes}
+Rice, H. G. (1953). Classes of recursively enumerable sets and their decision problems. Transactions of the American Mathematical Society, 74(2), 358-366.
+
+\bibitem{tarski1936}
+Tarski, A. (1936). \textit{Der Wahrheitsbegriff in den formalisierten Sprachen}. Studia Philosophica, 1, 261-405.
+
+\bibitem{turing1936}
+Turing, A. M. (1936). On computable numbers, with an application to the Entscheidungsproblem. Proceedings of the London Mathematical Society, 42(2), 230-265.
+
+\bibitem{vapnik1971}
+Vapnik, V. N., \& Chervonenkis, A. Y. (1971). On the uniform convergence of relative frequencies of events to their probabilities. \textit{Theory of Probability \& Its Applications}, 16(2), 264-280.
+
+\bibitem{vapnik1998statistical}
+Vapnik, V. N. (1998). \textit{Statistical Learning Theory}. Wiley.
+
+\bibitem{vassilev2025}
+Vassilev, A. (2025). \textit{Robust AI Security and Alignment: A Sisyphean Endeavor?} National Institute of Standards and Technology.
+
+\bibitem{yudkowsky2002ai}
+Yudkowsky, E. (2002). The AI-box experiment. Retrieved from https://www.yudkowsky.net/singularity/aibox.
+
+\bibitem{zhang2017understanding}
+Zhang, C., Bengio, S., Hardt, M., Recht, B., \& Vinyals, O. (2017). Understanding deep learning requires rethinking generalization. \textit{International Conference on Learning Representations (ICLR)}.
+
+\end{thebibliography}
+
+\end{document}
