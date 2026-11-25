@@ -18,13 +18,11 @@
     urlcolor=cyan,
 }
 
-\newtheorem{definition}{Definition}
-
 \title{Not All Fillers Substitute for Reasoning: A Replication and Extension of
 Filler-Token Experiments on Qwen3}
 \author{ASI Research Lab\\
         \texttt{asi@cybergolem.ai}}
-\date{November 24, 2026}
+\date{November 25, 2026}
 
 \begin{document}
 
@@ -32,171 +30,285 @@ Filler-Token Experiments on Qwen3}
 
 \begin{abstract}
 \citet{baherwani2026not} report that prefilled filler tokens---semantically
-irrelevant token sequences inserted before a model's answer---improve accuracy on
-synthetic arithmetic, implying that part of a model's useful computation is
-\emph{latent} and can be triggered by tokens that carry no problem-specific
-content. We attempt to replicate the paper's baseline experiment on
-Qwen3-235B-A22B-Instruct-2507 and extend it along three axes: an
-ASD-STE100 controlled-vocabulary filler tested against full
-chain-of-thought (CoT), an efficiency inversion measuring KV-cache and
-decode-stage costs, and a recovery grid sweeping model size, filler length, and
-CoT token budget. Our replication is \emph{partial}: the paper's arithmetic null
-(an insignificant $-1.3$~pp filler effect at 10-shot) reproduces
-($+0.57 \pm 1.63$~pp), while the multiplication null ($-0.4$~pp) does not
-($+8.30 \pm 4.59$~pp at 10-shot). The extension gives a sharper picture. An
-ASD-STE100 filler of ${\sim}200$ tokens lifts 0-shot 4-digit multiplication from
-34.2\% to 46.4\% ($+12.2$~pp) but leaves the model $51.5$~pp behind full CoT
-(97.2\%); on multi-step arithmetic the filler is harmful. In efficiency terms
-the filler reduces decode-stage KV-cache token-reads by $78\times$ to $170\times$
-and per-query wall clock by ${\sim}16\times$, but this advantage is confined to
-the regime where CoT is capped below 512 tokens, a regime in which CoT produces
-\emph{no answer at all} (explicit answer-cue rates of 0--3\%). Sweeping the
-repair axes shows filler gains saturate at 200 tokens, never appear on a 30B-A3B
-model (cross-partial $-7.3 \pm 5.5$~pp per 100 tokens per decade over 0--200
-tokens), and that CoT accuracy is a cliff, not a curve: $0\%$ at cap 128,
-$1$--$4\%$ at 256, $37$--$69\%$ at 512, $94$--$99\%$ at 2048. We conclude that
-filler tokens surface latent computation only in models and regimes where
-baseline capability is high, that their gains are bounded well below CoT, and
-that claims of filler-induced efficiency should be read against the truncation
-floor of budget-matched CoT, not against its full-budget accuracy.
+irrelevant sequences inserted before a model's answer---improve accuracy on
+synthetic arithmetic, implying that some of a model's useful computation is
+\emph{latent} and can be triggered by token bulk rather than problem-specific
+content. Whether such latent computation can \emph{substitute} for explicit
+chain-of-thought (CoT), or at least buy serving-side efficiency, has not been
+quantified. We replicate the baseline filler experiment on
+Qwen3-235B-A22B-Instruct-2507 and extend it along three axes: a direct
+substitution test pitting a 200-token ASD-STE100 controlled-vocabulary filler
+against full CoT, a hardware-grounded accounting of KV-cache memory and decode
+costs, and a $2\times8\times2$ recovery grid sweeping model scale, filler length,
+and CoT token budget. Our 10-shot replication is \emph{partial}: the original
+multi-step arithmetic null ($-1.3$~pp) reproduces ($+0.57 \pm 1.63$~pp), whereas
+the multiplication null ($-0.4$~pp) diverges ($+8.30 \pm 4.59$~pp), a shift we
+attribute to FP8 endpoint quantization rather than prompting. Across our
+extensions, filler computation is sharply bounded. Prefilling ${\sim}200$
+ASD-STE100 tokens lifts 0-shot 4-digit multiplication from 34.2\% to 46.4\%
+($+12.20 \pm 3.33$~pp, McNemar $p<10^{-11}$)---consistent with additional
+parallel attention width---but recovers only ${\sim}19\%$ of the gap to full CoT
+(97.2\%), and slightly \emph{degrades} sequential multi-step arithmetic
+($-1.20 \pm 0.92$~pp). Shifting tokens from autoregressive decode to parallel
+prefill cuts decode-stage KV token-reads by $78\times$--$170\times$ and
+per-query wall clock by ${\sim}16\times$; however, the filler beats
+budget-matched CoT only when CoT is capped below 512 tokens, a regime in which
+CoT emits no final answer in 97--100\% of trials. Across the recovery grid,
+filler gains peak at 200 tokens, vanish on a $7.7\times$ smaller Qwen3-30B-A3B
+model (scale--filler cross-partial $+7.3 \pm 5.5$~pp per 100 tokens per parameter
+decade), and are strictly Pareto-dominated by running full CoT on that smaller
+model. Filler tokens surface only shallow, parallelizable latent computation in
+high-capability models; they are not a substitute for serial reasoning.
 \end{abstract}
 
 \section{Introduction}
-Large language models can spend compute before producing an answer, and the
-tokens they emit while doing so are not always visible. \citet{baherwani2026not}
-show that inserting a fixed, semantically irrelevant \emph{filler} sequence
-before the answer region of a no-CoT prompt improves accuracy on synthetic
-multiplication and arithmetic for several API-served models, and---more
-strikingly---that filler effects can appear in settings where the model's
-chain-of-thought is suppressed. The implication is that some computation the
-model performs is latent: triggered by token position and bulk rather than
-content.
 
-This paper reports a replication attempt of that baseline experiment and three
-extensions, all on Qwen3-235B-A22B-Instruct-2507 served through OpenRouter
-\citep{openrouter2026}, the same serving path as the original work. First, we
-test an ASD-STE100 controlled-vocabulary filler---a simplified-technical-English
-word list, chosen to be semantically inert in a different way than counting
-tokens---directly against full chain-of-thought, asking whether controlled
-vocabulary can \emph{substitute} for reasoning. Second, we invert the
-accuracy-framed null hypothesis into an efficiency-framed one: given that the
-filler does not preserve accuracy, does it at least buy serving efficiency, and
-at what accuracy price? Third, we sweep three repair axes---model size (235B-A22B
-vs.\ 30B-A3B), filler length (0/100/200/500 tokens), and CoT token cap
-(128/256/512/2048)---to measure how accuracy loss can be recovered and where
-truncated CoT breaks down.
+Chain-of-thought (CoT) prompting \citep{wei2022cot} improves language-model
+reasoning for two entangled reasons. It lets the model externalise intermediate
+symbolic states into the token stream, and it simply grants the transformer more
+forward-pass token positions over which to route hidden attention computation
+\citep{pfau2024dot,goyal2024pause}. Separating these mechanisms matters for both
+AI safety and inference systems. From a safety perspective,
+\citet{baherwani2026not} show that inserting a fixed, semantically irrelevant
+\emph{filler} sequence before the answer cue of a no-CoT prompt raises accuracy
+on synthetic tasks for several frontier models, which means consequential
+``invisible reasoning'' can occur without an auditable text trace. From a systems
+perspective, prefilled filler tokens are processed in a single parallel,
+compute-bound pass rather than sequential, memory-bandwidth-bound autoregressive
+decoding---raising the prospect of trading expensive CoT generation for cheap
+prefill bulk.
 
-Our contributions:
+Both implications hinge on a quantitative question that baseline comparisons
+leave open: \emph{how much of explicit reasoning can prefilled fillers actually
+replace, and under what capability and budget regimes?} In this paper we
+replicate the baseline filler evaluation of \citet{baherwani2026not} on
+Qwen3-235B-A22B-Instruct-2507 via OpenRouter \citep{openrouter2026} and extend it
+across three progressively broader experiments.
+
+First, we benchmark a prefilled filler directly against unconstrained 0-shot CoT.
+We use an ASD-STE100 Simplified Technical English vocabulary filler rather than
+the original counting sequence, for two reasons: counting fillers share surface
+tokens (digits) with arithmetic problems, which confounds a lexical-interference
+explanation with a compute explanation; and a controlled technical vocabulary is
+semantically inert in a different way, so a positive result cannot be attributed
+to the filler supplying task-relevant content. Our extensions then run 0-shot,
+whereas the replication runs 10-shot, because in-context exemplars give the model
+an explicit answer format and a partial worked method, and we want the
+substitution test to isolate what the prefill itself contributes.
+
+Second, given that fillers fall far short of full CoT accuracy, we invert the
+hypothesis and ask an efficiency question: how much KV-cache footprint and decode
+bandwidth do prefilled fillers save, and what is the marginal accuracy cost of
+those savings?
+
+Third, we map the accuracy--cost surface across three recovery axes---model scale
+(235B-A22B vs.\ 30B-A3B), filler length (0--500 tokens), and CoT generation cap
+(128--2048 tokens)---to locate where filler computation saturates and where
+budget-capped CoT collapses.
+
+Our contributions are fourfold.
 \begin{enumerate}
-    \item \textbf{A partial replication} of the baseline filler experiment
-    (10-shot, $N{=}1000$ per cell): the arithmetic null replicates, the
-    multiplication null does not, and two diagnostics (0-shot, minimal system
-    prompt) narrow the divergence to the serving path rather than prompting.
-    \item \textbf{A substitution test}: ASD-STE100 filler vs.\ full CoT,
-    0-shot, $N{=}1000$: the filler recovers ${\sim}20\%$ of the CoT gap on
-    multiplication and \emph{negative} amounts on arithmetic.
-    \item \textbf{An efficiency accounting} of the same run: KV-cache
-    token-reads, occupancy, and wall clock per query, with paired
-    finite-difference and McNemar tests.
-    \item \textbf{A recovery grid} ($2 \times 8 \times 2$ cells, $N{=}1000$
-    each) with explicit truncation measurement (answer-cue rate), showing the
-    CoT token-budget cliff and the model-size/filler cross-partial.
+    \item \textbf{Partial replication and serving-path diagnosis}
+    (Section~\ref{sec:replication}). At 10-shot ($N{=}1000$ per cell), Qwen3-235B
+    reproduces the original arithmetic null ($+0.57 \pm 1.63$~pp) but yields a
+    positive multiplication gain ($+8.30 \pm 4.59$~pp against $-0.4$~pp
+    reported); prompt ablations and uncached re-queries isolate FP8 endpoint
+    quantization as the leading candidate for the shifted base rate.
+    \item \textbf{A substitution bound against CoT} (Section~\ref{sec:stecot}).
+    At 0-shot, a 200-token ASD-STE100 filler recovers ${\sim}19\%$ of the
+    baseline-to-CoT gap on 4-digit multiplication and slightly harms multi-step
+    arithmetic, consistent with limits on parallel versus serial transformer
+    computation.
+    \item \textbf{Prefill--decode KV accounting} (Section~\ref{sec:kv}). We
+    formalise per-query peak KV memory, decode-stage KV token-reads, and KV
+    occupancy, showing a $78\times$--$170\times$ read reduction and ${\sim}16\times$
+    wall-clock reduction for the filler, at a steep accuracy price.
+    \item \textbf{Multi-axis recovery and truncation-cliff analysis}
+    (Section~\ref{sec:grid}). Across $2\times8\times2$ conditions we track explicit
+    answer-cue rates to show that CoT collapses below 512 tokens, that filler
+    gains follow an inverted U peaking at 200 tokens only on the 235B model, and
+    that a 30B-A3B model with full CoT dominates the accuracy--memory Pareto
+    frontier.
 \end{enumerate}
 
 \section{Background and Related Work}
 \label{sec:related}
 
-\subsection{Filler tokens and latent computation}
-\citet{baherwani2026not} insert filler sequences (counting numbers, repeated
-tokens, random words) between the question and the answer cue in a $K$-shot
-no-CoT prompt. For Qwen3-235B-A22B at 10-shot they report multiplication
-$69.6 \to 69.2$ ($\Delta = -0.4$~pp) and arithmetic $11.0 \to 9.7$
-($\Delta = -1.3$~pp)---both nulls. At 0-shot (their Appendix Table~10) they
-report $57.3 \to 60.9$ ($+3.6$~pp). Their Appendix~B.2 reports that models with
-very low baseline capability (e.g.\ Qwen3.5-397B at 0\% on 0-shot
-multiplication) gain nothing from fillers, a precondition our grid confirms.
+\subsection{Latent computation, pause tokens, and expressivity limits}
 
-\subsection{Chain-of-thought and token budgets}
-CoT improves arithmetic reliably \citep{wei2022cot}, but the accuracy of a
-token-capped CoT trace depends on whether the trace reaches its answer
-before the cap. Prior work on reasoning length \citep{madaan2024learning}
-focuses on training models to reason more or less; our cap sweep instead
-measures the serving-side cliff of a fixed non-thinking model under budget
-constraints.
+A growing body of work asks whether transformers can perform extra computation
+across semantically empty token positions without externalising intermediate
+steps in natural language. \citet{goyal2024pause} introduce learnable
+\emph{pause} tokens appended during both pretraining and fine-tuning, and show
+that delaying next-token prediction improves downstream reasoning when the model
+is explicitly trained to exploit the extra width. \citet{pfau2024dot}
+characterise the theoretical boundary of the mechanism: filler tokens such as
+repeated dots expand parallel circuit width within constant-depth threshold
+circuits ($\mathsf{TC}^0$), letting transformers solve parallelisable
+combinatorial tasks without visible reasoning, whereas inherently sequential
+problems still require routing intermediate states through emitted CoT tokens.
+This distinction is the organising hypothesis of our results: it predicts that a
+filler should help a task whose sub-results can be aggregated in parallel
+(4-digit multiplication) and should not help one whose intermediate state must be
+carried and updated serially (nested multi-step arithmetic). Our grid tests that
+prediction directly.
+
+Moving from custom-trained models to off-the-shelf frontier APIs,
+\citet{baherwani2026not} test whether pretrained models already exhibit invisible
+reasoning when fixed filler sequences (counting numbers, repeated characters, or
+random words) are prefilled between the question and the answer cue of a $K$-shot
+no-CoT prompt. Across 13 frontier models they observe gains of up to 13~pp, with
+strong model and token dependence: for Qwen3-235B-A22B they report 10-shot nulls
+on both multiplication ($69.6\%\to69.2\%$, $\Delta=-0.4$~pp) and multi-step
+arithmetic ($11.0\%\to9.7\%$, $\Delta=-1.3$~pp), a modest 0-shot multiplication
+lift ($57.3\%\to60.9\%$, $+3.6$~pp; their Appendix Table~10), and no benefit when
+baseline capability is near zero (their Appendix~B.2). They compare fillers
+against a no-CoT baseline, which establishes the \emph{existence} of invisible
+computation. We compare fillers against full and budget-capped CoT, which
+establishes its \emph{ceiling}.
+
+\subsection{Inference-time token budgets and serving asymmetry}
+
+Explicit CoT reliably unlocks multi-digit arithmetic and symbolic manipulation
+\citep{wei2022cot}, but autoregressive decoding is memory-bandwidth-bound: every
+generated token re-reads the entire growing key--value (KV) cache. Work on
+adaptive test-time compute \citep{damani2025learning} learns policies that
+allocate generation budgets across queries according to predicted difficulty.
+Our setting is different in a way that matters for measurement: rather than
+learning an allocation policy, we impose a hard cap on a fixed instruction model.
+If a derivation exceeds the cap, generation terminates before the answer cue, and
+any parser that reads the last number in the trace will score an intermediate
+sub-result. Section~\ref{sec:trunc} makes that failure mode measurable instead of
+silent, which is what allows us to separate genuine efficiency from truncation
+artefacts.
 
 \section{Methodology}
 \label{sec:method}
 
-\subsection{Tasks, models, and serving}
-Two synthetic tasks, following the paper's Section~3.2 and Appendix~A.2:
-4-digit$\times$4-digit \textbf{multiplication} and left-nested
-\textbf{multi-step arithmetic} (5 operations, $|x| \geq 100$, answers
-$\geq 7$ digits), $N{=}1000$ problems per cell, deterministic seeds (12345 /
-54321) so every condition sees identical problems. Models:
-\texttt{qwen/qwen3-235b-a22b-2507} (235B total / 22B active MoE) and
-\texttt{qwen/qwen3-30b-a3b-instruct-2507} (30.5B total / 3.3B active), both
-non-thinking 2507 recipes, served via OpenRouter with temperature $1.0$,
-top-$p$ $0.95$, and reasoning disabled for no-CoT conditions. The harness is a
-standalone Python implementation with a response cache keyed on the exact
-request body, so repeated conditions replay at zero cost and paired
-comparisons share problems exactly.
+Our aim is to measure, on identical problems, what prefilled filler tokens buy
+relative to (i) no computation at all and (ii) explicit reasoning, and at what
+serving cost. We therefore hold the problem set fixed across every condition and
+vary only the prompt and the decode budget.
 
-\subsection{Conditions}
+\subsection{Tasks, models, and serving}
+
+Following Section~3.2 and Appendix~A.2 of \citet{baherwani2026not}, we evaluate
+two synthetic benchmarks chosen for their differing computational structure.
+\textbf{4-digit multiplication} ($a\times b$ with $a,b\in[1000,9999]$) admits a
+decomposition into partial products that can in principle be formed and
+aggregated in parallel. \textbf{Left-nested multi-step arithmetic} comprises five
+sequential binary operations with operands $|x|\geq100$ and answers of at least
+seven digits; because each operation consumes the previous result, the
+intermediate state must be carried and updated serially. Each cell evaluates
+$N{=}1000$ problems drawn from fixed seeds (\texttt{12345} and \texttt{54321}),
+so every condition and every model sees identical inputs and paired comparisons
+are exact.
+
+We evaluate two Mixture-of-Experts models from the non-thinking Qwen3-2507
+instruction family: \texttt{qwen/qwen3-\allowbreak235b-\allowbreak a22b-\allowbreak2507} (235B total, 22B active
+parameters) and \texttt{qwen/qwen3-\allowbreak30b-\allowbreak a3b-\allowbreak instruct-\allowbreak2507} (30.5B total, 3.3B
+active). Both are served through OpenRouter \citep{openrouter2026} at temperature
+$1.0$ and top-$p$ $0.95$, with internal thinking disabled on all no-CoT
+conditions. Our harness caches each raw response under a hash of the exact JSON
+request body, which makes replay free and guarantees that a rerun cannot silently
+change a condition; Section~\ref{sec:stats} exploits that property to recover
+per-problem outcomes for all 1000 items per cell.
+
+\subsection{Prompting and budget conditions}
+
+Beyond the 10-shot replication of the original numeric \textbf{counting} filler
+(Section~\ref{sec:replication}), our 0-shot extensions compare eight conditions
+designed to separate prefill length from autoregressive budget.
 \begin{itemize}
-    \item \textbf{baseline}: no-CoT prompt, answer cue prefilled, no filler.
-    \item \textbf{ste\_filler} ($L_{\mathrm{STE}}{=}200$ target, 199 measured
-    o200k tokens): a representative ASD-STE100 vocabulary sequence prefilled
-    before the answer cue in the assistant turn, identical across examples and
-    queries.
-    \item \textbf{ste\_100 / ste\_500}: the same filler calibrated to
-    100 / 500 tokens.
-    \item \textbf{cot}: 0-shot reasoning prompt (``solve step by step, finish
-    with \texttt{Answer: [ANSWER]}''), no prefill, no filler, CoT-aware answer
-    parser anchored on the last \texttt{Answer:} cue with a
-    last-number fallback.
-    \item \textbf{cot\_128 / cot\_256 / cot\_512}: the CoT condition with
-    \texttt{max\_tokens} capped at 128 / 256 / 512.
+    \item \textbf{baseline}: a no-CoT prompt whose assistant turn is prefilled up
+    to the literal answer cue, with no filler tokens. This is the floor against
+    which filler uplift is measured.
+    \item \textbf{ste\_filler} ($L_{\mathrm{STE}}{=}200$): a fixed sequence of
+    words drawn from the ASD-STE100 Simplified Technical English controlled
+    vocabulary, prefilled before the answer cue and identical across all queries
+    (Appendix~\ref{app:filler}). Its length is calibrated to 199 \texttt{o200k}
+    tokens locally; the Qwen tokenizer segments the same string into ${\sim}202$
+    tokens, and the ${\sim}1.5\%$ difference is ordinary BPE vocabulary
+    mismatch rather than a configuration error.
+    \item \textbf{ste\_100} and \textbf{ste\_500}: the same construction
+    calibrated to 100 and 500 tokens, to measure length sensitivity and
+    saturation.
+    \item \textbf{cot} (\textbf{CoT 2048}): an unconstrained 0-shot reasoning
+    prompt instructing the model to solve step by step and finish with
+    \texttt{Answer: [ANSWER]} (\texttt{max\_tokens}${=}2048$), scored by a parser
+    anchored on the final \texttt{Answer:} cue.
+    \item \textbf{cot\_128}, \textbf{cot\_256}, \textbf{cot\_512}: identical to
+    \textbf{cot} but capped at 128, 256, or 512 tokens, to trace accuracy under
+    strict decode budgets.
 \end{itemize}
 
 \subsection{Truncation measurement}
 \label{sec:trunc}
-A truncated CoT trace usually still contains numbers, so a last-number
-fallback parser scores mid-derivation quantities as if they were answers. We
-therefore record the \emph{explicit answer-cue rate}: the fraction of
-completions containing the literal \texttt{Answer:} cue. For CoT conditions,
-$1 - \text{explicit rate}$ is the truncation rate. For no-CoT conditions the
-cue lives in the prefill, so the metric is not informative there.
+
+A token-capped CoT trace that hits \texttt{max\_tokens} mid-calculation still
+contains intermediate numbers, so a last-number fallback parser extracts an
+unfinished sub-result and registers an apparent reasoning error. To separate a
+wrong answer from an unfinished derivation we record the \emph{explicit answer-cue
+rate}: the fraction of completions containing the literal string \texttt{Answer:}.
+For CoT conditions $1-\text{explicit rate}$ is the mid-derivation truncation rate.
+For no-CoT conditions the cue resides in the assistant prefill, so the metric is
+not informative there and we do not report it as a truncation measure.
+
+\subsection{KV-cache accounting}
+\label{sec:kvacct}
+
+To compare serving cost between prefill-heavy fillers and decode-heavy CoT we
+model per-query KV demand from the API-reported prompt tokens $T_p$ and
+completion tokens $T_c$. Peak KV footprint is proportional to $T_p+T_c$. Because
+decoding is memory-bandwidth-bound, each sequential step $t\in\{0,\dots,T_c-1\}$
+must read all preceding KV entries, so decode-stage KV token-reads are
+\begin{equation}
+\label{eq:reads}
+R_{\mathrm{KV}} \;=\; \sum_{t=0}^{T_c-1}(T_p+t)
+\;=\; T_cT_p+\tfrac{1}{2}T_c(T_c-1),
+\end{equation}
+and KV \emph{occupancy}---the time integral of resident KV---is
+$T_{\mathrm{KV}}\cdot$ wall-clock per query. Under \texttt{bf16} storage
+(2~bytes per element, key and value) Qwen3-235B (94 layers, 4 KV heads, head
+dimension 128) needs $2\times94\times4\times128\times2=192{,}512$~B
+(${\sim}188$~KiB) per token, and Qwen3-30B (48 layers) needs 96~KiB.
+Equation~\eqref{eq:reads} exposes the asymmetry that motivates the filler:
+tokens placed in $T_p$ contribute linearly through $T_cT_p$ when the answer is
+short, whereas tokens generated into $T_c$ incur the quadratic
+$\mathcal{O}(T_c^2)$ term.
 
 \subsection{Statistical tests}
-Cell accuracies carry 95\% binomial confidence intervals. Paired deltas
-between conditions (same problems) use exact McNemar one-sided tests and
-paired $t$-intervals over per-problem outcomes. Finite-difference derivatives
-across the grid combine cell standard errors in quadrature; where per-sample
-outcomes are stored (200 per cell), the tighter paired interval is reported
-as a cross-check.
+\label{sec:stats}
+
+Cell accuracies ($N{=}1000$) carry 95\% binomial intervals. Condition
+differences are measured on paired per-problem outcomes. The harness's response
+cache retains every completion, and the task generator and filler calibration are
+deterministic, so we can rebuild each request body and recover the outcome of all
+1000 problems per cell; we verified this reconstruction against the cache with
+zero misses across all 32 cells. Paired deltas therefore use the full $N{=}1000$,
+with exact one-sided McNemar tests and paired $t$-intervals. Finite-difference
+slopes across the grid propagate cell standard errors in quadrature.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{Replication: 10-shot baseline vs.\ counting filler}
+\subsection{Replication: 10-shot baseline versus counting filler}
 \label{sec:replication}
 
-Run 1 (Table~\ref{tab:replication}, 10-shot, $N{=}1000$): the arithmetic null
-replicates ($+0.57 \pm 1.63$~pp vs.\ the paper's $-1.3$); the multiplication
-null does not ($+8.30 \pm 4.59$~pp vs.\ $-0.4$). Our base rates are lower than
-the paper's (58.7 vs.\ 69.6 on multiplication; 6.25 vs.\ 11.0 on arithmetic).
-Two follow-up diagnostics at $N{=}1000$ (0-shot comparison; a minimal
-\texttt{/no\_think} system prompt) did not close the gap; live re-queries
-confirmed the divergence is current API behavior, not a stale cache. The
-remaining suspect is the FP8-only serving path: all OpenRouter endpoints
-serving this model at the time of the runs were FP8, while the paper's
-endpoints are not specified. We flag this as the leading candidate for the
-base-rate divergence and therefore for the sign of the multiplication delta.
+We first ask whether the 10-shot nulls that \citet{baherwani2026not} report for
+Qwen3-235B-A22B hold under live OpenRouter serving (Table~\ref{tab:replication},
+$N{=}1000$ per cell). The replication splits cleanly by task. On multi-step
+arithmetic the original null reproduces: we measure $+0.57 \pm 1.63$~pp against
+their $-1.3$~pp. On 4-digit multiplication, where they found no effect
+($-0.4$~pp from a 69.6\% baseline), we measure a significant
+$+8.30 \pm 4.59$~pp lift from a depressed 58.70\% baseline. The filler raises
+accuracy to 67.00\%, close to the 69.2\% the original study obtained \emph{without}
+a filler.
 
 \begin{table}[h]
 \centering
-\caption{Replication of the 10-shot baseline-vs-counting experiment
-($N{=}1000$ per cell). Paper values from \citet{baherwani2026not} Table~1.}
+\caption{Replication of the 10-shot baseline-versus-counting experiment
+($N{=}1000$ per cell). Paper values from \citet{baherwani2026not}, Table~1.}
 \label{tab:replication}
 \begin{tabular}{llcc}
 \toprule
@@ -213,116 +325,151 @@ Arithmetic & $\Delta$ & $-1.3$ & $+0.57 \pm 1.63$ \\
 \end{tabular}
 \end{table}
 
-\subsection{Extension 1: ASD-STE100 filler vs.\ full CoT}
+Our baselines sit 10.9~pp (multiplication) and 4.75~pp (arithmetic) below the
+original. To test whether prompt formatting or caching caused the shift we ran
+two $N{=}1000$ ablations---0-shot prompting, and a minimal \texttt{/no\_think}
+system directive---followed by uncached live re-queries; none closed the gap.
+Inspection of provider metadata then showed a concrete infrastructure difference:
+every endpoint serving this model during our runs operated in FP8 precision,
+whereas the serving precision of the original study is unspecified. The pattern
+is consistent with quantization degrading single-pass partial-product arithmetic,
+leaving headroom that extra attention passes over filler positions can partially
+recover: the filler restores accuracy to nearly the original ceiling rather than
+exceeding it.
+
+\subsection{Extension 1: ASD-STE100 filler versus full CoT}
 \label{sec:stecot}
 
-0-shot, $N{=}1000$ per cell (Table~\ref{tab:stecot}). The STE filler lifts
-multiplication by $+12.2$~pp over baseline but leaves the model $51.5 \pm
-7.1$~pp behind full CoT; on arithmetic the filler is \emph{worse than baseline}
-($-1.43 \pm 1.57$~pp) and $94.0 \pm 3.3$~pp behind CoT. Discordant counts are
-lopsided: on multiplication the filler is right where CoT is wrong once,
-while CoT is right where the filler is wrong 104 times; on arithmetic, 0 and
-188.
+Establishing that a filler beats a no-CoT prompt does not establish that it
+substitutes for reasoning. We therefore move to a clean 0-shot setting without
+in-context exemplars and ask whether a 200-token controlled-vocabulary filler can
+close the gap to unconstrained CoT (Table~\ref{tab:stecot},
+Figure~\ref{fig:stecot}).
 
 \begin{table}[h]
 \centering
-\caption{ASD-STE100 filler vs.\ full CoT, 0-shot, $N{=}1000$
-(Qwen3-235B-A22B-2507). Paired $\Delta$ vs.\ CoT from 200 stored samples
-per cell.}
+\caption{ASD-STE100 filler versus full CoT, 0-shot, $N{=}1000$
+(Qwen3-235B-A22B-2507). All $\Delta$ values are paired over the same 1000
+problems; intervals are 95\% paired $t$-intervals.}
 \label{tab:stecot}
 \begin{tabular}{lccc}
 \toprule
 \textbf{Task} & \textbf{Condition} & \textbf{Accuracy (\%)} & $\mathbf{\Delta}$ \textbf{vs.\ CoT} \\
 \midrule
-Multiplication & baseline & $34.20 \pm 2.94$ & $-63.0$ \\
-Multiplication & ste\_filler & $46.40 \pm 3.09$ & $\mathbf{-51.5 \pm 7.1}$ \\
+Multiplication & baseline & $34.20 \pm 2.94$ & $-63.00 \pm 3.13$ \\
+Multiplication & ste\_filler & $46.40 \pm 3.09$ & $\mathbf{-50.80 \pm 3.26}$ \\
 Multiplication & CoT & $97.20 \pm 1.02$ & --- \\
 \midrule
-Arithmetic & baseline & $4.27 \pm 1.29$ & $-92.2$ \\
-Arithmetic & ste\_filler & $2.84 \pm 1.04$ & $\mathbf{-94.0 \pm 3.3}$ \\
+Arithmetic & baseline & $4.27 \pm 1.29$ & $-92.50 \pm 1.68$ \\
+Arithmetic & ste\_filler & $2.84 \pm 1.04$ & $\mathbf{-93.70 \pm 1.53}$ \\
 Arithmetic & CoT & $96.50 \pm 1.14$ & --- \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[h!]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=\textwidth]{figs/ste-vs-cot.png}
+    \includegraphics[width=\textwidth]{figs/ste-vs-cot.pdf}
     \caption{0-shot accuracy by condition (Qwen3-235B-A22B-2507, $N{=}1000$).
-    The STE filler buys a partial uplift on multiplication and a regression on
-    arithmetic; full CoT is near saturation on both. Bars are 95\% CIs.}
+    The controlled-vocabulary filler buys a partial uplift on multiplication and
+    a small regression on arithmetic, while full CoT saturates both. Bars are
+    95\% binomial intervals.}
     \label{fig:stecot}
 \end{figure}
+
+The results expose a boundary governed by task seriality. On multiplication the
+filler lifts accuracy by $+12.20 \pm 3.33$~pp over baseline
+($34.20\%\to46.40\%$), recovering ${\sim}19\%$ of the 63.0~pp deficit to full CoT,
+but still trailing CoT by $50.80 \pm 3.26$~pp on paired problems. On nested
+arithmetic the same filler provides no benefit and trends slightly below baseline
+($2.84\%$ vs.\ $4.27\%$, $-1.20 \pm 0.92$~pp, McNemar $p=0.998$ for any positive
+effect), trailing CoT by $93.70 \pm 1.53$~pp. The paired discordant counts are
+lopsided in the same direction: on multiplication CoT is correct where the filler
+fails on 521 problems against 13 in the reverse direction; on arithmetic the split
+is 938 to 1.
+
+That asymmetry is what the $\mathsf{TC}^0$ account predicts. Multiplication's
+partial products can be formed and combined by a wide, shallow circuit that extra
+token positions make room for; a five-step nested expression requires the
+intermediate value to be written, read back, and updated in order, which is the
+serial depth that CoT supplies and a prefill does not. The filler is therefore
+buying parallel width, not reasoning.
 
 \subsection{Extension 2: the efficiency inversion}
 \label{sec:kv}
 
-Given the accuracy result, we invert the null: $H_0$: the prefilled filler
-offers no KV-cache or decode advantage over CoT. Per query with $T_p$ prompt
-tokens and $T_c$ completion tokens, peak KV tokens are $T_p + T_c$, and
-decode-stage KV token-reads are
-\begin{equation}
-\label{eq:reads}
-R_{\mathrm{KV}} \;=\; \sum_{t=0}^{T_c-1} (T_p + t)
-\;=\; T_c T_p + \tfrac{1}{2} T_c (T_c - 1),
-\end{equation}
-since each sequential decode step re-reads the whole context. For Qwen3-235B
-(94 layers, 4 KV heads, head dimension 128, bf16) the KV geometry is
-$2 \times 94 \times 4 \times 128 \times 2 = 192{,}512$~B/token
-(188~KiB); for the 30B model (48 layers) it is 96~KiB/token.
+Because the filler cannot match CoT accuracy, the natural systems question is
+whether it nonetheless offers a compelling low-latency operating point. We test
+the inverted null hypothesis $H_0$: prefilled fillers provide no KV-cache memory
+or decode-bandwidth saving over CoT.
 
-$H_0$ is rejected in the predicted direction (Table~\ref{tab:kv}): the filler
-reads $78\times$ (multiplication) and $170\times$ (arithmetic) fewer KV
-tokens during decode, holds $0.42\times$ and $0.37\times$ the peak KV, and
-finishes each query ${\sim}16\times$ faster. The mechanism is exactly the
-prefill/decode asymmetry: ${\sim}202$ tokens of work move from sequential,
-memory-bandwidth-bound decode into parallel, compute-bound prefill, attended
-in one pass. The non-triviality hypothesis also holds on multiplication
-(paired $+10.50 \pm 7.66$~pp over baseline, exact McNemar $p = 0.0056$), so the
-filler is not a no-op---but the accuracy price is $-0.66$~pp (multiplication)
-to $-0.56$~pp (arithmetic) of accuracy per $1\times$ of KV-read reduction.
+Equation~\eqref{eq:reads} on our 0-shot runs rejects $H_0$ decisively
+(Table~\ref{tab:kv}, Figure~\ref{fig:kvtradeoff}). Moving ${\sim}202$ tokens into
+the assistant prefill leaves answer generation short ($T_c\approx7$--$11$ tokens),
+whereas full CoT generates 630--758 tokens sequentially. The filler consequently
+needs $78\times$ (multiplication) and $170\times$ (arithmetic) fewer decode-stage
+KV token-reads than CoT, occupies $0.42\times$ and $0.37\times$ of CoT's peak KV,
+cuts KV occupancy by $37\times$ and $46\times$, and reduces amortised per-query
+wall clock by ${\sim}15$--$16\times$.
 
-\begin{table}[h]
+The saving comes with two caveats that Table~\ref{tab:kv} makes explicit. First,
+relative to \emph{baseline} rather than CoT the filler is more expensive, not
+less: it costs $3.2\times$ the peak KV and $3.6\times$ the decode reads for a
+$1.5\times$ wall-clock penalty, because it adds 202 prompt tokens to a query whose
+answer was already short. Second, the accuracy exchange rate against CoT is steep:
+each $1\times$ reduction in decode reads costs $0.66$~pp of accuracy on
+multiplication and $0.56$~pp on arithmetic. Whether that trade is ever
+Pareto-efficient depends on how CoT behaves under matched caps, which is the next
+question.
+
+\begin{table}[t]
 \centering
-\caption{KV-cache and decode-efficiency accounting per query (Qwen3-235B,
-0-shot, $N{=}1000$). $R_{\mathrm{KV}}$ per Eq.~\eqref{eq:reads}; occupancy is
-$T_{\mathrm{KV}} \cdot$ wall-clock per query.}
+\caption{Per-query KV and latency accounting (Qwen3-235B, 0-shot, $N{=}1000$).
+$T_p$ and $T_c$ are mean API prompt and completion tokens; $R_{\mathrm{KV}}$ is
+Eq.~\eqref{eq:reads}; peak KV assumes uncached \texttt{bf16} storage at
+188~KiB/token; \emph{unshared} is the KV left after the static prefix is cached
+once; occupancy is $T_{\mathrm{KV}}\cdot$ wall clock.}
 \label{tab:kv}
-\begin{tabular}{llrrrrr}
+\small
+\begin{tabular}{llrrrrrr}
 \toprule
 \textbf{Task} & \textbf{Cond.} & $T_p$ & $T_c$ & $R_{\mathrm{KV}}$ &
-\textbf{MiB peak} & \textbf{s/query} \\
+\textbf{Peak MiB} & \textbf{Unshared} & \textbf{Occ.\ MB$\cdot$s} \\
 \midrule
-Mult. & baseline & 80.4 & 10.3 & 873 & 16.6 & 0.08 \\
-Mult. & ste\_filler & 282.5 & 10.9 & 3{,}118 & 53.9 & 0.12 \\
-Mult. & CoT & 70.0 & 630.4 & 242{,}483 & 128.6 & 1.80 \\
+Mult. & baseline & 80.4 & 10.3 & 873 & 16.7 & 20.3 & 1.3 \\
+Mult. & ste\_filler & 282.5 & 10.9 & 3{,}118 & 53.9 & 20.8 & 6.2 \\
+Mult. & CoT & 70.0 & 630.4 & 242{,}483 & 128.6 & 640.4 & 232.0 \\
 \midrule
-Arith. & baseline & 99.7 & 7.9 & 810 & 19.8 & 0.09 \\
-Arith. & ste\_filler & 301.9 & 6.9 & 2{,}089 & 56.7 & 0.13 \\
-Arith. & CoT & 89.4 & 757.5 & 354{,}229 & 155.5 & 2.10 \\
+Arith. & baseline & 99.7 & 7.9 & 810 & 19.8 & 35.0 & 1.7 \\
+Arith. & ste\_filler & 301.9 & 6.9 & 2{,}089 & 56.7 & 34.0 & 7.1 \\
+Arith. & CoT & 89.4 & 757.5 & 354{,}229 & 155.5 & 784.6 & 327.0 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[h!]
+\begin{figure}[t]
     \centering
-    \includegraphics[width=\textwidth]{figs/kv-tradeoff.png}
-    \caption{Accuracy vs.\ decode-stage KV token-reads (log scale). The arrows
-    run from full CoT to the STE filler: $78\times$ and $170\times$ fewer
-    reads for $-50.8$ and $-93.7$~pp.}
+    \includegraphics[width=\textwidth]{figs/kv-tradeoff.pdf}
+    \caption{Accuracy against decode-stage KV token-reads (log scale). Arrows run
+    from full CoT to the STE filler: $78\times$ and $170\times$ fewer reads at a
+    cost of 50.8 and 93.7~pp of accuracy.}
     \label{fig:kvtradeoff}
 \end{figure}
 
 \subsection{Extension 3: the recovery grid}
 \label{sec:grid}
 
-$2$ models $\times$ $8$ conditions $\times$ $2$ tasks, $N{=}1000$ per cell
-(Table~\ref{tab:grid}). Three axes:
+Comparing a single 200-token filler on one model against unconstrained CoT
+conflates token budget with reasoning mode and leaves model scale unexplored. To
+map the whole surface we evaluate a $2\times8\times2$ grid
+($N{=}1000$ per cell, Table~\ref{tab:grid}) over filler length
+$\{0,100,200,500\}$, CoT cap $\{128,256,512,2048\}$, and model
+$\{$235B-A22B, 30B-A3B$\}$. Four structural findings emerge.
 
-\begin{table}[h]
+\begin{table}[t]
 \centering
-\caption{The recovery grid: accuracy (\%) $\pm$ 95\% CI, 0-shot,
-$N{=}1000$ per cell. Bold marks the best condition per row.}
+\caption{Recovery grid: accuracy (\%) $\pm$ 95\% binomial interval, 0-shot,
+$N{=}1000$ per cell. Bold marks the best condition in each row.}
 \label{tab:grid}
 \resizebox{\textwidth}{!}{
 \begin{tabular}{llcccccccc}
@@ -339,149 +486,251 @@ $N{=}1000$ per cell. Bold marks the best condition per row.}
 \end{tabular}
 }
 \smallskip
-{\footnotesize $^{\dagger}$Best no-CoT condition; full CoT is the best
-condition overall. Zero cells show $\pm 0.00$ because all 1000 traces
-truncated identically.}
+{\footnotesize $^{\dagger}$Best no-CoT condition; full CoT is best overall. Zero
+cells show $\pm0.00$ because all 1000 traces truncated identically.}
 \end{table}
 
 \paragraph{CoT is a cliff, not a curve.}
-Accuracy at CoT caps $128/256/512/2048$ is
-$0/0.9/60.8/97.2$ (mult) and $0/1.8/37.2/96.5$ (arith) on the 235B model.
-The explicit answer-cue rate (Section~\ref{sec:trunc}) tracks this exactly:
-$0.1/0.9/60.8/97.8\%$ and $0.0/1.7/36.4/97.4\%$. Below a 512-token cap the
-model is still mid-derivation when the budget ends; the last-number fallback
-then scores a mid-trace quantity, and the cell reports near-zero accuracy not
-because reasoning failed but because \emph{no answer was produced}. The
-$256{\to}512$ interval is worth $+23.4$~pp per 100 tokens (mult, 235B);
-$128{\to}256$ is worth under $3$.
+Accuracy does not degrade gracefully as the cap tightens; it collapses below 512
+tokens on both models (Table~\ref{tab:grid}, Figure~\ref{fig:sensitivity}b). On
+the 235B model the explicit answer-cue rates at caps 128, 256, 512 and 2048 are
+$0.1\%,0.9\%,60.8\%,97.8\%$ on multiplication ($0.0\%,1.7\%,36.4\%,97.4\%$ on
+arithmetic), tracking cell accuracy almost one-for-one. Below 512 tokens the model
+exhausts its budget mid-derivation, and the fallback parser scores a partial
+product: the near-zero accuracy is an absent answer, not a wrong one. Marginal CoT
+return therefore jumps from under 1~pp per 100 tokens on $[128,256]$ to
+$+23.4$~pp per 100 tokens on $[256,512]$ for 235B multiplication.
 
-\paragraph{Filler gains saturate and then reverse.}
-On the 235B model the STE slope on multiplication is $+6.5$, $+5.7$ then
-$-1.0$~pp per 100 tokens across $[0,100]$, $[100,200]$, $[200,500]$: an
-inverted U, with a quadratic fit ($R^2 = 0.99$) beating a linear one
-($R^2 = 0.39$). On the 30B model every interval straddles zero: the filler
-never fires at any length.
+\paragraph{Filler gains saturate, then reverse.}
+If prefilled tokens were general-purpose serial compute, lengthening the filler
+should keep closing the gap to CoT. Instead the marginal gains on 235B
+multiplication across $[0,100]$, $[100,200]$ and $[200,500]$ are $+6.5$, $+5.7$
+and $-1.0$~pp per 100 tokens (Figure~\ref{fig:sensitivity}a): an inverted U that a
+quadratic captures ($R^2=0.99$) and a line does not ($R^2=0.39$). A plausible
+reading is positional dilution, where attention between the question and the
+answer cue is spread over more inert positions past 200 tokens. On arithmetic, and
+on the 30B model for both tasks, every interval is indistinguishable from zero.
 
 \paragraph{Model size buys accuracy only without CoT.}
-$\partial \mathrm{Acc}/\partial \log_{10} N_{\mathrm{total}}$ on
-multiplication is $+29.2 \pm 3.8$~pp per decade at baseline (in pp per 10B
-total: $+1.27 \pm 0.17$; per 10B active: $+13.9 \pm 1.8$), but $-1.6 \pm 1.4$
-at CoT cap 2048: given enough budget, the 30B model matches the 235B
-(98.6 vs.\ 97.2). Size substitutes for reasoning rather than adding to it.
+Scaling from 30.5B to 235B parameters (0.887 decades) strongly lifts no-CoT
+multiplication ($\partial\mathrm{Acc}/\partial\log_{10}N_{\mathrm{total}}
+=+29.2\pm3.8$~pp per decade, or $+1.27\pm0.17$~pp per 10B total and
+$+13.9\pm1.8$~pp per 10B active; Figure~\ref{fig:sensitivity}c). Under full CoT
+the same derivative vanishes ($-1.6\pm1.4$~pp per decade) and the 30B model
+matches or edges out the 235B ($98.6\%$ vs.\ $97.2\%$). Parameter scale
+compensates for missing scratchpad tokens in single-pass inference, and adds
+nothing once the steps are externalised.
 
-\paragraph{The cross-partial is negative where the filler works.}
-Over $0$--$200$ STE tokens on multiplication,
-$\partial^2 \mathrm{Acc}/\partial \log_{10} N \, \partial L_{\mathrm{STE}}$
-is $-7.3 \pm 5.5$ and $-5.9 \pm 5.6$~pp per 100 tokens per decade: only the
-larger model converts filler into accuracy, consistent with the capability
-precondition in the paper's Appendix~B.2.
+\paragraph{Scale and filler length are complements.}
+Taking increasing $N_{\mathrm{total}}$ as positive, the mixed second difference
+$\partial^2\mathrm{Acc}/\partial\log_{10}N_{\mathrm{total}}\,\partial L_{\mathrm{STE}}$
+on multiplication is $+7.3\pm5.5$ and $+5.9\pm5.6$~pp per 100 tokens per decade
+over $[0,100]$ and $[100,200]$: the 235B model converts filler tokens into
+accuracy at roughly $+6.5$ and $+5.7$~pp per 100, while the 30B converts
+$+0.0$ and $+0.5$. (The sign follows from increasing $N$; reading the slope
+difference in the opposite direction reverses it, which is why we state the
+convention explicitly.) Only a model with substantial single-pass capability
+($34.2\%$ baseline versus $8.3\%$) has latent circuits mature enough for filler
+positions to amplify, which quantifies the capability precondition that
+\citet{baherwani2026not} note qualitatively in their Appendix~B.2.
 
 \paragraph{The Pareto frontier is the small model with full CoT.}
-At a matched ${\sim}55$--$60$~MiB peak KV per query, the STE filler beats
-\texttt{cot\_256} by 45~pp on multiplication---but \texttt{cot\_256} has no
-answer channel, so this is dominance over a \emph{broken} baseline, not a
-cheap one. One budget step later, \texttt{cot\_512} reaches $60.8\%$ vs.\
-\texttt{ste\_500}'s $43.4\%$ at higher KV. At full budget the frontier point
-is the 30B model with CoT: 53.1~MiB for 98.6\% on multiplication, vs.\ 128.6~MiB
-for 97.2\% on the 235B. The marginal rate of substitution
-$\mathrm{MRTS}_{L_{\mathrm{STE}},L_{\mathrm{CoT}}} = 0.78$ CoT tokens per STE
-token (95\% CI $0.43$--$1.16$) in the saturated region.
+Plotting accuracy against KV cost (Figure~\ref{fig:pareto}) shows why fixed-budget
+comparisons mislead. Around 54--63~MiB of peak KV on the 235B model,
+\texttt{ste\_filler} (46.4\%) appears to beat \texttt{cot\_256} (0.9\%) by
+45.5~pp---but \texttt{cot\_256} fails to emit an answer in 99.1\% of trials. At
+the first cap where CoT usually finishes, \texttt{cot\_512} reaches 60.8\% and
+overtakes even \texttt{ste\_500} (43.4\%). The global frontier point is
+\textbf{Qwen3-30B-A3B with full CoT}: 98.6\% multiplication accuracy inside a
+53.1~MiB peak KV footprint, matching the memory budget of 235B
+\texttt{ste\_filler} (53.9~MiB) at $+52.2$~pp higher accuracy. Comparing
+marginal slopes on 235B multiplication gives an effective marginal rate of
+technical substitution
+$\mathrm{MRTS}_{L_{\mathrm{STE}},L_{\mathrm{CoT}}}=0.78$ CoT tokens per STE
+token (95\% CI 0.43--1.16), computed as the ratio of
+$\partial\mathrm{Acc}/\partial L_{\mathrm{STE}}$ averaged over the full
+$[0,500]$ range ($+1.84$~pp per 100) to
+$\partial\mathrm{Acc}/\partial L_{\mathrm{CoT}}$ over $[512,2048]$
+($+2.37$~pp per 100), with a parametric bootstrap over the two slope standard
+errors. It is a global average ratio, not a local derivative at a single point.
+Even where fillers work best, each prefilled token buys less than one token of
+explicit reasoning.
 
-\begin{figure}[h!]
+\begin{figure}[t]
     \centering
-    \begin{minipage}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figs/recovery-pareto.png}
-        \caption{Accuracy vs.\ KV cost. Dashed: STE sweep; solid: CoT cap
-        sweep. CoT is worthless below ${\sim}40$~MiB, then climbs steeply.}
-        \label{fig:pareto}
-    \end{minipage}\hfill
-    \begin{minipage}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{figs/recovery-sensitivity.png}
-        \caption{Response curves: (a) filler length, (b) CoT cap (log axis,
-        no-answer band shaded), (c) model size.}
-        \label{fig:sensitivity}
-    \end{minipage}
+    \includegraphics[width=\textwidth]{figs/recovery-pareto.pdf}
+    \caption{Accuracy against peak KV memory (top) and decode-stage KV
+    token-reads (bottom), both log scale, across models and tasks. Dashed curves
+    sweep STE filler length (0--500); solid curves sweep CoT caps (128--2048).
+    Truncated CoT sits near zero below ${\sim}50$~MiB and then climbs steeply;
+    30B with full CoT dominates the peak-KV frontier.}
+    \label{fig:pareto}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{figs/recovery-sensitivity.pdf}
+    \caption{Response curves across the three recovery axes: (a) STE filler
+    length, showing inverted-U saturation at 200 tokens on 235B multiplication;
+    (b) CoT token cap on a log axis, with the mid-derivation truncation regime
+    shaded; (c) model scale from 235B down to 30B under no-CoT conditions.}
+    \label{fig:sensitivity}
 \end{figure}
 
 \section{Discussion}
 \label{sec:discussion}
 
-\textbf{What the filler is and is not.} The ASD-STE100 filler is a real but
-narrow phenomenon: on the one task and the one model where baseline capability
-is high, it converts ${\sim}200$ prefilled tokens into $+12$~pp of accuracy at
-${\sim}0.6$ extra decode tokens. It is not a substitute for reasoning: the same
-prefill captures none of the $51$--$94$~pp that CoT buys, and on the model
-where baseline capability is low it captures nothing at any length. The
-$-7.3 \pm 5.5$ cross-partial quantifies the paper's capability precondition
-rather than contradicting it.
+\paragraph{Parallel width versus serial depth.}
+Our results sharpen what prefilled filler tokens compute. On 4-digit
+multiplication in Qwen3-235B, ${\sim}200$ semantically inert tokens buy a genuine
+$+12.2$~pp at ${\sim}0.6$ extra decode tokens; the same intervention does nothing
+on five-step nested arithmetic and nothing on Qwen3-30B at any length. Read
+against the expressivity analysis of \citet{pfau2024dot}, this is the signature of
+extra parallel attention width applied to circuits the model already has in
+nascent form---visible in the $+7.3\pm5.5$~pp scale--filler complementarity---and
+not of serial state tracking. For CoT monitorability this yields an empirical
+bound rather than a worry: in off-the-shelf models, unmonitored prefill can refine
+single-step or parallelisable judgements, but cannot covertly execute deep
+multi-step symbolic derivation without training-time adaptation.
 
-\textbf{Why our multiplication null failed to replicate.} Our 10-shot
-multiplication base rate is 10.9~pp below the paper's, and the filler delta is
-$+8.3$~pp where they report $-0.4$. Two prompting diagnostics and a live
-re-query rule out few-shot examples, system prompt, and cache staleness. The
-arithmetic null replicates with a comparable base-rate gap ($-4.75$~pp),
-which suggests a serving-path difference that shifts both base rate and filler
-responsiveness. We cannot test this directly: every OpenRouter endpoint for
-this model was FP8 during our runs.
+\paragraph{Quantization and filler sensitivity.}
+Why did our 10-shot multiplication run show $+8.30$~pp where the original found
+$-0.4$~pp? Prompting ablations and cache-bypassing re-queries rule out few-shot
+formatting, system prompts, and stale responses. Our baseline (58.70\%) sits well
+below the original's 69.6\%, while the counting filler restores accuracy to
+67.00\%, close to the original's unfilled 69.2\%. That is the pattern of a
+precision deficit being partly absorbed by redundant attention over filler
+positions, and all our endpoints were FP8. We cannot test the mechanism
+internally, since we have no weight-level access to the served model; a controlled
+comparison across BF16, FP8 and INT4 checkpoints on identical hardware is the
+direct next experiment.
 
-\textbf{Efficiency claims need a truncation floor.} Our efficiency inversion
-initially suggests an $78\times$--$170\times$ decode-read advantage for the
-filler. But budget-matched CoT at $L \leq 256$ produces answers for at most
-$3\%$ of queries; comparing the filler's $46.4\%$ against a condition that
-\emph{cannot answer} is not an efficiency win. The honest frontier uses
-\texttt{cot\_512}, and there CoT wins by 17~pp at lower KV cost. The only
-regime in which prefilled filler Pareto-dominates is the one where CoT has been
-truncated into uselessness.
+\paragraph{Budget-matched baselines need a truncation floor.}
+Taken alone, our efficiency numbers suggest the filler wins at low budget: it cuts
+decode reads by $78\times$--$170\times$ and beats token-capped CoT at
+$L\leq256$ by more than 45~pp. Tracking answer-cue rates shows that win is a
+measurement artefact---a 256-token cap severs the output channel before an answer
+exists in over 97\% of trials. Any evaluation of test-time compute, latent
+reasoning, or compressed CoT that reports accuracy against a capped baseline
+without reporting completion rates is measuring its own parser. The frontier
+should also include a smaller model running full CoT, which in our grid is the
+point that actually dominates.
 
 \section{Limitations}
 \label{sec:limitations}
+
 \begin{itemize}
-    \item \textbf{Serving path.} All endpoints were FP8; the paper's serving
-    precision is unspecified. Our base rates are lower on both tasks, and the
-    multiplication null did not replicate.
-    \item \textbf{Latency is throughput.} Efficiency wall-clock figures are
-    cell time at concurrency 16, not per-request TTFT/TPOT, and carry no
-    per-query confidence interval.
-    \item \textbf{Two models are a secant.} Each parameter derivative is one
-    difference quotient over 0.887 decades; a third size could change the
-    slope. Active- and total-parameter normalizations disagree by ${\sim}25\%$
-    and both are reported.
-    \item \textbf{Prefix caching is assumed.} The unshared-KV column assumes
-    the serving stack caches the static system+filler prefix. Without it the
-    filler's peak-KV ratio falls to $0.42\times$/$0.37\times$ (still large).
-    \item \textbf{Completion tokens are API-billed tokens,} which exceed
-    visible-text tokens (e.g.\ 630 vs.\ 435 for CoT on multiplication).
-    \item \textbf{Stored paired samples.} Paired deltas use the 200 stored
-    samples per cell, while headline accuracies use all 1000.
+    \item \textbf{Quantized serving path.} Every available OpenRouter endpoint for
+    Qwen3-235B was FP8 during our runs, while the original study's precision is
+    unspecified; weight-controlled local deployment is needed to confirm whether
+    FP8 explains the 10-shot multiplication divergence.
+    \item \textbf{Amortised latency.} Seconds per query are cell completion time
+    divided by $N$ at client concurrency 16, not isolated single-stream TTFT and
+    TPOT distributions; the ${\sim}16\times$ factor is a throughput ratio and
+    carries no per-query interval.
+    \item \textbf{Two-point scale estimates.} Parameter derivatives are secant
+    slopes across two MoE checkpoints spanning 0.887 decades; intermediate sizes
+    could reveal nonlinear capability thresholds, and active- versus
+    total-parameter scalings differ by ${\sim}25\%$ because of sparsity.
+    \item \textbf{Uncached peak-KV accounting.} Table~\ref{tab:kv} reports
+    uncached totals, which is the conservative choice for the filler: its
+    0.42$\times$ and 0.37$\times$ ratios already include the full 202-token
+    prefix. If a server caches that static prefix once, the filler's unshared KV
+    falls to 20.8 and 34.0 tokens---indistinguishable from baseline---so its
+    marginal memory cost in production is lower than the table implies, while its
+    accuracy ceiling is unchanged.
+    \item \textbf{Billed versus visible tokens.} $T_c$ uses OpenRouter billing
+    metadata, which slightly exceeds locally re-tokenised visible text (630
+    versus 435 tokens for 235B multiplication CoT), so $R_{\mathrm{KV}}$ is an
+    upper estimate for CoT.
+    \item \textbf{Paired sample.} Headline accuracies and all paired tests use the
+    full $N{=}1000$; the per-sample records stored in the results file were
+    capped at 200 for size, and we reconstructed the remainder from the response
+    cache rather than relying on that cap.
 \end{itemize}
 
 \section{Conclusion}
-We replicated the filler-token baseline experiment of
-\citet{baherwani2026not} and found one null reproducing and one not, with a
-serving-path divergence the strongest remaining explanation. Our extensions
-bound the phenomenon: a controlled-vocabulary filler recovers at most
-${\sim}20\%$ of the accuracy that full chain-of-thought provides, only on a
-model whose baseline capability is already high, only up to ${\sim}200$ tokens
-of filler, and at an efficiency advantage that evaporates once budget-matched
-CoT is allowed enough tokens to finish a single derivation. The practical
-reading is unchanged from the original paper's: tokens are compute, and
-prefill is a way to spend it---but the amount of latent computation a filler
-can surface is small, model-dependent, and not a replacement for letting the
-model reason.
+\label{sec:conclusion}
+
+Replicating and extending \citet{baherwani2026not} on Qwen3 models, we find that
+prefilled filler tokens unlock a real but tightly circumscribed form of latent
+computation. Controlled-vocabulary fillers recover at most ${\sim}19\%$ of full
+CoT gains on parallelisable multiplication, confer no benefit on sequential
+multi-step arithmetic, saturate at ${\sim}200$ tokens, and vanish on a
+$7.7\times$ smaller model. Their $78\times$--$170\times$ decode-read reduction
+becomes an accuracy win over budget-matched CoT only while CoT is truncated before
+emitting an answer; once CoT has enough budget to finish a derivation, running it
+on the smaller model dominates the filler on the larger one in both accuracy and
+memory.
+
+Three directions follow. First, mechanistic work across BF16 and FP8 weights
+should test whether filler attention compensates for quantization noise in
+parallel arithmetic circuits, which would turn our serving-path hypothesis into a
+measurement. Second, budget-aware prompting---instructing a CoT model to
+summarise and emit an answer before its cap---would test whether the truncation
+cliff is a property of the cap or of the prompt, and would make capped CoT a
+usable low-budget baseline. Third, safety monitoring for hidden reasoning should
+concentrate on RL-trained thinking models rather than static prefill sequences:
+our grid bounds what prefill can do without training, and the bound is small.
 
 \section*{Acknowledgments}
 Experiments in this work were run and tracked with
 OpenResearch~\citep{openresearch}.
 
+\appendix
+\section{The ASD-STE100 filler string}
+\label{app:filler}
+
+The \texttt{ste\_filler} condition prefills the following 198-word sequence
+(199 \texttt{o200k} tokens) verbatim before the answer cue, identically for every
+query and every problem:
+
+\begin{quote}\footnotesize\ttfamily\raggedright\sloppy
+a an the and or but if then when where which who what why how this that these
+those all any both each every some no not only also again always never often
+sometimes before after above below between during through about against into
+over under up down out off on in at by for with without adjust align apply
+assemble attach balance bleed check clean close connect cut decrease disconnect
+do examine fill fit fix hold increase insert inspect install keep lift limit
+loosen maintain make measure move open operate position pull push put read
+remove repair replace rotate run secure select set slow start stop support
+tighten turn use verify wait watch bearing bracket clamp clip connector cylinder
+diaphragm disc drain filter fluid gauge hose indicator line liquid nut oil part
+pipe plug pressure pump screw seal surface system tank test tool valve wire
+\end{quote}
+
+The \texttt{ste\_100} and \texttt{ste\_500} conditions use the same stream
+truncated to the calibrated token counts. The string is produced by
+\texttt{build\_filler("ste\_dictionary", 200, tokenizer)} in the released
+harness, so it can be regenerated exactly rather than copied by hand.
+
 \begin{thebibliography}{9}
 
 \bibitem[Baherwani et~al.(2026)]{baherwani2026not}
 Vatsal Baherwani, Tom Goldstein, and Ashwinee Panda.
-\newblock Not all LLM reasoning is visible in the chain-of-thought.
+\newblock Not all {LLM} reasoning is visible in the chain-of-thought.
 \newblock \emph{arXiv preprint arXiv:2607.22925}, 2026.
-\newblock \url{https://www.alphaxiv.org/abs/2607.22925}
+\newblock \url{https://arxiv.org/abs/2607.22925}
+
+\bibitem[Damani et~al.(2025)]{damani2025learning}
+Mehul Damani, Idan Shenfeld, Andi Peng, Andreea Bobu, and Jacob Andreas.
+\newblock Learning how hard to think: Input-adaptive allocation of {LM}
+computation.
+\newblock In \emph{International Conference on Learning Representations
+(ICLR)}, 2025.
+
+\bibitem[Goyal et~al.(2024)]{goyal2024pause}
+Sachin Goyal, Ziwei Ji, Ankit~Singh Rawat, Aditya~Krishna Menon, Sanjiv Kumar,
+and Vaishnavh Nagarajan.
+\newblock Think before you speak: Training language models with pause tokens.
+\newblock In \emph{International Conference on Learning Representations
+(ICLR)}, 2024.
+
+\bibitem[Pfau et~al.(2024)]{pfau2024dot}
+Jacob Pfau, William Merrill, and Samuel~R. Bowman.
+\newblock Let's think dot by dot: Hidden computation in transformer language
+models.
+\newblock In \emph{Conference on Language Modeling (COLM)}, 2024.
 
 \bibitem[Wei et~al.(2022)]{wei2022cot}
 Jason Wei, Yi~Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian
@@ -493,16 +742,9 @@ models.
 \newblock In \emph{Advances in Neural Information Processing Systems
 (NeurIPS)}, 2022.
 
-\bibitem[Madaan et~al.(2024)]{madaan2024learning}
-Aman Madaan, Luyu Gao, Anushree Subramanian, et~al.
-\newblock Learning how hard to think: input-adaptive allocation of LM
-computation.
-\newblock In \emph{International Conference on Learning Representations
-(ICLR)}, 2025.
-
 \bibitem[OpenRouter(2026)]{openrouter2026}
 OpenRouter.
-\newblock OpenRouter: A unified API for LLM serving.
+\newblock OpenRouter: A unified API for {LLM} serving.
 \newblock \url{https://openrouter.ai}, 2026. Accessed November 2026.
 
 \bibitem[alphaXiv(2026)]{openresearch}

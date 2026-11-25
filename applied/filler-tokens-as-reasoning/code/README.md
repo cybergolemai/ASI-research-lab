@@ -9,11 +9,11 @@ Accompanying manuscript: `ste_filler_replication.tex` (ASI Research Lab, Novembe
 ## Summary of Findings
 
 - **Partial Replication (10-shot, $N=1{,}000$, Qwen3-235B-A22B-2507):** The arithmetic null replicates ($+0.57 \pm 1.63\text{ pp}$ vs. the paper's $-1.3\text{ pp}$), while the multiplication null does not ($+8.30 \pm 4.59\text{ pp}$ vs. $-0.4\text{ pp}$), alongside lower base rates on both tasks. Two 0-shot prompting diagnostics isolate the divergence to the FP8 OpenRouter serving path rather than prompt formatting.
-- **Substitution Test (0-shot ASD-STE100 filler vs. Full CoT):** A $\sim 200$-token ASD-STE100 controlled-vocabulary filler lifts 4-digit multiplication from $34.20\%$ to $46.40\%$ ($+12.2\text{ pp}$), but still trails full chain-of-thought ($97.20\%$) by $51.5 \pm 7.1\text{ pp}$. On multi-step arithmetic, the filler regresses relative to baseline ($4.27\% \to 2.84\%$, $94.0 \pm 3.3\text{ pp}$ behind CoT at $96.50\%$).
+- **Substitution Test (0-shot ASD-STE100 filler vs. Full CoT):** A $\sim 200$-token ASD-STE100 controlled-vocabulary filler lifts 4-digit multiplication from $34.20\%$ to $46.40\%$ ($+12.20 \pm 3.33\text{ pp}$), but still trails full chain-of-thought ($97.20\%$) by $50.80 \pm 3.26\text{ pp}$. On multi-step arithmetic, the filler regresses relative to baseline ($4.27\% \to 2.84\%$, $93.7 \pm 1.5\text{ pp}$ behind CoT at $96.50\%$).
 - **Efficiency Inversion (KV-Cache & Decode Accounting):** Moving $\sim 200$ tokens from sequential decode into parallel prefill reduces decode-stage KV token-reads by $78\times$ (multiplication) and $170\times$ (arithmetic), peak KV by $0.42\times / 0.37\times$, and wall-clock time by $\sim 16\times$—at an accuracy cost of $-0.56$ to $-0.66\text{ pp}$ per $1\times$ KV-read reduction.
 - **Recovery Grid ($2 \times 8 \times 2$ cells, $N=1{,}000$ each):**
   - **CoT accuracy is a cliff, not a curve:** $0\%$ at `max_tokens=128`, $0.9\text{--}3.5\%$ at `256`, $37.2\text{--}68.8\%$ at `512`, and $94.0\text{--}98.6\%$ at `2048`. The explicit `Answer:` cue rate confirms that sub-512 caps fail due to trace truncation rather than reasoning failure.
-  - **Filler gains saturate and require high baseline capability:** STE gains on 235B peak at 200 tokens and turn negative by 500; on Qwen3-30B-A3B, filler gains never materialize at any length (cross-partial $-7.3 \pm 5.5\text{ pp}$ per 100 tokens per decade over 0–200 tokens).
+  - **Filler gains saturate and require high baseline capability:** STE gains on 235B peak at 200 tokens and turn negative by 500; on Qwen3-30B-A3B, filler gains never materialize at any length (cross-partial $+7.3 \pm 5.5\text{ pp}$ per 100 tokens per decade over 0–200 tokens).
   - **Pareto frontier:** The smaller 30B model with full CoT dominates ($98.6\%$ multiplication at $53.1\text{ MiB}$ peak KV vs. $97.2\%$ at $128.6\text{ MiB}$ for 235B).
 
 ---
@@ -68,7 +68,7 @@ Accompanying manuscript: `ste_filler_replication.tex` (ASI Research Lab, Novembe
 Verifies task determinism, token calibration, prompt layouts, answer parsing, truncation tracking, wall-clock deadlines, and end-to-end scoring with no network calls:
 
 ```bash
-uv run --no-project --with pytest --with "tiktoken==0.11.0" pytest tests/test_filler_eval.py -v
+uv run --no-project --with pytest --with "tiktoken==0.11.0" python -m pytest tests/test_filler_eval.py -v
 ```
 
 ### 2. Preview Prompts (Dry Run)
@@ -90,8 +90,6 @@ Run any experiment by setting `FILLER_EVAL_CONFIG`:
 | 0-shot minimal `/no_think` diagnostic | Sec. 4.1 | `FILLER_EVAL_CONFIG=runs/filler_baseline_0shot_minimal.json bash runs/filler_eval.sh` |
 | ASD-STE100 filler vs. full CoT & KV accounting | Sec. 4.2–4.3, Tables 2–3 | `FILLER_EVAL_CONFIG=runs/filler_ste_cot.json bash runs/filler_eval.sh` |
 | Recovery grid ($2 \times 8 \times 2$ sweep) | Sec. 4.4, Table 4 | `FILLER_EVAL_CONFIG=runs/filler_grid.json bash runs/filler_eval.sh` |
-
-*(If you did not rename `runs/filler_baseline.json` to `runs/filler_baseline_0shot_minimal.json`, use `runs/filler_baseline.json` for Diagnostic 2.)*
 
 ### Useful CLI Flags
 

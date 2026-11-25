@@ -16,6 +16,7 @@ RESULTS = os.path.expanduser(
     "dbcdb225-18b3-4454-8e05-95bc8c79fc13/repo/results/filler_eval_20261123-073740.json"
 )
 
+HERE = os.path.dirname(os.path.abspath(__file__))
 TASKS = ["multiplication", "arithmetic"]
 LABELS = {"multiplication": "4-digit multiplication", "arithmetic": "multi-step arithmetic"}
 
@@ -30,15 +31,13 @@ def load():
         for cond in ("baseline", "ste_filler", "cot"):
             cell = cells[(task, cond)]
             row[cond] = (cell["accuracy"], cell["ci95"])
-        # paired STE vs CoT delta from the stored samples
-        base = {s["index"]: s["parsed"] == s["gold"] for s in cells[(task, "ste_filler")]["samples"]}
-        cot = {s["index"]: s["parsed"] == s["gold"] for s in cells[(task, "cot")]["samples"]}
-        idx = sorted(set(base) & set(cot))
-        diffs = [int(base[i]) - int(cot[i]) for i in idx]
-        mean = sum(diffs) / len(diffs)
-        sd = math.sqrt(sum((v - mean) ** 2 for v in diffs) / (len(diffs) - 1)) if len(diffs) > 1 else 0.0
-        se = sd / math.sqrt(len(diffs))
-        row["ste_minus_cot"] = (100 * mean, 100 * 1.96 * se)
+        # Paired STE vs CoT delta over all N=1000 problems, reconstructed from
+        # the response cache by full_paired.py. The results file stores only 200
+        # per-sample records, which would give a wider and slightly different
+        # interval than the full-N test the paper reports.
+        with open(os.path.join(HERE, "full_paired.json")) as handle:
+            paired = json.load(handle)["paired"][f"{task}:ste_filler-cot"]
+        row["ste_minus_cot"] = (paired["delta"], paired["ci95"])
         out[task] = row
     return out
 

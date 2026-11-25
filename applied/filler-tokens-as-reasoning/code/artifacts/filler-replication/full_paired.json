@@ -1,0 +1,57 @@
+{
+  "misses": 0,
+  "recovered": 32000,
+  "paired": {
+    "multiplication:ste_filler-cot": {
+      "delta": -50.8,
+      "ci95": 3.2574481337918915,
+      "plus": 13,
+      "minus": 521,
+      "p": 1.0,
+      "n": 1000
+    },
+    "multiplication:baseline-cot": {
+      "delta": -63.0,
+      "ci95": 3.1320490627273387,
+      "plus": 11,
+      "minus": 641,
+      "p": 1.0,
+      "n": 1000
+    },
+    "multiplication:ste_filler-baseline": {
+      "delta": 12.2,
+      "ci95": 3.334336223906334,
+      "plus": 213,
+      "minus": 91,
+      "p": 9.95389686413248e-13,
+      "n": 1000
+    },
+    "arithmetic:ste_filler-cot": {
+      "delta": -93.7,
+      "ci95": 1.5319640367220708,
+      "plus": 1,
+      "minus": 938,
+      "p": 1.0,
+      "n": 1000
+    },
+    "arithmetic:baseline-cot": {
+      "delta": -92.5,
+      "ci95": 1.6797605768667094,
+      "plus": 2,
+      "minus": 927,
+      "p": 1.0,
+      "n": 1000
+    },
+    "arithmetic:ste_filler-baseline": {
+      "delta": -1.2,
+      "ci95": 0.9167663587613528,
+      "plus": 5,
+      "minus": 17,
+      "p": 0.9978282451629639,
+      "n": 1000
+    }
+  },
+  "filler_text_200": "a an the and or but if then when where which who what why how this that these those all any both each every some no not only also again always never often sometimes before after above below between during through about against into over under up down out off on in at by for with without adjust align apply assemble attach balance bleed check clean close connect cut decrease disconnect do examine fill find flush get give go have hold increase install keep let loosen lubricate make measure move open put remove repair replace rotate run set start stop tighten turn use wait add change compare complete correct count cut divide dry empty estimate extend fix follow heat inspect join lift limit lock mark mix obey oil operate paint position prepare press pull push read record release repeat rinse seal select separate shorten show slow supply support test tighten transfer try weigh work write air area bolt cable cap case connection cover damage end equipment filter fluid gauge hose indicator line liquid nut oil part pipe plug pressure pump screw seal surface system tank test tool valve wire bearing bracket clamp clip connector cylinder diaphragm disc drain",
+  "filler_text_100": "a an the and or but if then when where which who what why how this that these those all any both each every some no not only also again always never often sometimes before after above below between during through about against into over under up down out off on in at by for with without adjust align apply assemble attach balance bleed check clean close connect cut decrease disconnect do examine fill find flush get give go have hold increase install keep let loosen lubricate make measure move open put remove repair replace rotate run set start",
+  "filler_text_500": "a an the and or but if then when where which who what why how this that these those all any both each every some no not only also again always never often sometimes before after above below between during through about against into over under up down out off on in at by for with without adjust align apply assemble attach balance bleed check clean close connect cut decrease disconnect do examine fill find flush get give go have hold increase install keep let loosen lubricate make measure move open put remove repair replace rotate run set start stop tighten turn use wait add change compare complete correct count cut divide dry empty estimate extend fix follow heat inspect join lift limit lock mark mix obey oil operate paint position prepare press pull push read record release repeat rinse seal select separate shorten show slow supply support test tighten transfer try weigh work write air area bolt cable cap case connection cover damage end equipment filter fluid gauge hose indicator line liquid nut oil part pipe plug pressure pump screw seal surface system tank test tool valve wire bearing bracket clamp clip connector cylinder diaphragm disc drain fastener fitting flange gasket handle head housing inlet insert joint knob label lever lid lug motor mount nozzle outlet panel pin piston plate port pulley rod sample shaft sheet sleeve socket spacer spring switch terminal thread tube correct damaged dirty dry empty full good hot cold large small long short loose tight new old open closed safe clean clear direct easy hard heavy light rough smooth soft solid stable straight strong weak a an the and or but if then when where which who what why how this that these those all any both each every some no not only also again always never often sometimes before after above below between during through about against into over under up down out off on in at by for with without adjust align apply assemble attach balance bleed check clean close connect cut decrease disconnect do examine fill find flush get give go have hold increase install keep let loosen lubricate make measure move open put remove repair replace rotate run set start stop tighten turn use wait add change compare complete correct count cut divide dry empty estimate extend fix follow heat inspect join lift limit lock mark mix obey oil operate paint position prepare press pull push read record release repeat rinse seal select separate shorten show slow supply support test tighten transfer try weigh work write air area bolt cable cap case connection cover damage end equipment filter fluid gauge hose indicator line liquid nut oil part pipe plug pressure pump screw seal surface system tank test tool valve wire bearing bracket clamp clip connector cylinder diaphragm disc drain fastener fitting flange gasket handle head housing inlet insert joint knob label lever lid lug motor mount nozzle outlet panel pin piston plate port pulley rod sample shaft"
+}

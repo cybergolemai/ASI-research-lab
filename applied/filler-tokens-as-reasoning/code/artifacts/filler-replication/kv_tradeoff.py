@@ -50,6 +50,8 @@ def main():
             xy=(np.sqrt(ste["reads"] * cot["reads"]),
                 ste["acc"] + 0.55 * (cot["acc"] - ste["acc"])),
             ha="center", va="center", fontsize=6.2, color=PALETTE["red"],
+            bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.2},
+            zorder=6,
         )
 
     ax.set_xscale("log")
