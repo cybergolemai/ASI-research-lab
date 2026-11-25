@@ -1,0 +1,2035 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+  },
+  "config": {
+    "schema_version": 1,
+    "paper": {
+      "arxiv": "2607.22925",
+      "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+      "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+    },
+    "backend": "openrouter",
+    "models": [
+      "qwen/qwen3-235b-a22b-2507"
+    ],
+    "tasks": [
+      "multiplication",
+      "arithmetic"
+    ],
+    "conditions": [
+      {
+        "name": "baseline",
+        "filler_type": null
+      },
+      {
+        "name": "ste_filler",
+        "filler_type": "ste_dictionary",
+        "filler_tokens": 200
+      },
+      {
+        "name": "cot",
+        "cot": true
+      }
+    ],
+    "notes": "0-shot three-way comparison on 4-digit multiplication and multi-step arithmetic. baseline = no-CoT, no filler; ste_filler = no-CoT with ~200 tokens of ASD-STE100 vocabulary prefilled; cot = full chain-of-thought with no filler. The hypothesis is that ste_filler accuracy is statistically indistinguishable from cot accuracy. The CoT condition uses a separate backend with max_tokens=512 and reasoning enabled; the no-CoT conditions keep max_tokens=32 and reasoning disabled.",
+    "shots": 0,
+    "n_problems": 1000,
+    "seed": 12345,
+    "tokenizer": "tiktoken:o200k_base",
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "max_tokens": 32,
+      "reasoning": false
+    },
+    "prompting": {
+      "prefill": true
+    },
+    "concurrency": 16,
+    "max_samples": 200
+  },
+  "tokenizer": "tiktoken:o200k_base",
+  "n_problems": 1000,
+  "limit": 50,
+  "shots": 0,
+  "seed": 12345,
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    },
+    {
+      "name": "ste_filler",
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens_measured": 199,
+      "calibration": "tokens"
+    },
+    {
+      "name": "cot",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    }
+  ],
+  "cells": [
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 3.8,
+      "n": 50,
+      "n_kept": 50,
+      "n_reasoning_discarded": 0,
+      "accuracy": 34.0,
+      "ci95": 13.13,
+      "accuracy_including_discarded": 34.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 4028,
+      "completion_tokens": 521,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "Answer: 9121950",
+          "parsed": 9121950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41458512",
+          "parsed": 41458512
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "Answer: 22637484",
+          "parsed": 22637484
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": " 29728503",
+          "parsed": 29728503
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21587920",
+          "parsed": 21587920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": " 42706761",
+          "parsed": 42706761
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": " 15655360",
+          "parsed": 15655360
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": "17002430",
+          "parsed": 17002430
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": " 75212400",
+          "parsed": 75212400
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": "Answer: 34517624",
+          "parsed": 34517624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": "14975990",
+          "parsed": 14975990
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": "9354800",
+          "parsed": 9354800
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": "Answer: 41420816",
+          "parsed": 41420816
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": "Answer: 11801045",
+          "parsed": 11801045
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": "9449280",
+          "parsed": 9449280
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": "73132489",
+          "parsed": 73132489
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": " 1171104",
+          "parsed": 1171104
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": " 14472090",
+          "parsed": 14472090
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": "Answer: 15007850",
+          "parsed": 15007850
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": " 21300594",
+          "parsed": 21300594
+        },
+        {
+          "index": 20,
+          "gold": 28404544,
+          "completion": " 28399504",
+          "parsed": 28399504
+        },
+        {
+          "index": 21,
+          "gold": 46079758,
+          "completion": "Answer: 46084358",
+          "parsed": 46084358
+        },
+        {
+          "index": 22,
+          "gold": 10624236,
+          "completion": "Answer: 10623736",
+          "parsed": 10623736
+        },
+        {
+          "index": 23,
+          "gold": 14235372,
+          "completion": "14235372",
+          "parsed": 14235372
+        },
+        {
+          "index": 24,
+          "gold": 41718555,
+          "completion": "Answer: 41718555",
+          "parsed": 41718555
+        },
+        {
+          "index": 25,
+          "gold": 21117768,
+          "completion": "Answer: 21117768",
+          "parsed": 21117768
+        },
+        {
+          "index": 26,
+          "gold": 76916450,
+          "completion": "Answer: 76904450",
+          "parsed": 76904450
+        },
+        {
+          "index": 27,
+          "gold": 5253360,
+          "completion": " 5253360",
+          "parsed": 5253360
+        },
+        {
+          "index": 28,
+          "gold": 21897904,
+          "completion": "Answer: 21901144",
+          "parsed": 21901144
+        },
+        {
+          "index": 29,
+          "gold": 3991686,
+          "completion": "Answer: 4000686",
+          "parsed": 4000686
+        },
+        {
+          "index": 30,
+          "gold": 31982937,
+          "completion": "32002717",
+          "parsed": 32002717
+        },
+        {
+          "index": 31,
+          "gold": 64917466,
+          "completion": "Answer: 64917466",
+          "parsed": 64917466
+        },
+        {
+          "index": 32,
+          "gold": 26154004,
+          "completion": "Answer: 26158484",
+          "parsed": 26158484
+        },
+        {
+          "index": 33,
+          "gold": 7627840,
+          "completion": "Answer: 7627840",
+          "parsed": 7627840
+        },
+        {
+          "index": 34,
+          "gold": 3610576,
+          "completion": "3610336",
+          "parsed": 3610336
+        },
+        {
+          "index": 35,
+          "gold": 18963804,
+          "completion": " 18974724",
+          "parsed": 18974724
+        },
+        {
+          "index": 36,
+          "gold": 28990520,
+          "completion": " 28990520",
+          "parsed": 28990520
+        },
+        {
+          "index": 37,
+          "gold": 8366775,
+          "completion": " 8369775",
+          "parsed": 8369775
+        },
+        {
+          "index": 38,
+          "gold": 42549616,
+          "completion": " 42540616",
+          "parsed": 42540616
+        },
+        {
+          "index": 39,
+          "gold": 26542230,
+          "completion": " 26548230",
+          "parsed": 26548230
+        },
+        {
+          "index": 40,
+          "gold": 2461808,
+          "completion": " 2461808",
+          "parsed": 2461808
+        },
+        {
+          "index": 41,
+          "gold": 57394209,
+          "completion": " 57392289",
+          "parsed": 57392289
+        },
+        {
+          "index": 42,
+          "gold": 33959988,
+          "completion": " 33966788",
+          "parsed": 33966788
+        },
+        {
+          "index": 43,
+          "gold": 20590440,
+          "completion": " 20590620",
+          "parsed": 20590620
+        },
+        {
+          "index": 44,
+          "gold": 7977572,
+          "completion": " 7978572",
+          "parsed": 7978572
+        },
+        {
+          "index": 45,
+          "gold": 33717816,
+          "completion": " 33723816",
+          "parsed": 33723816
+        },
+        {
+          "index": 46,
+          "gold": 31042666,
+          "completion": "Answer: 31041766",
+          "parsed": 31041766
+        },
+        {
+          "index": 47,
+          "gold": 15930070,
+          "completion": "Answer: 15930070",
+          "parsed": 15930070
+        },
+        {
+          "index": 48,
+          "gold": 20980518,
+          "completion": "Answer: 20978598",
+          "parsed": 20978598
+        },
+        {
+          "index": 49,
+          "gold": 33898200,
+          "completion": "Answer: 33898200",
+          "parsed": 33898200
+        }
+      ],
+      "delta_vs_cot": -66.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 3.7,
+      "n": 50,
+      "n_kept": 45,
+      "n_reasoning_discarded": 5,
+      "accuracy": 2.22,
+      "ci95": 4.31,
+      "accuracy_including_discarded": 2.0,
+      "reasoning_rate": 10.0,
+      "prompt_tokens": 5012,
+      "completion_tokens": 447,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " -784",
+          "parsed": -784
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -164359",
+          "parsed": -164359
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Answer: -50 - (60 - ((((-56 + -78) % 58) * -21) * -4",
+          "parsed": -50
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": " -104964",
+          "parsed": -104964
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "Answer: -24 * ((-97 - (-23 - (((-37 * 92) % 84) - -3",
+          "parsed": -24
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": "Answer: -180789",
+          "parsed": -180789
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": " 81",
+          "parsed": 81
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": " 15",
+          "parsed": 15
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": "Answer: 8",
+          "parsed": 8
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": "Answer: 123480",
+          "parsed": 123480
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": "Answer: 58795",
+          "parsed": 58795
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": " 87220",
+          "parsed": 87220
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": "Answer: 80",
+          "parsed": 80
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": " -560",
+          "parsed": -560
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": " -398520",
+          "parsed": -398520
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": "Answer: -12",
+          "parsed": -12
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": "Answer: -5084",
+          "parsed": -5084
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": " -37",
+          "parsed": -37
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": " -190",
+          "parsed": -190
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": " -83",
+          "parsed": -83
+        },
+        {
+          "index": 20,
+          "gold": 105386,
+          "completion": "Answer: -104833",
+          "parsed": -104833
+        },
+        {
+          "index": 21,
+          "gold": 2812,
+          "completion": " -5472",
+          "parsed": -5472
+        },
+        {
+          "index": 22,
+          "gold": 458,
+          "completion": "Answer: 354",
+          "parsed": 354
+        },
+        {
+          "index": 23,
+          "gold": -252,
+          "completion": "Answer: -133",
+          "parsed": -133
+        },
+        {
+          "index": 24,
+          "gold": -764928,
+          "completion": "Answer: -101376",
+          "parsed": -101376
+        },
+        {
+          "index": 25,
+          "gold": -143220,
+          "completion": "Answer: -57684",
+          "parsed": -57684
+        },
+        {
+          "index": 26,
+          "gold": 173,
+          "completion": " 173",
+          "parsed": 173
+        },
+        {
+          "index": 27,
+          "gold": -2345,
+          "completion": "Answer: -61",
+          "parsed": -61
+        },
+        {
+          "index": 28,
+          "gold": 140,
+          "completion": "Answer: 70",
+          "parsed": 70
+        },
+        {
+          "index": 29,
+          "gold": 1558,
+          "completion": "Answer: -41 * (((-74 * (52 % -41)) // -72) + -7)  \nFirst, compute",
+          "parsed": -41
+        },
+        {
+          "index": 30,
+          "gold": -4296,
+          "completion": " -83",
+          "parsed": -83
+        },
+        {
+          "index": 31,
+          "gold": -100,
+          "completion": "Answer: -91",
+          "parsed": -91
+        },
+        {
+          "index": 32,
+          "gold": -14112,
+          "completion": " -1005984",
+          "parsed": -1005984
+        },
+        {
+          "index": 33,
+          "gold": 101,
+          "completion": " 79",
+          "parsed": 79
+        },
+        {
+          "index": 34,
+          "gold": -2001,
+          "completion": " -46",
+          "parsed": -46
+        },
+        {
+          "index": 35,
+          "gold": 110,
+          "completion": "Answer: 88",
+          "parsed": 88
+        },
+        {
+          "index": 36,
+          "gold": 249,
+          "completion": "Answer: 64",
+          "parsed": 64
+        },
+        {
+          "index": 37,
+          "gold": 1846,
+          "completion": "35 - (58 + ((((40 * -50) + 98) + -50) - -83))  \n=",
+          "parsed": 35
+        },
+        {
+          "index": 38,
+          "gold": 159,
+          "completion": " 123",
+          "parsed": 123
+        },
+        {
+          "index": 39,
+          "gold": 189,
+          "completion": " 24",
+          "parsed": 24
+        },
+        {
+          "index": 40,
+          "gold": 498,
+          "completion": " -201",
+          "parsed": -201
+        },
+        {
+          "index": 41,
+          "gold": -5348,
+          "completion": " 153",
+          "parsed": 153
+        },
+        {
+          "index": 42,
+          "gold": -3780,
+          "completion": "-3633",
+          "parsed": -3633
+        },
+        {
+          "index": 43,
+          "gold": 182,
+          "completion": "Answer: 147",
+          "parsed": 147
+        },
+        {
+          "index": 44,
+          "gold": -44471,
+          "completion": "Answer: -117984",
+          "parsed": -117984
+        },
+        {
+          "index": 45,
+          "gold": -732,
+          "completion": "Answer: -708",
+          "parsed": -708
+        },
+        {
+          "index": 46,
+          "gold": 8186,
+          "completion": " 4511",
+          "parsed": 4511
+        },
+        {
+          "index": 47,
+          "gold": -2990,
+          "completion": "-74 - (((-44 // -52) - -51) - 60)  \nFirst, compute integer division:  \n-",
+          "parsed": -74
+        },
+        {
+          "index": 48,
+          "gold": 2420,
+          "completion": " 2200",
+          "parsed": 2200
+        },
+        {
+          "index": 49,
+          "gold": -5220,
+          "completion": " -272",
+          "parsed": -272
+        }
+      ],
+      "delta_vs_cot": -91.78
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 3.7,
+      "n": 50,
+      "n_kept": 50,
+      "n_reasoning_discarded": 0,
+      "accuracy": 48.0,
+      "ci95": 13.85,
+      "accuracy_including_discarded": 48.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 14141,
+      "completion_tokens": 572,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "Answer: 9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "Answer: 41457168",
+          "parsed": 41457168
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "Answer: 22638444",
+          "parsed": 22638444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": "Answer: 29738503",
+          "parsed": 29738503
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21584920",
+          "parsed": 21584920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": " 42706761",
+          "parsed": 42706761
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": " 15655360",
+          "parsed": 15655360
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": "Answer: 16998370",
+          "parsed": 16998370
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": "Answer: 75194400",
+          "parsed": 75194400
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": "Answer: 34515624",
+          "parsed": 34515624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": "Answer: 14975990",
+          "parsed": 14975990
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": "Answer: 9354800",
+          "parsed": 9354800
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": "Answer: 41394416",
+          "parsed": 41394416
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": "Answer: 11801045",
+          "parsed": 11801045
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": "Answer: 9449280",
+          "parsed": 9449280
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": "Answer: 73133149",
+          "parsed": 73133149
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": "Answer: 1171056",
+          "parsed": 1171056
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": "Answer: 14474190",
+          "parsed": 14474190
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": "Answer: 15007850",
+          "parsed": 15007850
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": "Answer: 21300694",
+          "parsed": 21300694
+        },
+        {
+          "index": 20,
+          "gold": 28404544,
+          "completion": " 28403584",
+          "parsed": 28403584
+        },
+        {
+          "index": 21,
+          "gold": 46079758,
+          "completion": "Answer: 46084758",
+          "parsed": 46084758
+        },
+        {
+          "index": 22,
+          "gold": 10624236,
+          "completion": "Answer: 10624236",
+          "parsed": 10624236
+        },
+        {
+          "index": 23,
+          "gold": 14235372,
+          "completion": "Answer: 14235372",
+          "parsed": 14235372
+        },
+        {
+          "index": 24,
+          "gold": 41718555,
+          "completion": "Answer: 41718555",
+          "parsed": 41718555
+        },
+        {
+          "index": 25,
+          "gold": 21117768,
+          "completion": "Answer: 21117768",
+          "parsed": 21117768
+        },
+        {
+          "index": 26,
+          "gold": 76916450,
+          "completion": "Answer: 76916450",
+          "parsed": 76916450
+        },
+        {
+          "index": 27,
+          "gold": 5253360,
+          "completion": "Answer: 5253360",
+          "parsed": 5253360
+        },
+        {
+          "index": 28,
+          "gold": 21897904,
+          "completion": "Answer: 21900424",
+          "parsed": 21900424
+        },
+        {
+          "index": 29,
+          "gold": 3991686,
+          "completion": "Answer: 4001686",
+          "parsed": 4001686
+        },
+        {
+          "index": 30,
+          "gold": 31982937,
+          "completion": "Answer: 32003457",
+          "parsed": 32003457
+        },
+        {
+          "index": 31,
+          "gold": 64917466,
+          "completion": "Answer: 64918066",
+          "parsed": 64918066
+        },
+        {
+          "index": 32,
+          "gold": 26154004,
+          "completion": "Answer: 261570724",
+          "parsed": 261570724
+        },
+        {
+          "index": 33,
+          "gold": 7627840,
+          "completion": "Answer: 7627840",
+          "parsed": 7627840
+        },
+        {
+          "index": 34,
+          "gold": 3610576,
+          "completion": "Answer: 3610336",
+          "parsed": 3610336
+        },
+        {
+          "index": 35,
+          "gold": 18963804,
+          "completion": "Answer: 18963764",
+          "parsed": 18963764
+        },
+        {
+          "index": 36,
+          "gold": 28990520,
+          "completion": "Answer: 29002520",
+          "parsed": 29002520
+        },
+        {
+          "index": 37,
+          "gold": 8366775,
+          "completion": " 8365725",
+          "parsed": 8365725
+        },
+        {
+          "index": 38,
+          "gold": 42549616,
+          "completion": "Answer: 42549616",
+          "parsed": 42549616
+        },
+        {
+          "index": 39,
+          "gold": 26542230,
+          "completion": " 26542230",
+          "parsed": 26542230
+        },
+        {
+          "index": 40,
+          "gold": 2461808,
+          "completion": " 2461808",
+          "parsed": 2461808
+        },
+        {
+          "index": 41,
+          "gold": 57394209,
+          "completion": "Answer: 57389169",
+          "parsed": 57389169
+        },
+        {
+          "index": 42,
+          "gold": 33959988,
+          "completion": "Answer: 33960788",
+          "parsed": 33960788
+        },
+        {
+          "index": 43,
+          "gold": 20590440,
+          "completion": "Answer: 20586840",
+          "parsed": 20586840
+        },
+        {
+          "index": 44,
+          "gold": 7977572,
+          "completion": " 7977572",
+          "parsed": 7977572
+        },
+        {
+          "index": 45,
+          "gold": 33717816,
+          "completion": " 33717816",
+          "parsed": 33717816
+        },
+        {
+          "index": 46,
+          "gold": 31042666,
+          "completion": "Answer: 30995666",
+          "parsed": 30995666
+        },
+        {
+          "index": 47,
+          "gold": 15930070,
+          "completion": "Answer: 15930070",
+          "parsed": 15930070
+        },
+        {
+          "index": 48,
+          "gold": 20980518,
+          "completion": "Answer: 20979558",
+          "parsed": 20979558
+        },
+        {
+          "index": 49,
+          "gold": 33898200,
+          "completion": "Answer: 33898200",
+          "parsed": 33898200
+        }
+      ],
+      "delta_vs_baseline": 14.0,
+      "delta_ci95": 19.08,
+      "delta_vs_cot": -52.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 3.6,
+      "n": 50,
+      "n_kept": 49,
+      "n_reasoning_discarded": 1,
+      "accuracy": 2.04,
+      "ci95": 3.96,
+      "accuracy_including_discarded": 2.0,
+      "reasoning_rate": 2.0,
+      "prompt_tokens": 15125,
+      "completion_tokens": 378,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": "Answer: 1288",
+          "parsed": 1288
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": "Answer: -58051",
+          "parsed": -58051
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Answer: -50",
+          "parsed": -50
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": "Answer: -864192",
+          "parsed": -864192
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "Answer: 192",
+          "parsed": 192
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": "Answer: -178749",
+          "parsed": -178749
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": "Answer: 111",
+          "parsed": 111
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": " -13",
+          "parsed": -13
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": "Answer: -93",
+          "parsed": -93
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": "Answer: -1120",
+          "parsed": -1120
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": "Answer: 46756",
+          "parsed": 46756
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": "Answer: 22400",
+          "parsed": 22400
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": "Answer: 800",
+          "parsed": 800
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": "Answer: -28",
+          "parsed": -28
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": "Answer: -464760",
+          "parsed": -464760
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": "Answer: 12",
+          "parsed": 12
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": "Answer: -11276",
+          "parsed": -11276
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": " -29",
+          "parsed": -29
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": "Answer: 144",
+          "parsed": 144
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": " -37",
+          "parsed": -37
+        },
+        {
+          "index": 20,
+          "gold": 105386,
+          "completion": "Answer: -63243",
+          "parsed": -63243
+        },
+        {
+          "index": 21,
+          "gold": 2812,
+          "completion": "Answer: -10144",
+          "parsed": -10144
+        },
+        {
+          "index": 22,
+          "gold": 458,
+          "completion": "Answer: 116",
+          "parsed": 116
+        },
+        {
+          "index": 23,
+          "gold": -252,
+          "completion": "Answer: -215",
+          "parsed": -215
+        },
+        {
+          "index": 24,
+          "gold": -764928,
+          "completion": "Answer: 4579584",
+          "parsed": 4579584
+        },
+        {
+          "index": 25,
+          "gold": -143220,
+          "completion": "Answer: -14322",
+          "parsed": -14322
+        },
+        {
+          "index": 26,
+          "gold": 173,
+          "completion": " 175",
+          "parsed": 175
+        },
+        {
+          "index": 27,
+          "gold": -2345,
+          "completion": "Answer: -67",
+          "parsed": -67
+        },
+        {
+          "index": 28,
+          "gold": 140,
+          "completion": "Answer: 70",
+          "parsed": 70
+        },
+        {
+          "index": 29,
+          "gold": 1558,
+          "completion": "Answer: -41 * (((-74 * (52 % -41)) // -72) + -7)  \nFirst, compute",
+          "parsed": -41
+        },
+        {
+          "index": 30,
+          "gold": -4296,
+          "completion": " 30",
+          "parsed": 30
+        },
+        {
+          "index": 31,
+          "gold": -100,
+          "completion": "Answer: -45",
+          "parsed": -45
+        },
+        {
+          "index": 32,
+          "gold": -14112,
+          "completion": " -5054916",
+          "parsed": -5054916
+        },
+        {
+          "index": 33,
+          "gold": 101,
+          "completion": "Answer: 23",
+          "parsed": 23
+        },
+        {
+          "index": 34,
+          "gold": -2001,
+          "completion": "Answer: -3864",
+          "parsed": -3864
+        },
+        {
+          "index": 35,
+          "gold": 110,
+          "completion": "Answer: 84",
+          "parsed": 84
+        },
+        {
+          "index": 36,
+          "gold": 249,
+          "completion": "Answer: 139",
+          "parsed": 139
+        },
+        {
+          "index": 37,
+          "gold": 1846,
+          "completion": "Answer: 1780",
+          "parsed": 1780
+        },
+        {
+          "index": 38,
+          "gold": 159,
+          "completion": "Answer: 67",
+          "parsed": 67
+        },
+        {
+          "index": 39,
+          "gold": 189,
+          "completion": "Answer: 92",
+          "parsed": 92
+        },
+        {
+          "index": 40,
+          "gold": 498,
+          "completion": " -720",
+          "parsed": -720
+        },
+        {
+          "index": 41,
+          "gold": -5348,
+          "completion": " -10",
+          "parsed": -10
+        },
+        {
+          "index": 42,
+          "gold": -3780,
+          "completion": "Answer: -2940",
+          "parsed": -2940
+        },
+        {
+          "index": 43,
+          "gold": 182,
+          "completion": "Answer: 141",
+          "parsed": 141
+        },
+        {
+          "index": 44,
+          "gold": -44471,
+          "completion": " -640920",
+          "parsed": -640920
+        },
+        {
+          "index": 45,
+          "gold": -732,
+          "completion": "Answer: -732",
+          "parsed": -732
+        },
+        {
+          "index": 46,
+          "gold": 8186,
+          "completion": " -238",
+          "parsed": -238
+        },
+        {
+          "index": 47,
+          "gold": -2990,
+          "completion": "Answer: -8464",
+          "parsed": -8464
+        },
+        {
+          "index": 48,
+          "gold": 2420,
+          "completion": "Answer: 220",
+          "parsed": 220
+        },
+        {
+          "index": 49,
+          "gold": -5220,
+          "completion": " -2726",
+          "parsed": -2726
+        }
+      ],
+      "delta_vs_baseline": -0.18,
+      "delta_ci95": 5.85,
+      "delta_vs_cot": -91.96
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 84.3,
+      "n": 50,
+      "n_kept": 50,
+      "n_reasoning_discarded": 0,
+      "accuracy": 100.0,
+      "ci95": 0.0,
+      "accuracy_including_discarded": 100.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 3500,
+      "completion_tokens": 28307,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "To find the product of 7825 and 1166, we can multiply them step by step.\n\nWe will compute:\n\n$$\n7825 \\times 1166\n$$\n\nWe can break 1166 into smaller parts to make multiplication easier:\n\n$$\n1166 = 1000 + 100 + 60 + 6\n$$\n\nNow multiply 7825 by each part:\n\n1. $ 7825 \\times 1000 = 7,825,000 $  \n2. $ 7825 \\times 100 = 782,500 $  \n3. $ 7825 \\times 60 = 469,500 $  \n   (Because $ 7825 \\times 6 = 46,950 $, then $ \\times 10 = 469,500 $)\n4. $ 7825 \\times 6 = 46,950 $\n\nNow add them all together:\n\n$$\n7,825,000 + 782,500 = 8,607,500\n$$\n$$\n8,607,500 + 469,500 = 9,077,000\n$$\n$$\n9,077,000 + 46,950 = 9,123,950\n$$\n\nSo the total is:\n\n$$\n7825 \\times 1166 = 9,123,950\n$$\n\nAnswer: 9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "To calculate $ 5892 \\times 7036 $, let's break it down step by step using long multiplication:\n\n### Step 1: Multiply 5892 by each digit of 7036, starting from the right.\n\n#### Multiply 5892 by 6 (units place):\n$$\n5892 \\times 6 = 35,352\n$$\n\n#### Multiply 5892 by 30 (tens place):\n$$\n5892 \\times 3 = 17,676 \\Rightarrow \\text{Shift one place left: } 176,760\n$$\n\n#### Multiply 5892 by 0 (hundreds place):\n$$\n5892 \\times 0 = 0 \\Rightarrow \\text{Shift two places left: } 0\n$$\n\n#### Multiply 5892 by 7000 (thousands place):\n$$\n5892 \\times 7 = 41,244 \\Rightarrow \\text{Shift three places left: } 41,244,000\n$$\n\n### Step 2: Add all the partial results:\n$$\n\\begin{align*}\n&\\quad\\ 35,352 \\\\\n&+ 176,760 \\\\\n&+ \\quad\\quad 0 \\\\\n&+ 41,244,000 \\\\\n\\hline\n&= 35,352 + 176,760 = 212,112 \\\\\n&+ 41,244,000 = 41,456,112 \\\\\n\\end{align*}\n$$\n\nSo, the total is:\n$$\n5892 \\times 7036 = 41,456,112\n$$\n\nAnswer: 41456112",
+          "parsed": 41456112
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "To calculate $ 4172 \\times 5427 $, let's proceed step by step.\n\nWe can use standard multiplication or break it down using distributive property:\n\n$$\n4172 \\times 5427 = 4172 \\times (5000 + 400 + 20 + 7)\n$$\n\nNow distribute:\n\n$$\n= 4172 \\times 5000 + 4172 \\times 400 + 4172 \\times 20 + 4172 \\times 7\n$$\n\nCompute each term:\n\n1. $ 4172 \\times 5000 = 4172 \\times 5 \\times 1000 = (20,860) \\times 1000 = 20,860,000 $\n\n2. $ 4172 \\times 400 = 4172 \\times 4 \\times 100 = (16,688) \\times 100 = 1,668,800 $\n\n3. $ 4172 \\times 20 = 4172 \\times 2 \\times 10 = (8,344) \\times 10 = 83,440 $\n\n4. $ 4172 \\times 7 = 29,204 $\n\nNow add all the results:\n\n$$\n20,860,000 + 1,668,800 = 22,528,800\n$$\n$$\n22,528,800 + 83,440 = 22,612,240\n$$\n$$\n22,612,240 + 29,204 = 22,641,444\n$$\n\nSo, the final result is:\n\nAnswer: 22641444",
+          "parsed": 22641444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": "To calculate $ 8147 \\times 3649 $, we can break it down step by step using long multiplication.\n\n### Step 1: Multiply 8147 by 9 (units digit of 3649)\n$$\n8147 \\times 9 = 73,323\n$$\n\n### Step 2: Multiply 8147 by 40 (tens digit of 3649, i.e., 4 \u00d7 10)\n$$\n8147 \\times 4 = 32,588 \\quad \\text{(then multiply by 10 \u2192 shift left one place)} \\\\\n\\Rightarrow 325,880\n$$\n\n### Step 3: Multiply 8147 by 600 (hundreds digit of 3649, i.e., 6 \u00d7 100)\n$$\n8147 \\times 6 = 48,882 \\quad \\text{(then multiply by 100 \u2192 shift left two places)} \\\\\n\\Rightarrow 4,888,200\n$$\n\n### Step 4: Multiply 8147 by 3000 (thousands digit of 3649, i.e., 3 \u00d7 1000)\n$$\n8147 \\times 3 = 24,441 \\quad \\text{(then multiply by 1000 \u2192 shift left three places)} \\\\\n\\Rightarrow 24,441,000\n$$\n\n### Step 5: Add all the partial results\n$$\n73,323 \\\\\n+ 325,880 \\\\\n+ 4,888,200 \\\\\n+ 24,441,000 \\\\\n= ?\n$$\n\nLet's add step by step:\n\n1. $ 73,323 + 325,880 = 399,203 $\n2. $ 399,203 + 4,888,200 = 5,287,403 $\n3. $ 5,287,403 + 24,441,000 = 29,728,403 $\n\nSo,\n$$\n8147 \\times 3649 = 29,728,403\n$$\n\nAnswer: 29728403",
+          "parsed": 29728403
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": "To calculate $ 7112 \\times 3035 $, we can break it down step by step.\n\nWe can use standard multiplication:\n\n$$\n7112 \\times 3035\n$$\n\nBreak 3035 into parts: $ 3000 + 30 + 5 $\n\nNow compute:\n\n### Step 1: $ 7112 \\times 3000 $\n$$\n7112 \\times 3000 = 7112 \\times 3 \\times 1000 = (21,336) \\times 1000 = 21,336,000\n$$\n\n### Step 2: $ 7112 \\times 30 $\n$$\n7112 \\times 30 = 7112 \\times 3 \\times 10 = 21,336 \\times 10 = 213,360\n$$\n\n### Step 3: $ 7112 \\times 5 $\n$$\n7112 \\times 5 = 35,560\n$$\n\n### Now add all the parts:\n$$\n21,336,000 + 213,360 = 21,549,360\n$$\n$$\n21,549,360 + 35,560 = 21,584,920\n$$\n\nAnswer: 21584920",
+          "parsed": 21584920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": "To calculate $ 8093 \\times 5277 $, we can break it down step by step.\n\nWe\u2019ll use standard multiplication:\n\n```\n     8093\n   \u00d7 5277\n   ------\n```\n\nWe multiply 8093 by each digit of 5277, starting from the right:\n\n### Step 1: Multiply 8093 by 7\n$ 8093 \\times 7 = 56,651 $\n\n### Step 2: Multiply 8093 by 70 (i.e., 7 in tens place)\n$ 8093 \\times 70 = 8093 \\times 7 \\times 10 = 56,651 \\times 10 = 566,510 $\n\n### Step 3: Multiply 8093 by 200 (i.e., 2 in hundreds place)\n$ 8093 \\times 200 = 8093 \\times 2 \\times 100 = 16,186 \\times 100 = 1,618,600 $\n\n### Step 4: Multiply 8093 by 5000 (i.e., 5 in thousands place)\n$ 8093 \\times 5000 = 8093 \\times 5 \\times 1000 = 40,465 \\times 1000 = 40,465,000 $\n\nNow add them all together:\n\n$$\n40,465,000 \\\\\n+ 1,618,600 \\\\\n+   566,510 \\\\\n+    56,651 \\\\\n= ?\n$$\n\nAdd step by step:\n\n1. $ 40,465,000 + 1,618,600 = 42,083,600 $\n2. $ 42,083,600 + 566,510 = 42,650,110 $\n3. $ 42,650,110 + 56,651 = 42,706,761 $\n\nSo, $ 8093 \\times 5277 = 42,706,761 $\n\nAnswer: 42706761",
+          "parsed": 42706761
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": "To calculate $ 3856 \\times 4060 $, we can break it down using the distributive property:\n\n$$\n3856 \\times 4060 = 3856 \\times (4000 + 60) = (3856 \\times 4000) + (3856 \\times 60)\n$$\n\n### Step 1: Calculate $ 3856 \\times 4000 $\n$$\n3856 \\times 4000 = 3856 \\times 4 \\times 1000 = (15424) \\times 1000 = 15,424,000\n$$\n\n### Step 2: Calculate $ 3856 \\times 60 $\n$$\n3856 \\times 60 = 3856 \\times 6 \\times 10 = (23,136) \\times 10 = 231,360\n$$\n\n### Step 3: Add the two results\n$$\n15,424,000 + 231,360 = 15,655,360\n$$\n\nAnswer: 15655360",
+          "parsed": 15655360
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": "To calculate $ 6814 \\times 2495 $, we can break it down step by step using standard multiplication.\n\nBut to make it faster, let's use a calculator-like approach:\n\n$$\n6814 \\times 2495\n$$\n\nWe can compute it directly:\n\nFirst, note that:\n$$\n6814 \\times 2495 = 6814 \\times (2500 - 5) = 6814 \\times 2500 - 6814 \\times 5\n$$\n\nNow compute each part:\n\n1. $ 6814 \\times 2500 $\n\nSince $ 2500 = 25 \\times 100 $, we can do:\n$$\n6814 \\times 25 = ?\n$$\n\nTo compute $ 6814 \\times 25 $:  \nNote $ 25 = 100 \\div 4 $, so:\n$$\n6814 \\times 25 = \\frac{6814 \\times 100}{4} = \\frac{681400}{4} = 170,350\n$$\n\nThen multiply by 100:\n$$\n170,350 \\times 100 = 17,035,000\n$$\n\nWait \u2014 no! Actually, $ 6814 \\times 25 = 170,350 $, then:\n$$\n6814 \\times 2500 = 170,350 \\times 100 = 17,035,000\n$$\n\nWait \u2014 that\u2019s wrong.\n\nWait: Actually, $ 6814 \\times 2500 = 6814 \\times 25 \\times 100 $\n\nWe already have:\n- $ 6814 \\times 25 = 170,350 $\nThen:\n- $ 170,350 \\times 100 = 17,035,000 $\n\nYes \u2014 so $ 6814 \\times 2500 = 17,035,000 $\n\nNow compute:\n- $ 6814 \\times 5 = 34,070 $\n\nSo:\n$$\n6814 \\times 2495 = 6814 \\times (2500 - 5) = 17,035,000 - 34,070 = 16,999,930 + 60? Wait, let's subtract:\n$$\n\n$$\n17,035,000 - 34,070 = ?\n$$\n\nDo the subtraction:\n\n$$\n17,035,000  \n-    34,070  \n= 17,035,000 - 34,070 = 16,999,930 + (1,000 - 70)? Better to compute directly:\n\nAlign:\n\n17,035,000  \n-   34,070  \n= ?\n\nStart from right:\n\nWe can think of it as:\n17,035,000  \n-   34,070  \n= 17,035,000 - 30,000 = 17,005,000  \nThen -4,070 = 17,005,000 - 4,070 = 17,000,930\n\nWait:\n\nWait:\n\n17,035,000  \n-   34,070  \n------------\n\nBreak it:  \n= 17,035,000 - 34,070  \n= 17,000,930?\n\nLet\u2019s do it step by step:\n\n17,035,000 minus 34,070:\n\nWe can write:\n\n17,035,000  \n-   34,070  \n= ?\n\nThink: 17,035,000 - 34,070 = ?\n\nSubtract:\n\nFrom 17,035,000, subtract 30,000 \u2192 17,005,000  \nThen subtract 4,070 \u2192 17,005,000 - 4,070 = 17,000,930\n\nWait \u2014 no:\n\nWait, 17,035,000 - 30,000 = 17,005,000 \u2014 correct  \nThen 17,005,000 - 4,070 = ?\n\n17,005,000 - 4,000 = 17,001,000  \nThen -70 = 17,000,930\n\nYes \u2014 so total: 17,000,930\n\nWait, but that would mean:\n6814 \u00d7 2495 = 17,000,930?\n\nBut let's verify by direct multiplication.\n\nAlternative: Do full multiplication.\n\nLet\u2019s compute $ 6814 \\times 2495 $ directly.\n\nWe can do:\n\n$$\n6814 \\times 2495 = ?\n$$\n\nUse standard multiplication:\n\nFirst, compute:\n\n6814 \u00d7 2495\n\nBreak 2495 as: 2000 + 400 + 90 + 5\n\nSo:\n\n1. $ 6814 \\times 2000 = 13,628,000 $  \n2. $ 6814 \\times 400 = 2,725,600 $  \n3. $ 6814 \\times 90 = 613,260 $  \n4. $ 6814 \\times 5 = 34,070 $\n\nNow add them up:\n\nStart with:\n\n13,628,000  \n+ 2,725,600 \u2192 16,353,600  \n+   613,260 \u2192 16,966,860  \n+    34,070 \u2192 17,000,930\n\nSo total is **17,000,930**\n\nWait \u2014 but earlier we had:\n\n$ 6814 \\times 2500 = 17,035,000 $  \n$ 6814 \\times 5 = 34,070 $  \nThen $ 6814 \\times 2495 = 17,035,000 - 34,070 = 17,000,930 $\n\nSame result.\n\nSo the answer is **17,000,930**\n\nBut let's double-check with a different method.\n\nLet\u2019s compute $ 6814 \\times 2495 $ using direct multiplication:\n\n           6814  \n         \u00d7 2495  \n        --------\n\nFirst, multiply 6814 by 5:  \n6814 \u00d7 5 = 34,070\n\nThen by 90:  \n6814 \u00d7 9 = 61,326 \u2192 so \u00d790 = 613,260\n\nThen by 400:  \n6814 \u00d7 4 = 27,256 \u2192 \u00d7400 = 2,725,600\n\nThen by 2000:  \n6814 \u00d7 2 = 13,628 \u2192 \u00d72000 = 13,628,000\n\nNow add:\n\nStart:\n\n     34,070  \n    613,260  \n  2,725,600  \n 13,628,000  \n-----------\n\nAdd step by step:\n\n34,070 + 613,260 = 647,330  \n647,330 + 2,725,600 = 3,372,930  \n3,372,930 + 13,628,000 = 17,000,930\n\nSame result.\n\nSo final answer is **17,000,930**\n\nAnswer: 17000930",
+          "parsed": 17000930
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": "To calculate $ 9700 \\times 7752 $, we can break it down step by step.\n\nFirst, note that:\n$$\n9700 = 97 \\times 100\n$$\n\nSo:\n$$\n9700 \\times 7752 = (97 \\times 100) \\times 7752 = 97 \\times 7752 \\times 100\n$$\n\nNow compute $ 97 \\times 7752 $.\n\nWe can use the fact that:\n$$\n97 = 100 - 3\n$$\n\nSo:\n$$\n97 \\times 7752 = (100 - 3) \\times 7752 = 100 \\times 7752 - 3 \\times 7752\n$$\n\nCalculate:\n- $ 100 \\times 7752 = 775,200 $\n- $ 3 \\times 7752 = 23,256 $\n\nNow subtract:\n$$\n775,200 - 23,256 = 751,944\n$$\n\nNow multiply by 100 (from earlier):\n$$\n751,944 \\times 100 = 75,194,400\n$$\n\nAnswer: 75194400",
+          "parsed": 75194400
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": "To calculate $ 9256 \\times 3729 $, we can break it down step by step.\n\nWe can use long multiplication or break it into parts:\n\nAlternatively, let's compute directly:\n\n$$\n9256 \\times 3729\n$$\n\nWe can compute this as:\n\n$$\n9256 \\times 3729 = 9256 \\times (3000 + 700 + 20 + 9)\n$$\n\nNow distribute:\n\n$$\n= 9256 \\times 3000 + 9256 \\times 700 + 9256 \\times 20 + 9256 \\times 9\n$$\n\nCompute each term:\n\n1. $ 9256 \\times 3000 = 9256 \\times 3 \\times 1000 = 27,768 \\times 1000 = 27,768,000 $\n\n2. $ 9256 \\times 700 = 9256 \\times 7 \\times 100 = 64,792 \\times 100 = 6,479,200 $\n\n3. $ 9256 \\times 20 = 9256 \\times 2 \\times 10 = 18,512 \\times 10 = 185,120 $\n\n4. $ 9256 \\times 9 = 83,304 $\n\nNow add them all:\n\n$$\n27,768,000 \\\\\n+ 6,479,200 \\\\\n= 34,247,200 \\\\\n+ 185,120 = 34,432,320 \\\\\n+ 83,304 = 34,515,624\n$$\n\nSo, the total is:\n\n$$\n\\boxed{34,515,624}\n$$\n\nAnswer: 34515624",
+          "parsed": 34515624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": "To calculate $ 3427 \\times 4370 $, we can break it down step by step.\n\nWe can write:\n$$\n3427 \\times 4370 = 3427 \\times (4000 + 300 + 70)\n$$\nNow distribute:\n$$\n= 3427 \\times 4000 + 3427 \\times 300 + 3427 \\times 70\n$$\n\nStep 1: $ 3427 \\times 4000 $\n$$\n3427 \\times 4 = 13,708 \\Rightarrow 13,708 \\times 1000 = 13,708,000\n$$\n\nStep 2: $ 3427 \\times 300 $\n$$\n3427 \\times 3 = 10,281 \\Rightarrow 10,281 \\times 100 = 1,028,100\n$$\n\nStep 3: $ 3427 \\times 70 $\n$$\n3427 \\times 7 = 23,989 \\Rightarrow 23,989 \\times 10 = 239,890\n$$\n\nNow add them all:\n$$\n13,708,000 + 1,028,100 = 14,736,100\n$$\n$$\n14,736,100 + 239,890 = 14,975,990\n$$\n\nSo, $ 3427 \\times 4370 = 14,975,990 $\n\nAnswer: 14975990",
+          "parsed": 14975990
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": "To calculate $ 2275 \\times 4112 $, we can break it down step by step.\n\nWe can use standard multiplication:\n\n```\n      2275\n   \u00d7 4112\n   -------\n     4550   \u2190 2275 \u00d7 2\n    22750   \u2190 2275 \u00d7 10 (shifted)\n   227500   \u2190 2275 \u00d7 100 (shifted)\n+ 9100000   \u2190 2275 \u00d7 4000 (shifted)\n---------\n```\n\nBut a better way is to compute directly:\n\nWe can compute:\n\n$$\n2275 \\times 4112 = 2275 \\times (4000 + 100 + 10 + 2)\n$$\n\nBreak it down:\n\n1. $ 2275 \\times 4000 = 2275 \\times 4 \\times 1000 = 9100 \\times 1000 = 9,100,000 $\n2. $ 2275 \\times 100 = 227,500 $\n3. $ 2275 \\times 10 = 22,750 $\n4. $ 2275 \\times 2 = 4,550 $\n\nNow add them all:\n\n$$\n9,100,000 + 227,500 = 9,327,500 \\\\\n9,327,500 + 22,750 = 9,350,250 \\\\\n9,350,250 + 4,550 = 9,354,800\n$$\n\nWait \u2014 double-checking the addition:\n\n- $ 9,100,000 $\n- $ + 227,500 = 9,327,500 $\n- $ + 22,750 = 9,350,250 $\n- $ + 4,550 = 9,354,800 $\n\nSo total is $ 9,354,800 $\n\nBut let's verify with direct multiplication:\n\nLet\u2019s compute $ 2275 \\times 4112 $ directly using multiplication:\n\n```\n      2275\n   \u00d7 4112\n   -------\n      4550   \u2190 2275 \u00d7 2\n     22750   \u2190 2275 \u00d7 1 (tens place)\n    227500   \u2190 2275 \u00d7 1 (hundreds place)\n+ 9100000   \u2190 2275 \u00d7 4 (thousands place, so \u00d74000)\n```\n\nWait: 4112 is:\n\n- 4 (thousands)\n- 1 (hundreds)\n- 1 (tens)\n- 2 (ones)\n\nSo:\n\n- 2275 \u00d7 2 = 4,550\n- 2275 \u00d7 10 = 22,750 \u2192 write as 22,750\n- 2275 \u00d7 100 = 227,500\n- 2275 \u00d7 4000 = 9,100,000\n\nNow sum:\n\nStart with:\n\n9,100,000  \n+ 227,500 \u2192 9,327,500  \n+ 22,750 \u2192 9,350,250  \n+ 4,550 \u2192 9,354,800\n\nYes, same result.\n\nBut wait \u2014 let\u2019s verify using calculator-style multiplication:\n\nTry:\n\n$$\n2275 \\times 4112\n$$\n\nAlternatively, use:\n\n2275 \u00d7 4112\n\nLet me compute it step by step:\n\nFirst, 2275 \u00d7 4112\n\nWe can use:\n\n2275 \u00d7 4112 = ?\n\nLet me compute:\n\n4112 \u00d7 2000 = 8,224,000  \n4112 \u00d7 200 = 822,400  \n4112 \u00d7 70 = 287,840  \n4112 \u00d7 5 = 20,560\n\nNow sum:\n\n2000 + 200 = 2200, 70 + 5 = 75 \u2192 total 2275\n\nSo:\n\n- 4112 \u00d7 2000 = 8,224,000\n- 4112 \u00d7 70 = let's compute: 4112 \u00d7 7 = 28,784 \u2192 \u00d710 = 287,840\n- 4112 \u00d7 5 = 20,560\n- 4112 \u00d7 200 = 822,400\n\nNow sum all:\n\nFirst: 8,224,000 (from 2000)\n\n+ 822,400 (from 200) \u2192 8,224,000 + 822,400 = 9,046,400\n\n+ 287,840 \u2192 9,046,400 + 287,840 = 9,334,240\n\n+ 20,560 \u2192 9,334,240 + 20,560 = 9,354,800\n\nSame result again.\n\nSo total is **9,354,800**\n\nLet me just verify with another method.\n\nCheck: 2275 \u00d7 4112\n\nUse approximation:\n\n2300 \u00d7 4100 = 23 \u00d7 41 \u00d7 100 \u00d7 100 = ?\n\n23 \u00d7 41 = 23 \u00d7 (40 + 1) = 920 + 23 = 943 \u2192 943 \u00d7 10,000 = 9,430,000\n\nWe are close: 9.35 million is reasonable.\n\nBut let\u2019s just accept the consistent result.\n\nAnswer: 9354800\n\nBut wait \u2014 did we make an error in breaking down?\n\nWait: 2275 = 2000 + 200 + 70 + 5 \u2014 yes.\n\n4112 \u00d7 2000 = 8,224,000\n\n4112 \u00d7 200 = 822,400\n\n4112 \u00d7 70 = 4112 \u00d7 7 \u00d7 10 = (28,784) \u00d7 10 = 287,840\n\n4112 \u00d7 5 = 20,560\n\nAdd:\n\n8,224,000  \n+ 822,400 \u2192 9,046,400  \n+ 287,840 \u2192 9,046,400 + 287,840 = 9,334,240  \n+ 20,560 \u2192 9,334,240 + 20,560 = 9,354,800\n\nYes.\n\nAlternatively, use direct multiplication:\n\n       2275  \n     \u00d7 4112  \n     ------  \n       4550   \u2190 2275 \u00d7 2  \n      2275    \u2190 2275 \u00d7 1 (shifted one place \u2192 22750)  \n     2275     \u2190 \u00d7100 \u2192 227500  \n+ 9100       \u2190 \u00d74000 \u2192 9,100,000 (2275 \u00d7 4 = 9100 \u2192 shifted 3 places)\n\nNow align:\n\n       2275  \n     \u00d7 4112  \n     ------  \n        4550   (\u00d72)  \n       22750   (\u00d710)  \n      227500   (\u00d7100)  \n   +9100000    (\u00d74000)  \n     -------\n\nNow add:\n\nStart from right:\n\nBut better to align:\n\n\u2003\u2003\u2003\u2003\u20034550  \n\u2003\u2003\u2003\u200222750  \n\u2003\u2003\u2002227500  \n\u2003+9100000\n\nWrite:\n\n       4,550",
+          "parsed": 9354800
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": "We are asked to compute:\n\n$$\n6596 \\times 6276\n$$\n\nThis is a large multiplication, so we can compute it directly or break it down. Let's compute it step by step using standard multiplication.\n\nAlternatively, we can use a calculator or perform the multiplication carefully.\n\nBut since we're doing it manually, let's break it down using the distributive property.\n\nWe can write:\n\n$$\n6596 \\times 6276 = 6596 \\times (6000 + 200 + 70 + 6)\n$$\n\nNow distribute:\n\n$$\n= 6596 \\times 6000 + 6596 \\times 200 + 6596 \\times 70 + 6596 \\times 6\n$$\n\nCompute each term:\n\n1. $ 6596 \\times 6000 = 6596 \\times 6 \\times 1000 = 39,576 \\times 1000 = 39,576,000 $\n\n2. $ 6596 \\times 200 = 6596 \\times 2 \\times 100 = 13,192 \\times 100 = 1,319,200 $\n\n3. $ 6596 \\times 70 = 6596 \\times 7 \\times 10 = 46,172 \\times 10 = 461,720 $\n\n4. $ 6596 \\times 6 = 39,576 $\n\nNow add all these together:\n\n$$\n39,576,000 + 1,319,200 = 40,895,200\n$$\n$$\n40,895,200 + 461,720 = 41,356,920\n$$\n$$\n41,356,920 + 39,576 = 41,396,496\n$$\n\nSo the final result is:\n\nAnswer: 41396496",
+          "parsed": 41396496
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": "To calculate $ 1385 \\times 8517 $, we can break it down step by step.\n\nWe can use the standard multiplication method or a calculator. Let's compute it carefully.\n\nFirst, note:\n- $ 1385 \\times 8517 $\n\nWe can compute it directly:\n\n$$\n1385 \\times 8517\n$$\n\nLet\u2019s break it down using distributive property:\n\n$$\n= 1385 \\times (8000 + 500 + 10 + 7)\n$$\n$$\n= 1385 \\times 8000 + 1385 \\times 500 + 1385 \\times 10 + 1385 \\times 7\n$$\n\nNow compute each term:\n\n1. $ 1385 \\times 8000 = 1385 \\times 8 \\times 1000 = (11080) \\times 1000 = 11,080,000 $\n2. $ 1385 \\times 500 = 1385 \\times 5 \\times 100 = (6925) \\times 100 = 692,500 $\n3. $ 1385 \\times 10 = 13,850 $\n4. $ 1385 \\times 7 = 9,695 $\n\nNow add them all:\n\n$$\n11,080,000 + 692,500 = 11,772,500\n$$\n$$\n11,772,500 + 13,850 = 11,786,350\n$$\n$$\n11,786,350 + 9,695 = 11,796,045\n$$\n\nSo, the total is:\n\nAnswer: 11796045",
+          "parsed": 11796045
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": "To calculate $ 6562 \\times 1440 $, let's break it down step by step.\n\nWe can write 1440 as $ 1000 + 400 + 40 $, or more simply, use:\n\n$$\n6562 \\times 1440 = 6562 \\times (144 \\times 10) = (6562 \\times 144) \\times 10\n$$\n\nBut perhaps even better: note that:\n\n$$\n1440 = 12 \\times 120\n$$\n\nBut maybe the easiest way is direct multiplication.\n\nAlternatively, write:\n\n$$\n6562 \\times 1440\n$$\n\nWe can compute it as:\n\n$$\n6562 \\times 1440 = 6562 \\times (1400 + 40) = 6562 \\times 1400 + 6562 \\times 40\n$$\n\nFirst, compute $ 6562 \\times 1400 $:\n\nNote: $ 1400 = 14 \\times 100 $\n\nSo:\n\n$$\n6562 \\times 14 = ?\n$$\n\nCompute $ 6562 \\times 14 $:\n\nBreak it into:\n$$\n6562 \\times 10 = 65,620 \\\\\n6562 \\times 4 = 26,248 \\\\\n\\text{Add: } 65,620 + 26,248 = 91,868\n$$\n\nSo:\n$$\n6562 \\times 14 = 91,868\n$$\n\nThen:\n$$\n6562 \\times 1400 = 91,868 \\times 100 = 9,186,800\n$$\n\nNow compute $ 6562 \\times 40 $:\n\n$$\n6562 \\times 4 = 26,248 \\\\\nThen \\times 10 = 262,480\n$$\n\nNow add:\n\n$$\n6562 \\times 1440 = 9,186,800 + 262,480 = 9,449,280\n$$\n\nLet\u2019s verify with another method:\n\nDirect:\n$$\n6562 \\times 1440\n$$\n\nOr even simpler: use calculator-style multiplication.\n\nBut our breakdown:\n\n- $ 6562 \\times 1400 = 9,186,800 $\n- $ 6562 \\times 40 = 262,480 $\n- Sum: $ 9,186,800 + 262,480 = 9,449,280 $\n\nYes.\n\nAnswer: 9449280",
+          "parsed": 9449280
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": "To compute $ 9367 \\times 7807 $, we can break it down step by step using long multiplication.\n\nBut since this is a large multiplication, let's do it carefully.\n\nWe can compute:\n\n$$\n9367 \\times 7807 = 9367 \\times (7000 + 800 + 7) = 9367 \\times 7000 + 9367 \\times 800 + 9367 \\times 7\n$$\n\n### Step 1: Compute $ 9367 \\times 7000 $\n$$\n9367 \\times 7 = 65,569\n$$\nThen add three zeros: $ 65,569,000 $\n\n### Step 2: Compute $ 9367 \\times 800 $\n$$\n9367 \\times 8 = 74,936\n$$\nThen add two zeros: $ 7,493,600 $\n\n### Step 3: Compute $ 9367 \\times 7 $\nWe already did: $ 65,569 $\n\n### Now add them all:\n$$\n65,569,000 + 7,493,600 = 73,062,600\n$$\n$$\n73,062,600 + 65,569 = 73,128,169\n$$\n\nSo,\n$$\n9367 \\times 7807 = 73,128,169\n$$\n\nAnswer: 73128169",
+          "parsed": 73128169
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": "We are asked to compute:\n\n$$\n1056 \\times 1109\n$$\n\n### Step 1: Use the distributive property (break down the multiplication)\n\nWe can break 1109 into:\n\n$$\n1109 = 1100 + 9\n$$\n\nSo:\n\n$$\n1056 \\times 1109 = 1056 \\times (1100 + 9) = (1056 \\times 1100) + (1056 \\times 9)\n$$\n\n### Step 2: Compute $1056 \\times 1100$\n\nNote that:\n\n$$\n1056 \\times 1100 = 1056 \\times 11 \\times 100\n$$\n\nFirst, compute $1056 \\times 11$\n\nUse the trick for multiplying by 11:\n\nFor 1056 \u00d7 11:\n\n- Add digits in pairs:  \n  $1(1+0)(0+5)(5+6)6 = 1\\ 1\\ 5\\ 11\\ 6$ \u2192 carry over the 11\n\nActually, better to do it directly:\n\n$$\n1056 \\times 11 = 1056 \\times (10 + 1) = 10560 + 1056 = 11616\n$$\n\nNow multiply by 100:\n\n$$\n11616 \\times 100 = 1,161,600\n$$\n\nSo:\n\n$$\n1056 \\times 1100 = 1,161,600\n$$\n\n### Step 3: Compute $1056 \\times 9$\n\n$$\n1056 \\times 9 = (1000 + 56) \\times 9 = 1000 \\times 9 + 56 \\times 9 = 9000 + 504 = 9,504\n$$\n\n### Step 4: Add the two parts\n\n$$\n1,161,600 + 9,504 = 1,171,104\n$$\n\n### Final Answer:\n\nAnswer: 1171104",
+          "parsed": 1171104
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": "To find the product of 3683 and 3930, we perform the multiplication:\n\n$$\n3683 \\times 3930\n$$\n\nWe can simplify this by breaking it down:\n\n$$\n3683 \\times 3930 = 3683 \\times (3900 + 30) = (3683 \\times 3900) + (3683 \\times 30)\n$$\n\nFirst, compute $3683 \\times 3900$:\n\nNote: $3900 = 39 \\times 100$, so:\n\n$$\n3683 \\times 3900 = 3683 \\times 39 \\times 100\n$$\n\nNow compute $3683 \\times 39$:\n\nBreak it down:  \n$$\n3683 \\times 39 = 3683 \\times (40 - 1) = 3683 \\times 40 - 3683\n$$\n\n$$\n3683 \\times 40 = 3683 \\times 4 \\times 10 = (14732) \\times 10 = 147,320\n$$\n\n$$\n147,320 - 3,683 = 143,637\n$$\n\nNow multiply by 100:\n\n$$\n143,637 \\times 100 = 14,363,700\n$$\n\nNow compute $3683 \\times 30$:\n\n$$\n3683 \\times 30 = 3683 \\times 3 \\times 10 = 11,049 \\times 10 = 110,490\n$$\n\nNow add:\n\n$$\n14,363,700 + 110,490 = 14,474,190\n$$\n\nAnswer: 14474190",
+          "parsed": 14474190
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": "To find the product of 5695 and 2630, we can multiply them step by step.\n\nWe are calculating:\n\n$$\n5695 \\times 2630\n$$\n\nNote: Instead of long multiplication right away, observe that 2630 = 263 \u00d7 10, so:\n\n$$\n5695 \\times 2630 = 5695 \\times (263 \\times 10) = (5695 \\times 263) \\times 10\n$$\n\nSo first compute $ 5695 \\times 263 $, then multiply by 10.\n\n### Step 1: Compute $ 5695 \\times 263 $\n\nBreak 263 into: 200 + 60 + 3\n\nSo:\n\n$$\n5695 \\times 263 = 5695 \\times (200 + 60 + 3) = 5695 \\times 200 + 5695 \\times 60 + 5695 \\times 3\n$$\n\n#### 1. $ 5695 \\times 200 $\n\n$$\n5695 \\times 200 = 5695 \\times 2 \\times 100 = (11390) \\times 100 = 1,139,000\n$$\n\n#### 2. $ 5695 \\times 60 $\n\n$$\n5695 \\times 60 = 5695 \\times 6 \\times 10 = (34,170) \\times 10 = 341,700\n$$\n\n#### 3. $ 5695 \\times 3 $\n\n$$\n5695 \\times 3 = 17,085\n$$\n\nNow add them:\n\n$$\n1,139,000 + 341,700 = 1,480,700\n$$\n$$\n1,480,700 + 17,085 = 1,497,785\n$$\n\nSo, $ 5695 \\times 263 = 1,497,785 $\n\nNow multiply by 10:\n\n$$\n1,497,785 \\times 10 = 14,977,850\n$$\n\n### Final Answer:\n\nAnswer: 14977850",
+          "parsed": 14977850
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": "To calculate $ 7791 \\times 2734 $, we can break it down using long multiplication or use a step-by-step approach.\n\n### Step 1: Break down 2734\n$$\n7791 \\times 2734 = 7791 \\times (2000 + 700 + 30 + 4)\n$$\n$$\n= 7791 \\times 2000 + 7791 \\times 700 + 7791 \\times 30 + 7791 \\times 4\n$$\n\n### Step 2: Compute each part\n\n1. $ 7791 \\times 2000 = 7791 \\times 2 \\times 1000 = 15,582 \\times 1000 = 15,582,000 $\n\n2. $ 7791 \\times 700 = 7791 \\times 7 \\times 100 $\n   - $ 7791 \\times 7 = 54,537 $\n   - $ 54,537 \\times 100 = 5,453,700 $\n\n3. $ 7791 \\times 30 = 7791 \\times 3 \\times 10 $\n   - $ 7791 \\times 3 = 23,373 $\n   - $ 23,373 \\times 10 = 233,730 $\n\n4. $ 7791 \\times 4 = 31,164 $\n\n### Step 3: Add them all together\n$$\n15,582,000 \\\\\n+ 5,453,700 \\\\\n+ 233,730 \\\\\n+ 31,164 \\\\\n$$\n\nAdd step by step:\n\n- $ 15,582,000 + 5,453,700 = 21,035,700 $\n- $ 21,035,700 + 233,730 = 21,269,430 $\n- $ 21,269,430 + 31,164 = 21,300,594 $\n\nAnswer: 21300594",
+          "parsed": 21300594
+        },
+        {
+          "index": 20,
+          "gold": 28404544,
+          "completion": "To calculate $ 3976 \\times 7144 $, we can break it down step by step.\n\nWe can use standard multiplication:\n\nLet\u2019s compute it:\n\n$$\n3976 \\times 7144\n$$\n\nWe can think of it as:\n\n$$\n3976 \\times 7144 = 3976 \\times (7000 + 100 + 40 + 4)\n$$\n\nBut instead of distributing, since the numbers are large, it might be faster to just multiply directly or use a calculator-like approach.\n\nAlternatively, use direct multiplication:\n\n### Step 1: Multiply 3976 by 7144\n\nLet\u2019s do it step by step:\n\nFirst, write:\n\n       3976  \n    \u00d7  7144  \n    --------\n\nStart multiplying 3976 by each digit of 7144 from right to left.\n\n---\n\n**Step 1: Multiply 3976 by 4**\n\n$$\n3976 \\times 4 = 15904\n$$\n\n---\n\n**Step 2: Multiply 3976 by 40 (i.e., 4 in tens place, so add one zero)**\n\n$$\n3976 \\times 4 = 15904 \\Rightarrow 159040\n$$\n\nWait \u2014 actually, no: 3976 \u00d7 40 = 3976 \u00d7 4 \u00d7 10 = 15904 \u00d7 10 = **159040**\n\n---\n\n**Step 3: Multiply 3976 by 100 (i.e., 1 in hundreds place)**\n\n$$\n3976 \\times 1 = 3976 \\Rightarrow 3976 \\times 100 = 397600\n$$\n\n---\n\n**Step 4: Multiply 3976 by 7000**\n\n$$\n3976 \\times 7 = 27,832  \n\\Rightarrow 27,832 \\times 1000 = 27,832,000\n$$\n\nNow add all:\n\n- 3976 \u00d7 4 = 15,904  \n- 3976 \u00d7 40 = 159,040  \n- 3976 \u00d7 100 = 397,600  \n- 3976 \u00d7 7000 = 27,832,000\n\nNow sum all:\n\n$$\n15,904 + 159,040 = 174,944  \n174,944 + 397,600 = 572,544  \n572,544 + 27,832,000 = 28,404,544\n$$\n\nWait \u2014 double-check:\n\nLet\u2019s do it more carefully:\n\n1. $ 3976 \\times 4 = 15,904 $\n\n2. $ 3976 \\times 40 = 3976 \\times 4 \\times 10 = 15,904 \\times 10 = 159,040 $\n\n3. $ 3976 \\times 100 = 3976 \\times 1 \\times 100 = 397,600 $\n\n4. $ 3976 \\times 7000 = 3976 \\times 7 \\times 1000 $\n\nCompute $ 3976 \\times 7 $:\n\n- $ 3000 \\times 7 = 21,000 $\n- $ 900 \\times 7 = 6,300 $\n- $ 70 \\times 7 = 490 $\n- $ 6 \\times 7 = 42 $\n- Sum: 21,000 + 6,300 = 27,300 + 490 = 27,790 + 42 = **27,832**\n\nThen $ 27,832 \\times 1000 = 27,832,000 $\n\nNow add all components:\n\n1. 15,904  \n2. 159,040  \n3. 397,600  \n4. 27,832,000\n\nAdd step by step:\n\n- 15,904 + 159,040 = 174,944  \n- 174,944 + 397,600 = 572,544  \n- 572,544 + 27,832,000 = **28,404,544**\n\nSo, final result:\n\nAnswer: 28404544\n\nBut let's verify using another method or calculator check.\n\nAlternatively, use direct multiplication:\n\nLet\u2019s compute $ 3976 \\times 7144 $ using full multiplication:\n\n         3976  \n       \u00d7 7144  \n       -------  \n        15904    \u2190 3976 \u00d7 4  \n       159040    \u2190 3976 \u00d7 40 (shifted left by 1)  \n      397600     \u2190 3976 \u00d7 100 (shifted left by 2)  \n   +27832000     \u2190 3976 \u00d7 7000 (shifted left by 3)  \n   ----------  \n   28,404,544\n\nYes, same result.\n\nWait \u2014 when writing 3976 \u00d7 100 = 397,600, and written shifted by 2 positions: \u2192 397600 (yes)\n\nBut in multiplication:\n\nActually, 7144 = 7000 + 100 + 40 + 4 \u2192 correct.\n\nSo total is:\n\n15,904  \n+159,040 \u2192 174,944  \n+397,600 \u2192 572,544  \n+27,832,000 \u2192 **28,404,544**\n\nNow, to be sure, let's do a quick sanity check:\n\nEstimate:\n\n4000 \u00d7 7000 = 28,000,000\n\nWe are doing 3976 (\u2248 4000 - 24) \u00d7 7144 (\u2248 7000 + 144)\n\nSo slightly more than 28 million.\n\nOur result: 28,404,544 \u2014 which is reasonable.\n\nLet\u2019s compute more precisely:\n\nUse (4000 - 24) \u00d7 (7144) = 4000\u00d77144 - 24\u00d77144\n\n4000 \u00d7 7144 = 28,576,000\n\n24 \u00d7 7144 = ?\n\n20 \u00d7 7144 = 142,880  \n4 \u00d7 7144 = 28,576  \nSum = 142,880 + 28,576 = 171,456\n\nSo:\n\n28,576,000 - 171,456 = ?\n\n28,576,000 - 170,000 = 28,406,000  \n28,406,000 - 1,456 = 28,404,544\n\nExactly matches.\n\nSo $ 3976 \\times 7144 = 28,404,544 $\n\nAnswer: 28404544",
+          "parsed": 28404544
+        },
+        {
+          "index": 21,
+          "gold": 46079758,
+          "completion": "To calculate $ 4811 \\times 9578 $, we can proceed step by step.\n\nWe can use standard multiplication:\n\n$$\n4811 \\times 9578\n$$\n\nWe can break this down using the distributive property:\n\n$$\n= 4811 \\times (9000 + 500 + 70 + 8)\n$$\n\n$$\n= 4811 \\times 9000 + 4811 \\times 500 + 4811 \\times 70 + 4811 \\times 8\n$$\n\nNow compute each term:\n\n1. $ 4811 \\times 9000 = 4811 \\times 9 \\times 1000 = (43299) \\times 1000 = 43,299,000 $\n\n2. $ 4811 \\times 500 = 4811 \\times 5 \\times 100 = (24,055) \\times 100 = 2,405,500 $\n\n3. $ 4811 \\times 70 = 4811 \\times 7 \\times 10 = (33,677) \\times 10 = 336,770 $\n\n4. $ 4811 \\times 8 = 38,488 $\n\nNow add all these together:\n\n$$\n43,299,000 + 2,405,500 = 45,704,500\n$$\n$$\n45,704,500 + 336,770 = 46,041,270\n$$\n$$\n46,041,270 + 38,488 = 46,079,758\n$$\n\nSo,\n\n$$\n4811 \\times 9578 = 46,079,758\n$$\n\nAnswer: 46079758",
+          "parsed": 46079758
+        },
+        {
+          "index": 22,
+          "gold": 10624236,
+          "completion": "To calculate $ 6404 \\times 1659 $, we can break it down step by step.\n\nWe can use long multiplication or break it into parts. Let's use the distributive property:\n\n$$\n6404 \\times 1659 = 6404 \\times (1000 + 600 + 50 + 9)\n$$\n\nNow compute each part:\n\n1. $ 6404 \\times 1000 = 6,404,000 $  \n2. $ 6404 \\times 600 = 6404 \\times 6 \\times 100 = 38,424 \\times 100 = 3,842,400 $  \n3. $ 6404 \\times 50 = 6404 \\times 5 \\times 10 = 32,020 \\times 10 = 320,200 $  \n4. $ 6404 \\times 9 = 57,636 $\n\nNow add all these together:\n\n$$\n6,404,000 + 3,842,400 = 10,246,400\n$$\n$$\n10,246,400 + 320,200 = 10,566,600\n$$\n$$\n10,566,600 + 57,636 = 10,624,236\n$$\n\nSo, $ 6404 \\times 1659 = 10,624,236 $\n\nAnswer: 10624236",
+          "parsed": 10624236
+        },
+        {
+          "index": 23,
+          "gold": 14235372,
+          "completion": "To calculate $ 4806 \\times 2962 $, we can break it down step by step.\n\nWe can use the standard multiplication method:\n\n$$\n4806 \\times 2962\n$$\n\nBreak 2962 into parts: $ 2000 + 900 + 60 + 2 $\n\nNow compute:\n\n### Step 1: $ 4806 \\times 2000 $\n$$\n4806 \\times 2000 = 4806 \\times 2 \\times 1000 = 9612 \\times 1000 = 9,612,000\n$$\n\n### Step 2: $ 4806 \\times 900 $\n$$\n4806 \\times 900 = 4806 \\times 9 \\times 100 = (43,254) \\times 100 = 4,325,400\n$$\n\n### Step 3: $ 4806 \\times 60 $\n$$\n4806 \\times 60 = 4806 \\times 6 \\times 10 = (28,836) \\times 10 = 288,360\n$$\n\n### Step 4: $ 4806 \\times 2 $\n$$\n4806 \\times 2 = 9,612\n$$\n\n### Now add all the results:\n$$\n9,612,000 + 4,325,400 = 13,937,400\n$$\n$$\n13,937,400 + 288,360 = 14,225,760\n$$\n$$\n14,225,760 + 9,612 = 14,235,372\n$$\n\nAnswer: 14235372",
+          "parsed": 14235372
+        },
+        {
+          "index": 24,
+          "gold": 41718555,
+          "completion": "We are asked to compute:\n\n$$\n9179 \\times 4545\n$$\n\nWe can perform the multiplication step by step.\n\n### Step 1: Break down the multiplication\nWe can use standard long multiplication or use a calculator-like approach.\n\nAlternatively, we can compute it directly:\n\n$$\n9179 \\times 4545\n$$\n\nLet\u2019s compute it step by step using decomposition:\n\nNote:  \n$$\n4545 = 4000 + 500 + 40 + 5\n$$\n\nSo:\n$$\n9179 \\times 4545 = 9179 \\times (4000 + 500 + 40 + 5)\n$$\n$$\n= 9179 \\times 4000 + 9179 \\times 500 + 9179 \\times 40 + 9179 \\times 5\n$$\n\nNow compute each term:\n\n1. $9179 \\times 4000 = 9179 \\times 4 \\times 1000 = 36,716 \\times 1000 = 36,716,000$\n\n2. $9179 \\times 500 = 9179 \\times 5 \\times 100 = 45,895 \\times 100 = 4,589,500$\n\n3. $9179 \\times 40 = 9179 \\times 4 \\times 10 = 36,716 \\times 10 = 367,160$\n\n4. $9179 \\times 5 = 45,895$\n\nNow add them all:\n\n$$\n36,716,000 \\\\\n+ 4,589,500 \\\\\n+ 367,160 \\\\\n+ 45,895 \\\\\n$$\n\nAdd step by step:\n\nFirst:  \n$36,716,000 + 4,589,500 = 41,305,500$\n\nThen:  \n$41,305,500 + 367,160 = 41,672,660$\n\nThen:  \n$41,672,660 + 45,895 = 41,718,555$\n\n### Final Answer:\nAnswer: 41718555",
+          "parsed": 41718555
+        },
+        {
+          "index": 25,
+          "gold": 21117768,
+          "completion": "To calculate $ 4044 \\times 5222 $, we can proceed step by step.\n\nWe'll use standard multiplication:\n\n### Step 1: Break it down\nWe can compute it directly:\n\n$$\n4044 \\times 5222\n$$\n\nWe can think of it as:\n\n$$\n4044 \\times (5000 + 200 + 20 + 2) = 4044 \\times 5000 + 4044 \\times 200 + 4044 \\times 20 + 4044 \\times 2\n$$\n\n### Step 2: Compute each term\n\n1. $ 4044 \\times 5000 = 4044 \\times 5 \\times 1000 = 20220 \\times 1000 = 20,220,000 $\n\n2. $ 4044 \\times 200 = 4044 \\times 2 \\times 100 = 8088 \\times 100 = 808,800 $\n\n3. $ 4044 \\times 20 = 4044 \\times 2 \\times 10 = 8088 \\times 10 = 80,880 $\n\n4. $ 4044 \\times 2 = 8,088 $\n\n### Step 3: Add all the results\n\n$$\n20,220,000 + 808,800 = 21,028,800\n$$\n$$\n21,028,800 + 80,880 = 21,109,680\n$$\n$$\n21,109,680 + 8,088 = 21,117,768\n$$\n\n### Final Answer:\nAnswer: 21117768",
+          "parsed": 21117768
+        },
+        {
+          "index": 26,
+          "gold": 76916450,
+          "completion": "To calculate $ 8105 \\times 9490 $, we can break it down step by step.\n\nWe can use the distributive property:\n\n$$\n8105 \\times 9490 = 8105 \\times (9000 + 490) = (8105 \\times 9000) + (8105 \\times 490)\n$$\n\n### Step 1: $ 8105 \\times 9000 $\n$$\n8105 \\times 9000 = 8105 \\times 9 \\times 1000\n$$\nFirst, $ 8105 \\times 9 $:\n\n$$\n8105 \\times 9 = (8000 + 105) \\times 9 = 8000 \\times 9 + 105 \\times 9 = 72000 + 945 = 72945\n$$\n\nNow multiply by 1000:\n$$\n72945 \\times 1000 = 72,945,000\n$$\n\n### Step 2: $ 8105 \\times 490 $\n$$\n490 = 500 - 10\n$$\nSo:\n$$\n8105 \\times 490 = 8105 \\times (500 - 10) = (8105 \\times 500) - (8105 \\times 10)\n$$\n\n- $ 8105 \\times 500 = 8105 \\times 5 \\times 100 $\n\n$ 8105 \\times 5 = 40,525 $, then $ \\times 100 = 4,052,500 $\n\n- $ 8105 \\times 10 = 81,050 $\n\nSo:\n$$\n4,052,500 - 81,050 = 3,971,450\n$$\n\n### Step 3: Add both parts\n$$\n72,945,000 + 3,971,450 = 76,916,450\n$$\n\nAnswer: 76916450",
+          "parsed": 76916450
+        },
+        {
+          "index": 27,
+          "gold": 5253360,
+          "completion": "We are asked to compute:\n\n$$\n3127 \\times 1680\n$$\n\nWe can break this down for easier calculation. One way is to use the distributive property.\n\nNote that:\n\n$$\n1680 = 1600 + 80\n$$\n\nSo:\n\n$$\n3127 \\times 1680 = 3127 \\times (1600 + 80) = 3127 \\times 1600 + 3127 \\times 80\n$$\n\n### Step 1: Compute $3127 \\times 1600$\n\nNote: $1600 = 16 \\times 100$, so:\n\n$$\n3127 \\times 1600 = 3127 \\times 16 \\times 100\n$$\n\nFirst, compute $3127 \\times 16$:\n\nBreak $16 = 10 + 6$:\n\n$$\n3127 \\times 10 = 31,270  \n3127 \\times 6 = 18,762  \n$$\n\nAdd them:\n\n$$\n31,270 + 18,762 = 50,032\n$$\n\nNow multiply by 100:\n\n$$\n50,032 \\times 100 = 5,003,200\n$$\n\nSo:\n\n$$\n3127 \\times 1600 = 5,003,200\n$$\n\n---\n\n### Step 2: Compute $3127 \\times 80$\n\nNote: $80 = 8 \\times 10$\n\nFirst, $3127 \\times 8 = 25,016$\n\nThen multiply by 10: $25,016 \\times 10 = 250,160$\n\nSo:\n\n$$\n3127 \\times 80 = 250,160\n$$\n\n---\n\n### Step 3: Add them together\n\n$$\n5,003,200 + 250,160 = 5,253,360\n$$\n\n---\n\nAnswer: 5253360",
+          "parsed": 5253360
+        },
+        {
+          "index": 28,
+          "gold": 21897904,
+          "completion": "To calculate $ 3689 \\times 5936 $, we can break it down step by step using long multiplication.\n\n### Step 1: Break down 5936\nWe can think of this as:\n\n$$\n3689 \\times 5936 = 3689 \\times (5000 + 900 + 30 + 6)\n$$\n\nNow distribute:\n\n$$\n= (3689 \\times 5000) + (3689 \\times 900) + (3689 \\times 30) + (3689 \\times 6)\n$$\n\n---\n\n### Step 2: Compute each term\n\n**1. $ 3689 \\times 5000 $**\n\n$$\n3689 \\times 5000 = 3689 \\times 5 \\times 1000 = (18,445) \\times 1000 = 18,445,000\n$$\n\n---\n\n**2. $ 3689 \\times 900 $**\n\n$$\n3689 \\times 900 = 3689 \\times 9 \\times 100 = (33,201) \\times 100 = 3,320,100\n$$\n\n---\n\n**3. $ 3689 \\times 30 $**\n\n$$\n3689 \\times 30 = 3689 \\times 3 \\times 10 = (11,067) \\times 10 = 110,670\n$$\n\n---\n\n**4. $ 3689 \\times 6 $**\n\n$$\n3689 \\times 6 = 22,134\n$$\n\n---\n\n### Step 3: Add them all together\n\nNow add:\n\n$$\n18,445,000 \\\\\n+ 3,320,100 \\\\\n+ 110,670 \\\\\n+ 22,134 \\\\\n$$\n\nStart step by step:\n\n1. $ 18,445,000 + 3,320,100 = 21,765,100 $\n2. $ 21,765,100 + 110,670 = 21,875,770 $\n3. $ 21,875,770 + 22,134 = 21,897,904 $\n\n---\n\n### Final Answer:\n\nAnswer: 21897904",
+          "parsed": 21897904
+        },
+        {
+          "index": 29,
+          "gold": 3991686,
+          "completion": "To calculate $ 1153 \\times 3462 $, we can break it down step by step using long multiplication.\n\n### Step 1: Multiply 1153 by each digit of 3462, starting from the right.\n\nWe\u2019ll compute:\n\n$$\n1153 \\times 3462 = 1153 \\times (3000 + 400 + 60 + 2)\n$$\n\nSo we compute each part:\n\n### Step 2: Compute partial products\n\n1. $ 1153 \\times 2 = 2306 $\n\n2. $ 1153 \\times 60 = 1153 \\times 6 \\times 10 = 6918 \\times 10 = 69,180 $\n\n3. $ 1153 \\times 400 = 1153 \\times 4 \\times 100 = 4612 \\times 100 = 461,200 $\n\n4. $ 1153 \\times 3000 = 1153 \\times 3 \\times 1000 = 3459 \\times 1000 = 3,459,000 $\n\n### Step 3: Add all the partial products\n\nNow add:\n\n$$\n3,459,000 + 461,200 = 3,920,200\n$$\n$$\n3,920,200 + 69,180 = 3,989,380\n$$\n$$\n3,989,380 + 2,306 = 3,991,686\n$$\n\n### Final Answer:\n\nAnswer: 3991686",
+          "parsed": 3991686
+        },
+        {
+          "index": 30,
+          "gold": 31982937,
+          "completion": "To calculate $ 4753 \\times 6729 $, we can break it down step by step.\n\nWe can use standard multiplication:\n\n```\n      4753\n   \u00d7  6729\n   --------\n     42777   \u2190 4753 \u00d7 9\n    95060    \u2190 4753 \u00d7 20 (shifted one position to the left)\n   332710    \u2190 4753 \u00d7 700 (shifted two positions to the left)\n+ 28518000   \u2190 4753 \u00d7 6000 (shifted three positions to the left)\n   --------\n```\n\nNow compute each partial product:\n\n1. $ 4753 \\times 9 = 42,777 $\n2. $ 4753 \\times 20 = 95,060 $\n3. $ 4753 \\times 700 = 3,327,100 $\n4. $ 4753 \\times 6000 = 28,518,000 $\n\nNow add them up:\n\n$$\n42,777 + 95,060 = 137,837 \\\\\n137,837 + 3,327,100 = 3,464,937 \\\\\n3,464,937 + 28,518,000 = 31,982,937\n$$\n\nWait \u2014 that seems off. Let's double-check by direct multiplication or a better method.\n\nAlternatively, use calculator-style multiplication:\n\nLet\u2019s compute $ 4753 \\times 6729 $ directly using multiplication:\n\nWe can do:\n\n$$\n4753 \\times 6729 = 4753 \\times (6000 + 700 + 20 + 9)\n$$\n\nBreak it down:\n\n1. $ 4753 \\times 6000 = 4753 \\times 6 \\times 1000 = (28,518) \\times 1000 = 28,518,000 $\n2. $ 4753 \\times 700 = 4753 \\times 7 \\times 100 = (33,271) \\times 100 = 3,327,100 $\n3. $ 4753 \\times 20 = 4753 \\times 2 \\times 10 = (9,506) \\times 10 = 95,060 $\n4. $ 4753 \\times 9 = 42,777 $\n\nNow add all:\n\nStart with:\n- 28,518,000\n- + 3,327,100 = 31,845,100\n- + 95,060 = 31,940,160\n- + 42,777 = 31,982,937\n\nSo:\n\n$$\n4753 \\times 6729 = 31,982,937\n$$\n\nLet\u2019s verify with another method or logic.\n\nAlternatively, use approximation:\n- 4750 \u00d7 6730 \u2248 ?\n- 4750 \u00d7 6730 = (475 \u00d7 10) \u00d7 (673 \u00d7 10) = 475 \u00d7 673 \u00d7 100\n\nBut better to trust the step-by-step.\n\nAll partial products add to **31,982,937**\n\nAnswer: 31982937",
+          "parsed": 31982937
+        },
+        {
+          "index": 31,
+          "gold": 64917466,
+          "completion": "To calculate $ 9833 \\times 6602 $, we can break it down step by step.\n\nWe can use standard multiplication:\n\n```\n     9833\n   \u00d7 6602\n   ------\n    19666   \u2190 9833 \u00d7 2\n   00000    \u2190 9833 \u00d7 0 (shifted one position to the left)\n  58998     \u2190 9833 \u00d7 6 (shifted two positions, but actually 600)\n58998      \u2190 9833 \u00d7 6 (shifted three positions, actually 6000)\n```\n\nBut it's easier to compute directly using multiplication:\n\nWe can compute:\n\n$ 9833 \\times 6602 $\n\nLet\u2019s compute it step by step:\n\nWe can think of:\n\n$ 9833 \\times 6602 = 9833 \\times (6000 + 600 + 2) $\n\nSo:\n\n1. $ 9833 \\times 6000 = 9833 \\times 6 \\times 1000 = (58998) \\times 1000 = 58,998,000 $\n2. $ 9833 \\times 600 = 9833 \\times 6 \\times 100 = 58,998 \\times 100 = 5,899,800 $\n3. $ 9833 \\times 2 = 19,666 $\n\nNow add them all:\n\nFirst:  \n$ 58,998,000 + 5,899,800 = 64,897,800 $  \nThen:  \n$ 64,897,800 + 19,666 = 64,917,466 $\n\nSo, $ 9833 \\times 6602 = 64,917,466 $\n\nAnswer: 64917466",
+          "parsed": 64917466
+        },
+        {
+          "index": 32,
+          "gold": 26154004,
+          "completion": "To calculate $ 3571 \\times 7324 $, we can break it down step by step using standard multiplication:\n\nFirst, write the numbers:\n\n```\n      3571\n   \u00d7  7324\n   --------\n```\n\nWe multiply 3571 by each digit of 7324, starting from the right.\n\n### Step 1: Multiply 3571 by 4\n\n$ 3571 \\times 4 = 14,284 $\n\n### Step 2: Multiply 3571 by 20 (i.e., 2 in tens place)\n\n$ 3571 \\times 2 = 7,142 $ \u2192 shift one place left \u2192 71,420\n\n### Step 3: Multiply 3571 by 300 (i.e., 3 in hundreds place)\n\n$ 3571 \\times 3 = 10,713 $ \u2192 shift three places left \u2192 1,071,300\n\n### Step 4: Multiply 3571 by 7000 (i.e., 7 in thousands place)\n\n$ 3571 \\times 7 = 24,997 $ \u2192 shift four places left \u2192 24,997,000\n\nNow add them all:\n\n```\n     14,284\n    71,420\n  1,071,300\n+ 24,997,000\n------------\n```\n\nAdd step by step:\n\n1. $ 14,284 + 71,420 = 85,704 $\n2. $ 85,704 + 1,071,300 = 1,157,004 $\n3. $ 1,157,004 + 24,997,000 = 26,154,004 $\n\nSo, $ 3571 \\times 7324 = 26,154,004 $\n\nAnswer: 26154004",
+          "parsed": 26154004
+        },
+        {
+          "index": 33,
+          "gold": 7627840,
+          "completion": "To calculate $ 6304 \\times 1210 $, we can break it down step by step.\n\nFirst, note that:\n$$\n1210 = 1000 + 200 + 10\n$$\n\nSo:\n$$\n6304 \\times 1210 = 6304 \\times (1000 + 200 + 10) = 6304 \\times 1000 + 6304 \\times 200 + 6304 \\times 10\n$$\n\nNow compute each term:\n\n1. $ 6304 \\times 1000 = 6,304,000 $\n\n2. $ 6304 \\times 200 = 6304 \\times 2 \\times 100 = 12,608 \\times 100 = 1,260,800 $\n\n3. $ 6304 \\times 10 = 63,040 $\n\nNow add them together:\n$$\n6,304,000 + 1,260,800 = 7,564,800\n$$\n$$\n7,564,800 + 63,040 = 7,627,840\n$$\n\nSo, $ 6304 \\times 1210 = 7,627,840 $\n\nAnswer: 7627840",
+          "parsed": 7627840
+        },
+        {
+          "index": 34,
+          "gold": 3610576,
+          "completion": "To calculate $ 1808 \\times 1997 $, we can break it down using the distributive property:\n\nNote that:\n$$\n1997 = 2000 - 3\n$$\n\nSo:\n$$\n1808 \\times 1997 = 1808 \\times (2000 - 3) = 1808 \\times 2000 - 1808 \\times 3\n$$\n\nNow compute each part:\n\n1. $ 1808 \\times 2000 = 1808 \\times 2 \\times 1000 = 3616 \\times 1000 = 3,616,000 $\n\n2. $ 1808 \\times 3 = 5,424 $\n\nNow subtract:\n$$\n3,616,000 - 5,424 = 3,610,576\n$$\n\nAnswer: 3610576",
+          "parsed": 3610576
+        },
+        {
+          "index": 35,
+          "gold": 18963804,
+          "completion": "To calculate $ 8292 \\times 2287 $, we can break it down step by step.\n\nWe can use the standard multiplication method:\n\nLet\u2019s compute:\n\n```\n     8292\n   \u00d7 2287\n   -------\n    58044   \u2190 8292 \u00d7 7\n   66336    \u2190 8292 \u00d7 80 (shift one position left)\n  16584     \u2190 8292 \u00d7 200 (shift two positions left)\n+16584      \u2190 8292 \u00d7 2000 (shift three positions left)\n```\n\nBut better to do it properly with alignment.\n\n### Step-by-step:\n\n**Step 1: Multiply 8292 by 7**\n$ 8292 \\times 7 = 58044 $\n\n**Step 2: Multiply 8292 by 80**\n$ 8292 \\times 8 = 66336 $, then add one zero \u2192 663360\n\n**Step 3: Multiply 8292 by 200**\n$ 8292 \\times 2 = 16584 $, then add two zeros \u2192 1658400\n\n**Step 4: Multiply 8292 by 2000**\n$ 8292 \\times 2 = 16584 $, then add three zeros \u2192 16,584,000\n\nNow add them all:\n\n$$\n\\begin{align*}\n&\\quad\\quad58044 \\\\\n&\\quad\\ 663360 \\\\\n&\\ 1658400 \\\\\n+&16584000 \\\\\n\\hline\n\\end{align*}\n$$\n\nAdd step by step:\n\n1. $ 58044 + 663360 = 721404 $\n2. $ 721404 + 1658400 = 2,379,804 $\n3. $ 2,379,804 + 16,584,000 = 18,963,804 $\n\nSo, $ 8292 \\times 2287 = 18,963,804 $\n\nAnswer: 18963804",
+          "parsed": 18963804
+        },
+        {
+          "index": 36,
+          "gold": 28990520,
+          "completion": "To calculate $ 7358 \\times 3940 $, we can break it down step by step.\n\nFirst, note that:\n$$\n7358 \\times 3940 = 7358 \\times (4000 - 60) = 7358 \\times 4000 - 7358 \\times 60\n$$\n\n### Step 1: Calculate $ 7358 \\times 4000 $\n$$\n7358 \\times 4000 = 7358 \\times 4 \\times 1000\n$$\n$$\n7358 \\times 4 = 29,432\n$$\n$$\n29,432 \\times 1000 = 29,432,000\n$$\n\n### Step 2: Calculate $ 7358 \\times 60 $\n$$\n7358 \\times 60 = 7358 \\times 6 \\times 10\n$$\n$$\n7358 \\times 6 = 44,148\n$$\n$$\n44,148 \\times 10 = 441,480\n$$\n\n### Step 3: Subtract\n$$\n7358 \\times 3940 = 29,432,000 - 441,480 = 28,990,520\n$$\n\nAnswer: 28990520",
+          "parsed": 28990520
+        },
+        {
+          "index": 37,
+          "gold": 8366775,
+          "completion": "To find the product of 1191 and 7025, we can perform multiplication step by step.\n\nWe are calculating:\n\n$$\n1191 \\times 7025\n$$\n\n### Step 1: Break it down using multiplication\nWe can think of it as:\n\n$$\n1191 \\times 7025 = 1191 \\times (7000 + 25) = (1191 \\times 7000) + (1191 \\times 25)\n$$\n\n### Step 2: Calculate $1191 \\times 7000$\n\n$$\n1191 \\times 7000 = 1191 \\times 7 \\times 1000\n$$\n\nFirst, $1191 \\times 7$:\n\n$$\n1191 \\times 7 = (1000 \\times 7) + (100 \\times 7) + (90 \\times 7) + (1 \\times 7) = 7000 + 700 + 630 + 7 = 8337\n$$\n\nNow multiply by 1000:\n\n$$\n8337 \\times 1000 = 8,337,000\n$$\n\n### Step 3: Calculate $1191 \\times 25$\n\nNote: $25 = 100 \\div 4$, so $1191 \\times 25 = 1191 \\times 100 \\div 4$\n\n$$\n1191 \\times 100 = 119,100\n$$\n\nNow divide by 4:\n\n$$\n119,100 \\div 4 = 29,775\n$$\n\n### Step 4: Add the two parts\n\n$$\n8,337,000 + 29,775 = 8,366,775\n$$\n\n### Final Answer:\nAnswer: 8366775",
+          "parsed": 8366775
+        },
+        {
+          "index": 38,
+          "gold": 42549616,
+          "completion": "To calculate $ 4528 \\times 9397 $, we can proceed step by step.\n\nWe\u2019ll use standard multiplication:\n\nLet\u2019s break it down:\n\n### Step 1: Multiply 4528 by 9397\n\nWe can compute it directly:\n\nRather than long multiplication manually, we can compute:\n\n$$\n4528 \\times 9397\n$$\n\nWe can use the distributive property:\n\n$$\n= 4528 \\times (9000 + 300 + 90 + 7)\n$$\n\n$$\n= 4528 \\times 9000 + 4528 \\times 300 + 4528 \\times 90 + 4528 \\times 7\n$$\n\nNow calculate each term:\n\n1. $ 4528 \\times 9000 = 4528 \\times 9 \\times 1000 = (40752) \\times 1000 = 40,752,000 $\n\n2. $ 4528 \\times 300 = 4528 \\times 3 \\times 100 = (13,584) \\times 100 = 1,358,400 $\n\n3. $ 4528 \\times 90 = 4528 \\times 9 \\times 10 = (40,752) \\times 10 = 407,520 $\n\n4. $ 4528 \\times 7 = 31,696 $\n\nNow add them all together:\n\n$$\n40,752,000 + 1,358,400 = 42,110,400\n$$\n$$\n42,110,400 + 407,520 = 42,517,920\n$$\n$$\n42,517,920 + 31,696 = 42,549,616\n$$\n\nSo, the final result is:\n\nAnswer: 42549616",
+          "parsed": 42549616
+        },
+        {
+          "index": 39,
+          "gold": 26542230,
+          "completion": "We are asked to compute:\n\n$$\n2990 \\times 8877\n$$\n\nWe can simplify this multiplication step by step.\n\nFirst, note that:\n\n$$\n2990 = 3000 - 10\n$$\n\nSo we can use the distributive property:\n\n$$\n2990 \\times 8877 = (3000 - 10) \\times 8877 = 3000 \\times 8877 - 10 \\times 8877\n$$\n\nNow compute each term:\n\n1. $ 3000 \\times 8877 = 3 \\times 1000 \\times 8877 = 3 \\times 8,877,000 = 26,631,000 $\n\n2. $ 10 \\times 8877 = 88,770 $\n\nNow subtract:\n\n$$\n26,631,000 - 88,770 = 26,542,230\n$$\n\nAnswer: 26542230",
+          "parsed": 26542230
+        },
+        {
+          "index": 40,
+          "gold": 2461808,
+          "completion": "We are asked to compute:\n\n$$\n2008 \\times 1226\n$$\n\nWe can compute this using direct multiplication or break it down for easier calculation.\n\nLet\u2019s break it down using the distributive property:\n\n$$\n2008 \\times 1226 = 2008 \\times (1200 + 26) = (2008 \\times 1200) + (2008 \\times 26)\n$$\n\n### Step 1: Compute $2008 \\times 1200$\n\n$$\n2008 \\times 1200 = 2008 \\times 12 \\times 100\n$$\n\nFirst, compute $2008 \\times 12$:\n\n$$\n2008 \\times 12 = (2000 + 8) \\times 12 = 2000 \\times 12 + 8 \\times 12 = 24000 + 96 = 24096\n$$\n\nNow multiply by 100:\n\n$$\n24096 \\times 100 = 2,409,600\n$$\n\n### Step 2: Compute $2008 \\times 26$\n\n$$\n2008 \\times 26 = (2000 + 8) \\times 26 = 2000 \\times 26 + 8 \\times 26 = 52,000 + 208 = 52,208\n$$\n\n### Step 3: Add the two results\n\n$$\n2,409,600 + 52,208 = 2,461,808\n$$\n\nAnswer: 2461808",
+          "parsed": 2461808
+        },
+        {
+          "index": 41,
+          "gold": 57394209,
+          "completion": "We are asked to compute:\n\n$$\n9057 \\times 6337\n$$\n\nWe can compute this using standard multiplication.\n\nTo make it easier, let's break it down step by step.\n\nWe can use direct multiplication:\n\n```\n       9057\n   \u00d7   6337\n   --------\n```\n\nWe'll multiply 9057 by each digit of 6337, starting from the right:\n\n### Step 1: Multiply 9057 by 7 (units place)\n\n$$\n9057 \\times 7 = 63,399\n$$\n\n### Step 2: Multiply 9057 by 3 (tens place) \u2192 shift one position left\n\n$$\n9057 \\times 3 = 27,171 \u2192 271,710\n$$\n\n### Step 3: Multiply 9057 by 3 (hundreds place) \u2192 shift two positions left\n\n$$\n9057 \\times 3 = 27,171 \u2192 2,717,100\n$$\n\n### Step 4: Multiply 9057 by 6 (thousands place) \u2192 shift three positions left\n\n$$\n9057 \\times 6 = 54,342 \u2192 54,342,000\n$$\n\n### Now add them all:\n\n$$\n63,399 + 271,710 + 2,717,100 + 54,342,000\n$$\n\nLet\u2019s add step by step:\n\n1. $63,399 + 271,710 = 335,109$\n2. $335,109 + 2,717,100 = 3,052,209$\n3. $3,052,209 + 54,342,000 = 57,394,209$\n\nSo,\n\n$$\n9057 \\times 6337 = 57,394,209\n$$\n\nAnswer: 57394209",
+          "parsed": 57394209
+        },
+        {
+          "index": 42,
+          "gold": 33959988,
+          "completion": "To calculate $ 7894 \\times 4302 $, we can break it down step by step using standard multiplication:\n\nLet\u2019s compute:\n\n```\n      7894\n   \u00d7  4302\n   --------\n```\n\nWe'll multiply 7894 by each digit of 4302, starting from the right:\n\n### Step 1: Multiply 7894 by 2 (units place)\n$ 7894 \\times 2 = 15788 $\n\n### Step 2: Multiply 7894 by 0 (tens place)\n$ 7894 \\times 0 = 0 $, shifted one position to the left \u2192 00 (or just 0)\n\n### Step 3: Multiply 7894 by 3 (hundreds place)\n$ 7894 \\times 3 = 23682 $, shifted two positions to the left \u2192 2368200\n\n### Step 4: Multiply 7894 by 4 (thousands place)\n$ 7894 \\times 4 = 31576 $, shifted three positions to the left \u2192 31576000\n\nNow add them all together:\n\n```\n     15788   (from \u00d72)\n         0   (from \u00d70, \u00d710)\n  2368200   (from \u00d73, \u00d7100)\n+31576000   (from \u00d74, \u00d71000)\n----------\n```\n\nAdd step by step:\n\n1. $ 15788 + 0 = 15788 $\n2. $ 15788 + 2368200 = 2383988 $\n3. $ 2383988 + 31576000 = 33959988 $\n\nSo, the final result is:\n\nAnswer: 33959988",
+          "parsed": 33959988
+        },
+        {
+          "index": 43,
+          "gold": 20590440,
+          "completion": "To calculate $ 6968 \\times 2955 $, we can break it down step by step using long multiplication or use estimation and careful calculation.\n\nBut let's compute it directly:\n\nWe can compute:\n\n$$\n6968 \\times 2955\n$$\n\nFirst, break 2955 into smaller parts:\n$$\n2955 = 2000 + 900 + 50 + 5\n$$\n\nNow compute:\n1. $ 6968 \\times 2000 = 6968 \\times 2 \\times 1000 = 13,936 \\times 1000 = 13,936,000 $\n2. $ 6968 \\times 900 = 6968 \\times 9 \\times 100 $\n   - $ 6968 \\times 9 = 62,712 $\n   - $ 62,712 \\times 100 = 6,271,200 $\n3. $ 6968 \\times 50 = 6968 \\times 5 \\times 10 $\n   - $ 6968 \\times 5 = 34,840 $\n   - $ 34,840 \\times 10 = 348,400 $\n4. $ 6968 \\times 5 = 34,840 $\n\nNow add all the parts:\n$$\n13,936,000 \\\\\n+ 6,271,200 \\\\\n= 20,207,200 \\\\\n+ 348,400 = 20,555,600 \\\\\n+ 34,840 = 20,590,440\n$$\n\nSo,\n$$\n6968 \\times 2955 = 20,590,440\n$$\n\nLet\u2019s verify with another method or calculator-style multiplication to confirm.\n\nAlternatively, use direct multiplication:\n\n       6968  \n     \u00d7 2955  \n     -------\n      34840   \u2190 6968 \u00d7 5  \n     348400   \u2190 6968 \u00d7 50 (shifted)  \n    6271200   \u2190 6968 \u00d7 900 (shifted)  \n +13936000   \u2190 6968 \u00d7 2000 (shifted)  \n     -------\n    20,590,440\n\nYes, the total is 20,590,440.\n\nAnswer: 20590440",
+          "parsed": 20590440
+        },
+        {
+          "index": 44,
+          "gold": 7977572,
+          "completion": "To find the product of 3452 and 2311, we can multiply them step by step.\n\nWe can use long multiplication:\n\n```\n       3452\n   \u00d7   2311\n   --------\n       3452   (3452 \u00d7 1)\n      34520   (3452 \u00d7 10)\n     1035600  (3452 \u00d7 300)\n   +6904000   (3452 \u00d7 2000)\n   ---------\n```\n\nLet\u2019s compute each step:\n\n1. 3452 \u00d7 1 = 3,452  \n2. 3452 \u00d7 10 = 34,520  \n3. 3452 \u00d7 300 = 3452 \u00d7 3 \u00d7 100 = 10,356 \u00d7 100 = 1,035,600  \n4. 3452 \u00d7 2000 = 3452 \u00d7 2 \u00d7 1000 = 6,904 \u00d7 1000 = 6,904,000  \n\nNow add them all:\n\nStart with:\n- 3,452\n- + 34,520 = 37,972\n- + 1,035,600 = 1,073,572\n- + 6,904,000 = 7,977,572\n\nSo, 3452 \u00d7 2311 = 7,977,572\n\nAnswer: 7977572",
+          "parsed": 7977572
+        },
+        {
+          "index": 45,
+          "gold": 33717816,
+          "completion": "We are asked to compute:\n\n$$\n9108 \\times 3702\n$$\n\n### Step 1: Break it down using multiplication\nWe can compute it directly or use long multiplication. Here, we'll use direct computation with a breakdown.\n\nLet\u2019s use the distributive property:\n\n$$\n9108 \\times 3702 = 9108 \\times (3000 + 700 + 2)\n$$\n\nNow compute each part:\n\n#### 1. $9108 \\times 3000$\n$$\n9108 \\times 3000 = 9108 \\times 3 \\times 1000 = (27324) \\times 1000 = 27,324,000\n$$\n\n#### 2. $9108 \\times 700$\n$$\n9108 \\times 700 = 9108 \\times 7 \\times 100 = (63,756) \\times 100 = 6,375,600\n$$\n\n#### 3. $9108 \\times 2$\n$$\n9108 \\times 2 = 18,216\n$$\n\n### Step 2: Add them together\nNow add all three results:\n\n$$\n27,324,000 + 6,375,600 = 33,699,600\n$$\n$$\n33,699,600 + 18,216 = 33,717,816\n$$\n\n### Final Answer:\nAnswer: 33717816",
+          "parsed": 33717816
+        },
+        {
+          "index": 46,
+          "gold": 31042666,
+          "completion": "To calculate $ 6497 \\times 4778 $, we can break it down step by step.\n\nWe can use long multiplication or a calculator. Since this is a large multiplication, let's compute it carefully.\n\nBut since I can compute directly:\n\n$$\n6497 \\times 4778\n$$\n\nLet me compute it step by step using multiplication:\n\nAlternatively, trust a direct calculation:\n\n$$\n6497 \\times 4778 = ?\n$$\n\nLet me compute:\n\nFirst, approximate:  \n$ 6500 \\times 4800 = 31,200,000 $ \u2014 just for estimation.\n\nNow exact:\n\nWe can compute:\n\n$$\n6497 \\times 4778 = 6497 \\times (4000 + 700 + 70 + 8)\n$$\n\nBreak it down:\n\n1. $ 6497 \\times 4000 = 6497 \\times 4 \\times 1000 = 25,988 \\times 1000 = 25,988,000 $  \n2. $ 6497 \\times 700 = 6497 \\times 7 \\times 100 = 45,479 \\times 100 = 4,547,900 $  \n3. $ 6497 \\times 70 = 6497 \\times 7 \\times 10 = 45,479 \\times 10 = 454,790 $  \n4. $ 6497 \\times 8 = 51,976 $\n\nNow add them all:\n\n$$\n25,988,000 \\\\\n+ 4,547,900 \\\\\n= 30,535,900 \\\\\n+ 454,790 = 30,990,690 \\\\\n+ 51,976 = 31,042,666\n$$\n\nSo:\n\n$$\n6497 \\times 4778 = 31,042,666\n$$\n\nLet me double-check with another method.\n\nUsing calculator-style multiplication:\n\n$$\n6497 \\times 4778\n$$\n\nCompute directly:\n\n$$\n6497 \\times 4778 = (6000 + 497) \\times 4778  \n= 6000\u00d74778 + 497\u00d74778\n$$\n\n$ 6000 \u00d7 4778 = 28,668,000 $\n\nNow $ 497 \u00d7 4778 $\n\nBreak $ 497 = 500 - 3 $\n\nSo:\n\n$ 500 \u00d7 4778 = 2,389,000 $  \n$ 3 \u00d7 4778 = 14,334 $  \nSo $ 497 \u00d7 4778 = 2,389,000 - 14,334 = 2,374,666 $\n\nNow total:\n\n$ 28,668,000 + 2,374,666 = 31,042,666 $\n\nSame result.\n\nAnswer: 31042666",
+          "parsed": 31042666
+        },
+        {
+          "index": 47,
+          "gold": 15930070,
+          "completion": "To calculate $ 4330 \\times 3679 $, let's break it down step by step using long multiplication.\n\n### Step 1: Break down the multiplication\nWe can write:\n$$\n4330 \\times 3679 = 4330 \\times (3000 + 600 + 70 + 9)\n$$\nNow distribute:\n$$\n= 4330 \\times 3000 + 4330 \\times 600 + 4330 \\times 70 + 4330 \\times 9\n$$\n\n### Step 2: Compute each term\n\n1. $ 4330 \\times 3000 = 4330 \\times 3 \\times 1000 = 12,990 \\times 1000 = 12,990,000 $\n\n2. $ 4330 \\times 600 = 4330 \\times 6 \\times 100 = 25,980 \\times 100 = 2,598,000 $\n\n3. $ 4330 \\times 70 = 4330 \\times 7 \\times 10 = 30,310 \\times 10 = 303,100 $\n\n4. $ 4330 \\times 9 = 38,970 $\n\n### Step 3: Add them all together\n\nNow add:\n$$\n12,990,000 \\\\\n+ 2,598,000 \\\\\n+ 303,100 \\\\\n+ 38,970 \\\\\n= ?\n$$\n\nStep-by-step addition:\n\n- $ 12,990,000 + 2,598,000 = 15,588,000 $\n- $ 15,588,000 + 303,100 = 15,891,100 $\n- $ 15,891,100 + 38,970 = 15,930,070 $\n\n### Final Answer:\nAnswer: 15930070",
+          "parsed": 15930070
+        },
+        {
+          "index": 48,
+          "gold": 20980518,
+          "completion": "We are asked to compute:\n\n$$\n3666 \\times 5723\n$$\n\nWe can solve this step by step using standard multiplication.\n\nAlternatively, for accuracy and efficiency, let's compute it directly:\n\nBreak it down:\n\n$$\n3666 \\times 5723 = 3666 \\times (5000 + 700 + 20 + 3)\n$$\n\nNow distribute:\n\n$$\n= 3666 \\times 5000 + 3666 \\times 700 + 3666 \\times 20 + 3666 \\times 3\n$$\n\nCompute each term:\n\n1. $3666 \\times 5000 = 3666 \\times 5 \\times 1000 = 18,330 \\times 1000 = 18,330,000$\n\n2. $3666 \\times 700 = 3666 \\times 7 \\times 100 = (3666 \\times 7) \\times 100$\n\n   $3666 \\times 7 = 25,662$, so $25,662 \\times 100 = 2,566,200$\n\n3. $3666 \\times 20 = 3666 \\times 2 \\times 10 = 7,332 \\times 10 = 73,320$\n\n4. $3666 \\times 3 = 10,998$\n\nNow add them all:\n\n$$\n18,330,000 \\\\\n+ 2,566,200 \\\\\n= 20,896,200 \\\\\n+ 73,320 = 20,969,520 \\\\\n+ 10,998 = 20,980,518\n$$\n\nSo,\n\n$$\n3666 \\times 5723 = 20,980,518\n$$\n\nAnswer: 20980518",
+          "parsed": 20980518
+        },
+        {
+          "index": 49,
+          "gold": 33898200,
+          "completion": "To calculate $ 3459 \\times 9800 $, we can simplify the multiplication by breaking it down:\n\nNote that:\n$$\n9800 = 98 \\times 100\n$$\n\nSo:\n$$\n3459 \\times 9800 = 3459 \\times 98 \\times 100\n$$\n\nFirst, compute $ 3459 \\times 98 $, then multiply by 100.\n\n### Step 1: Compute $ 3459 \\times 98 $\n\nWe can write:\n$$\n98 = 100 - 2\n$$\n\nSo:\n$$\n3459 \\times 98 = 3459 \\times (100 - 2) = 3459 \\times 100 - 3459 \\times 2\n$$\n\n$$\n= 345900 - 6918 = 338982\n$$\n\n### Step 2: Multiply by 100\n$$\n338982 \\times 100 = 33,898,200\n$$\n\nAnswer: 33898200",
+          "parsed": 33898200
+        }
+      ],
+      "delta_vs_baseline": 66.0,
+      "delta_ci95": 13.13
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 116.2,
+      "n": 50,
+      "n_kept": 50,
+      "n_reasoning_discarded": 0,
+      "accuracy": 94.0,
+      "ci95": 6.58,
+      "accuracy_including_discarded": 94.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 4486,
+      "completion_tokens": 33877,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": "Let's solve this step by step:\n\nWe are given the expression:\n\n56 * (((((98 * (-50 - -80)) % -18) // -51) + 23) - 2)\n\n### Step 1: Simplify innermost parentheses\nStart with:  \n-50 - (-80) = -50 + 80 = **30**\n\nNow substitute:\n98 * 30 = 2940\n\nSo now the expression becomes:\n56 * ((((2940 % -18) // -51) + 23) - 2)\n\n### Step 2: Compute 2940 % -18 (modulo with negative divisor)\n\nRecall:  \na % b = a - b * floor(a / b)  \nBut in Python (which defines negative modulo behavior), the sign of the result is the same as the sign of the divisor.\n\nSo compute:\n2940 \u00f7 (-18) = -163.333...\n\nfloor(-163.333...) = -164\n\nSo:\n2940 % (-18) = 2940 - (-18)*(-164)  \n= 2940 - (18*164)  \n18*164 = (10*164) + (8*164) = 1640 + 1312 = 2952  \nSo: 2940 - 2952 = **-12**\n\nWait \u2014 that would be if we did 2940 - 2952 = -12, but let's double-check:\n\nActually:\n2940 % (-18) = remainder when dividing 2940 by -18, such that:\n2940 = (-18)*q + r, and 0 \u2265 r > -18 (since divisor is negative, remainder is negative or zero and in that range).\n\nTry q = -164:\n(-18)*(-164) = 2952 \u2192 2940 - 2952 = -12 \u2192 r = -12 \u2192 but that\u2019s **less than -18**? No, -12 > -18, and less than 0. Wait \u2014 for negative modulus, the remainder has the same sign as the divisor.\n\nIn Python:\n>>> 2940 % -18\n-12\n\nYes, it returns -12.\n\nSo:\n2940 % -18 = **-12**\n\nNow expression becomes:\n56 * (((( -12 ) // -51) + 23) - 2)\n\n### Step 3: Compute (-12) // (-51)\n\nInteger division: floor division.\n\n-12 / -51 = 0.235...  \nfloor(0.235) = 0\n\nSo: (-12) // (-51) = **0**\n\nNow:\n56 * (((0 + 23) - 2))  \n= 56 * ((23 - 2))  \n= 56 * 21\n\n### Step 4: 56 * 21\n\n56 * 20 = 1120  \n56 * 1 = 56  \nTotal = 1120 + 56 = **1176**\n\nAnswer: 1176",
+          "parsed": 1176
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n(87 - (22 \\times (-90 \\times (-56 + 33)))) - (-14)\n$$\n\n### Step 1: Simplify inside the innermost parentheses\n$$\n-56 + 33 = -23\n$$\n\nNow the expression becomes:\n$$\n(87 - (22 \\times (-90 \\times -23))) - (-14)\n$$\n\n### Step 2: Multiply -90 and -23\n$$\n-90 \\times -23 = 2070\n$$\n(Negative times negative is positive)\n\nNow:\n$$\n(87 - (22 \\times 2070)) - (-14)\n$$\n\n### Step 3: Multiply 22 and 2070\n$$\n22 \\times 2070 = 22 \\times (2000 + 70) = 22 \\times 2000 + 22 \\times 70 = 44,000 + 1,540 = 45,540\n$$\n\nNow:\n$$\n(87 - 45,540) - (-14)\n$$\n\n### Step 4: Subtract inside the parentheses\n$$\n87 - 45,540 = -45,453\n$$\n\nNow:\n$$\n-45,453 - (-14)\n$$\n\n### Step 5: Subtract a negative (which becomes addition)\n$$\n-45,453 + 14 = -45,439\n$$\n\n### Final Answer:\nAnswer: -45439",
+          "parsed": -45439
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Let's solve the expression step by step:\n\n$$\n-50 - \\left(60 - \\left(\\left(\\left((-56 + -78) \\mod 58\\right) \\times -21\\right) \\times -43\\right)\\right)\n$$\n\n### Step 1: Simplify innermost parentheses\n$$\n-56 + -78 = -134\n$$\n\nNow:\n$$\n(-134 \\mod 58)\n$$\n\nWe need to compute $-134 \\mod 58$.\n\nFirst, divide 134 by 58:\n$$\n134 \\div 58 \\approx 2.31 \\Rightarrow 58 \\times 2 = 116, \\quad 58 \\times 3 = 174\n$$\n\nSo $134 = 58 \\times 2 + 18$, so $134 \\mod 58 = 18$\n\nThus, $-134 \\mod 58 = -18$, but we want the **positive modulo** equivalent.\n\nIn modular arithmetic, negative mod:\n$$\n-134 \\mod 58 = 58 - (134 \\mod 58) = 58 - 18 = 40\n$$\n\nBecause $-134 \\equiv 40 \\mod 58$ (since $ -134 + 174 = 40 $, and $174 = 3 \\times 58$)\n\n\u2705 So:\n$$\n(-134) \\mod 58 = 40\n$$\n\n---\n\n### Step 2: Multiply by -21\n$$\n40 \\times -21 = -840\n$$\n\n---\n\n### Step 3: Multiply by -43\n$$\n-840 \\times -43 = 840 \\times 43\n$$\n\nCompute $840 \\times 43$:\n$$\n840 \\times 40 = 33,600 \\\\\n840 \\times 3 = 2,520 \\\\\n33,600 + 2,520 = 36,120\n$$\n\nSo:\n$$\n(-840) \\times (-43) = 36,120\n$$\n\n---\n\n### Step 4: Now plug back into the expression\n\n$$\n60 - 36,120 = -36,060\n$$\n\n---\n\n### Step 5: Final subtraction\n$$\n-50 - (-36,060) = -50 + 36,060 = 36,010\n$$\n\nAnswer: 36010",
+          "parsed": 36010
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n98 \\times \\left( \\left( \\left( \\left( \\left( 80 \\times 74 \\right) - (-71) \\right) \\div (-31) \\right) + (-14) \\right) + 90 \\right)\n$$\n\nNote: The `//` operator indicates **integer division** (floor division), which we'll treat as standard division followed by flooring (rounding down to the nearest integer). Let's evaluate step by step.\n\n---\n\n### Step 1: Compute $80 \\times 74$\n\n$$\n80 \\times 74 = 5920\n$$\n\n---\n\n### Step 2: Subtract $-71$, which is the same as adding 71\n\n$$\n5920 - (-71) = 5920 + 71 = 5991\n$$\n\n---\n\n### Step 3: Divide by $-31$ using integer (floor) division\n\n$$\n5991 \\div (-31) = -193.258...\n$$\n\nNow apply **floor division**: round down to the nearest integer.\n\n$$\n\\left\\lfloor \\frac{5991}{-31} \\right\\rfloor = -194\n$$\n\n> Why? Because $-193.258$ is between $-194$ and $-193$, and **floor** goes to the **next lower** integer, which is $-194$.\n\nLet\u2019s verify:\n\n$$\n-31 \\times -194 = 31 \\times 194 = ?\n$$\n\nBreak it down:\n\n$$\n31 \\times 194 = 31 \\times (200 - 6) = 31 \\times 200 - 31 \\times 6 = 6200 - 186 = 6014\n$$\n\nToo big. Try $-31 \\times -193 = 31 \\times 193 = ?$\n\n$$\n31 \\times 193 = 31 \\times (200 - 7) = 6200 - 217 = 5983\n$$\n\nNow:\n\n$$\n5991 - 5983 = 8 \\quad \\text{(remainder)}\n$$\n\nSo:\n\n$$\n5991 = (-31) \\times (-193) + 8 \\quad \\Rightarrow \\quad \\frac{5991}{-31} = -193 - \\frac{8}{31} \\approx -193.258\n$$\n\nFloor of that is $-194$\n\n\u2705 So floor division: $5991 // (-31) = -194$\n\n---\n\n### Step 4: Add $-14$\n\n$$\n-194 + (-14) = -208\n$$\n\n---\n\n### Step 5: Add 90\n\n$$\n-208 + 90 = -118\n$$\n\n---\n\n### Step 6: Multiply by 98\n\n$$\n98 \\times (-118) = ?\n$$\n\nCompute:\n\n$$\n98 \\times 118 = (100 - 2) \\times 118 = 100 \\times 118 - 2 \\times 118 = 11800 - 236 = 11564\n$$\n\nSo:\n\n$$\n98 \\times (-118) = -11564\n$$\n\n---\n\nAnswer: $-11564$\n\nAnswer: -11564",
+          "parsed": -11564
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-24 \\times \\left((-97 - (-23 - (((-37 \\times 92) \\mod 84) - (-33)))) - 35\\right)\n$$\n\nLet's simplify it **step by step**.\n\n---\n\n### Step 1: Compute $-37 \\times 92$\n\n$$\n-37 \\times 92 = -3404\n$$\n\n---\n\n### Step 2: Compute $(-3404) \\mod 84$\n\nWe need to compute $-3404 \\mod 84$. Remember that modulo with negative numbers returns a non-negative result less than 84 in most standard definitions.\n\nWe can compute it as follows:\n\nFirst, divide $-3404$ by $84$:\n\n$$\n3404 \\div 84 \\approx 40.52\n$$\n\nSo,\n$$\n84 \\times 40 = 3360 \\\\\n3404 - 3360 = 44\n\\Rightarrow -3404 = - (84 \\times 40 + 44) = -84 \\times 40 - 44\n$$\n\nSo:\n$$\n-3404 \\equiv -44 \\mod 84\n$$\n\nBut $-44 \\mod 84 = 84 - 44 = 40$\n\n\u2705 So:\n$$\n(-37 \\times 92) \\mod 84 = -3404 \\mod 84 = 40\n$$\n\n---\n\n### Step 3: Compute $((-37 \\times 92) \\mod 84) - (-33)$\n\nThat is:\n$$\n40 - (-33) = 40 + 33 = 73\n$$\n\n---\n\n### Step 4: Compute $-23 - 73$\n\n$$\n-23 - 73 = -96\n$$\n\n---\n\n### Step 5: Compute $-97 - (-96)$\n\n$$\n-97 - (-96) = -97 + 96 = -1\n$$\n\n---\n\n### Step 6: Subtract 35\n\n$$\n-1 - 35 = -36\n$$\n\n---\n\n### Step 7: Multiply by -24\n\n$$\n-24 \\times (-36) = 864\n$$\n\n---\n\nAnswer: 864",
+          "parsed": 864
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n((((-99 \\times 40) - 53) - (-11)) \\times 44) + (-61)\n$$\n\n### Step 1: Compute $-99 \\times 40$\n$$\n-99 \\times 40 = -3960\n$$\n\nNow the expression becomes:\n\n$$\n(((-3960 - 53) - (-11)) \\times 44) + (-61)\n$$\n\n---\n\n### Step 2: Compute $-3960 - 53$\n$$\n-3960 - 53 = -4013\n$$\n\nNow:\n$$\n((-4013 - (-11)) \\times 44) + (-61)\n$$\n\n---\n\n### Step 3: Compute $-4013 - (-11)$\nSubtracting a negative is like adding:\n$$\n-4013 + 11 = -4002\n$$\n\nNow:\n$$\n(-4002 \\times 44) + (-61)\n$$\n\n---\n\n### Step 4: Compute $-4002 \\times 44$\n\nBreak it down:\n$$\n4002 \\times 44 = 4002 \\times (40 + 2) = (4002 \\times 40) + (4002 \\times 2)\n$$\n\n- $4002 \\times 40 = 160,080$\n- $4002 \\times 2 = 8,004$\n\nAdd:\n$$\n160,080 + 8,004 = 168,084\n$$\n\nSince it's $-4002 \\times 44$, the result is:\n$$\n-168,084\n$$\n\nNow the expression is:\n$$\n-168,084 + (-61) = -168,084 - 61 = -168,145\n$$\n\n---\n\nAnswer: -168145",
+          "parsed": -168145
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": "We are asked to evaluate the following expression:\n\n$$\n(93 + (((5 \\times -49) // 10) // 40)) + 29\n$$\n\nWe'll break this down step by step.\n\n---\n\n### Step 1: Compute $5 \\times -49$\n\n$$\n5 \\times -49 = -245\n$$\n\n---\n\n### Step 2: Compute $-245 // 10$\n\nThe `//` operator means **floor division** (division rounded down to the nearest integer).\n\n$$\n-245 // 10 = \\left\\lfloor \\frac{-245}{10} \\right\\rfloor = \\left\\lfloor -24.5 \\right\\rfloor = -25\n$$\n\n(Because floor goes down, and -25 is less than -24.5.)\n\n---\n\n### Step 3: Compute $-25 // 40$\n\n$$\n-25 // 40 = \\left\\lfloor \\frac{-25}{40} \\right\\rfloor = \\left\\lfloor -0.625 \\right\\rfloor = -1\n$$\n\n---\n\n### Step 4: Plug into the expression\n\nNow we have:\n\n$$\n93 + (-1) + 29\n$$\n\n$$\n= 92 + 29 = 121\n$$\n\n---\n\nAnswer: 121",
+          "parsed": 121
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-84 - \\left(-63 + \\left(\\left(\\left(\\left(\\left(\\frac{-79}{-48}\\right) \\times -73\\right) - 32\\right) \\div -10\\right) + 82\\right)\\right)\n$$\n\nNote: The `//` operator denotes **floor division** (i.e., divide and then round down to the nearest integer).\n\nWe will evaluate this step by step.\n\n---\n\n### Step 1: Evaluate `-79 // -48`\n\nFirst, compute the division:  \n$$\n\\frac{-79}{-48} = \\frac{79}{48} \\approx 1.6458\n$$\n\nNow apply **floor division**:  \nFloor of 1.6458 is **1** (since floor rounds down).\n\nSo:\n$$\n-79 // -48 = 1\n$$\n\n---\n\n### Step 2: Multiply by -73\n\n$$\n1 \\times -73 = -73\n$$\n\n---\n\n### Step 3: Subtract 32\n\n$$\n-73 - 32 = -105\n$$\n\n---\n\n### Step 4: Divide by -10 using floor division\n\n$$\n\\frac{-105}{-10} = 10.5\n$$\n\nNow apply floor division (i.e., floor of 10.5):\n\nFloor(10.5) = **10**\n\nSo:\n$$\n(-105) // -10 = 10\n$$\n\n---\n\n### Step 5: Add 82\n\n$$\n10 + 82 = 92\n$$\n\n---\n\n### Step 6: Add to -63\n\n$$\n-63 + 92 = 29\n$$\n\n---\n\n### Step 7: Final step \u2014 compute -84 minus that result\n\n$$\n-84 - 29 = -113\n$$\n\n---\n\nAnswer: -113",
+          "parsed": -113
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n```\n96 - ((15 - (((61 * (89 - -57)) // 81) - 27)) - 8)\n```\n\n### Step 1: Simplify innermost parentheses\nStart with:  \n`89 - (-57)`  \nThis is:  \n`89 + 57 = 146`\n\nNow substitute back:\n```\n96 - ((15 - (((61 * 146) // 81) - 27)) - 8)\n```\n\n### Step 2: Multiply 61 * 146\nCalculate:\n`61 * 146`\n\nBreak it down:\n`60*146 = 8760`  \n`1*146 = 146`  \nTotal: `8760 + 146 = 8906`\n\nSo now:\n```\n96 - ((15 - (((8906 // 81) - 27)) - 8)\n```\n\n### Step 3: Integer division `8906 // 81`\n\nDivide 8906 by 81:\n\nLet\u2019s compute:\n`81 * 100 = 8100`  \n`8906 - 8100 = 806`  \n`81 * 9 = 729`  \n`806 - 729 = 77`  \nSo `81 * 109 = 81*(100+9) = 8100 + 729 = 8829`\n\nNow:  \n`8906 - 8829 = 77`\n\nSo:  \n`8906 // 81 = 109` (since 109 * 81 = 8829 \u2264 8906, and 110 * 81 = 8910 > 8906)\n\nSo now:\n```\n96 - ((15 - ((109 - 27)) - 8)\n```\n\n### Step 4: 109 - 27 = 82\n\nNow:\n```\n96 - ((15 - 82) - 8)\n```\n\n### Step 5: 15 - 82 = -67\n\nNow:\n```\n96 - (-67 - 8)\n```\n\n### Step 6: -67 - 8 = -75\n\nNow:\n```\n96 - (-75) = 96 + 75 = 171\n```\n\nAnswer: 171",
+          "parsed": 171
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n(74 \\times ((-72 \\times ((38 \\times -75) - (-52))) \\div 92)) \\div (-90)\n$$\n\nWe will evaluate this step by step, following the order of operations (PEMDAS: Parentheses, Exponents, Multiplication/Division left to right).\n\n---\n\n### Step 1: Evaluate innermost expression: $38 \\times -75$\n\n$$\n38 \\times -75 = -2850\n$$\n\n---\n\n### Step 2: Subtract $-52$: $-2850 - (-52)$\n\n$$\n-2850 + 52 = -2798\n$$\n\n---\n\n### Step 3: Multiply by $-72$: $-72 \\times -2798$\n\n$$\n72 \\times 2798 = ?\n$$\n\nLet\u2019s compute $72 \\times 2798$:\n\nBreak it down:\n\n$$\n72 \\times 2798 = 72 \\times (2800 - 2) = 72 \\times 2800 - 72 \\times 2\n$$\n\n$$\n72 \\times 2800 = 72 \\times 28 \\times 100 = (2016) \\times 100 = 201,600\n$$\n\n$$\n72 \\times 2 = 144\n$$\n\nSo:\n\n$$\n201,600 - 144 = 201,456\n$$\n\nSince both numbers were negative: $-72 \\times -2798 = +201,456$\n\n---\n\n### Step 4: Divide by 92: $201,456 \\div 92$\n\nLet\u2019s compute $201456 \\div 92$\n\nDo the division:\n\nTry $92 \\times 2190$:\n\n$$\n92 \\times 2000 = 184,000 \\\\\n92 \\times 190 = ?\n$$\n\n$$\n92 \\times 100 = 9,200 \\\\\n92 \\times 90 = 8,280 \\\\\n\\Rightarrow 9,200 + 8,280 = 17,480 \\\\\nSo 92 \\times 190 = 17,480 \\\\\nTotal: 184,000 + 17,480 = 201,480\n$$\n\nToo big (201,480 > 201,456)\n\nTry 92 \u00d7 2189:\n\nWe know 92 \u00d7 2190 = 201,480 \u2192 so 92 \u00d7 2189 = 201,480 - 92 = 201,388\n\nWait, that seems inconsistent.\n\nWait: better to divide directly.\n\n$$\n201456 \\div 92\n$$\n\nFirst, divide both by 4 to simplify:\n\n- 201456 \u00f7 4 = 50364\n- 92 \u00f7 4 = 23\n\nSo now: $50364 \\div 23$\n\nDivide 50364 by 23:\n\n$23 \\times 2000 = 46,000$  \nSubtract: 50,364 - 46,000 = 4,364\n\n$23 \\times 180 = 4,140$  \nSubtract: 4,364 - 4,140 = 224\n\n$23 \\times 9 = 207$  \nSubtract: 224 - 207 = 17\n\nSo total: 2000 + 180 + 9 = 2189, remainder 17\n\nSo:\n\n$$\n50364 \\div 23 = 2189 + 17/23\n$$\n\nThus:\n\n$$\n201456 \\div 92 = 50364 \\div 23 = 2189 + 17/23\n$$\n\nBut wait \u2014 in the original expression, this division is integer division? The symbol used was `//`, which usually denotes **floor division** (i.e., integer division, truncating toward negative infinity in Python).\n\nBut let's double-check whether it divides evenly.\n\nWait \u2014 maybe we made a mistake.\n\nLet\u2019s compute $92 \\times 2189$:\n\nBreak it down:\n\n$$\n92 \\times 2000 = 184,000 \\\\\n92 \\times 189 = ?\n$$\n\n$92 \\times 100 = 9,200$  \n$92 \\times 80 = 7,360$  \n$92 \\times 9 = 828$  \nSo $92 \\times 189 = 9,200 + 7,360 + 828 = 17,388$\n\nTotal: $184,000 + 17,388 = 201,388$\n\nBut we have 201,456\n\nDifference: $201,456 - 201,388 = 68$\n\nNow, $92 \\times 0.7 \\approx 64.4$, so 92 \u00d7 0.74 \u2248 68\n\nTry $92 \\times 2190 = 92 \\times (2189 + 1) = 201,388 + 92 = 201,480$\n\nBut 201,480 > 201,456 \u2192 too big\n\nSo 92 \u00d7 2189 = 201,388\n\n201,456 - 201,388 = 68\n\nSo $201,456 = 92 \\times 2189 + 68$\n\nSo:\n\n$$\n201,456 \\div 92 = 2189 + 68/92 = 2189 + 17/23 \\approx 2189.739\n$$\n\nBut since it's **floor division** (`//`), we take the floor:\n\n$$\n201,456 // 92 = 2189 \\quad \\text{(since floor of 2189.739 is 2189)}\n$$\n\nWait \u2014 but floor division in Python truncates toward negative infinity, but since all values so far are positive, floor = truncation down.\n\nBut wait \u2014 our number is positive, so floor division just truncates the decimal.\n\nSo:\n\n$$\n201,456 // 92 = 2189\n$$\n\nWait \u2014 but 92 \u00d7 2189 = 201,388, as above\n\nBut 201,388 is **less** than 201,456, so maybe there's a better multiple?\n\nWait \u2014 let's divide 201456 by 92 directly:\n\nUse long division:\n\nDivide 201456 \u00f7 92\n\nFirst, 92 into 201 \u2192 2 times (92\u00d72=184), remainder 17  \nBring down 4 \u2192 174  \n92 into 174 \u2192 1 time (92), remainder 82  \nBring down 5 \u2192 825  \n92 into 825 \u2192 92\u00d78=736, 825-736=89  \nBring down 6 \u2192 896  \n92 into 896 \u2192 92\u00d79=828, 896-828=68\n\nSo we get: 2189 with remainder 68 \u2192 same as before.\n\nSo quotient is 2189, remainder 68.\n\nThus:\n\n$$\n201,456 // 92 = 2189 \\quad \\text{(integer division)}\n$$\n\nBut wait \u2014 is this correct? 92 \u00d7 2189 = 201,388? Let's verify:\n\nCalculate $92 \\times 2189$:\n\n$2189 = 2000 + 180 + 9$\n\n- $92 \\times 2000 = 184,000$\n- $92 \\times 180 = 16,560$\n- $92 \\times 9 = 828$\n\nAdd them:\n\n184,000 + 16,560 =",
+          "parsed": 16560
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n(33 + ((13 \\times (74 \\times (4 \\times 16))) - 42)) + (-72)\n$$\n\n### Step 1: Innermost parentheses \u2014 $4 \\times 16$\n$$\n4 \\times 16 = 64\n$$\n\nNow the expression becomes:\n$$\n(33 + ((13 \\times (74 \\times 64)) - 42)) + (-72)\n$$\n\n### Step 2: $74 \\times 64$\n\nLet's compute that:\n$$\n74 \\times 64 = 74 \\times (60 + 4) = 74 \\times 60 + 74 \\times 4 = 4440 + 296 = 4736\n$$\n\nNow:\n$$\n(33 + ((13 \\times 4736) - 42)) + (-72)\n$$\n\n### Step 3: $13 \\times 4736$\n\nBreak it down:\n$$\n13 \\times 4736 = (10 + 3) \\times 4736 = 10 \\times 4736 + 3 \\times 4736 = 47360 + 14208 = 61568\n$$\n\nNow the expression is:\n$$\n(33 + (61568 - 42)) + (-72)\n$$\n\n### Step 4: $61568 - 42 = 61526$\n\nSo:\n$$\n(33 + 61526) + (-72)\n$$\n\n### Step 5: $33 + 61526 = 61559$\n\nThen:\n$$\n61559 + (-72) = 61559 - 72 = 61487\n$$\n\n### Final Answer:\nAnswer: 61487",
+          "parsed": 61487
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n70 \\times \\left(-70 - \\left(98 - \\left((-34 + (51 \\times -12)\\right) - (-63)\\right)\\right)\\right)\n$$\n\nWe will simplify this step by step, starting from the innermost parentheses.\n\n---\n\n### Step 1: Compute $51 \\times -12$\n\n$$\n51 \\times -12 = -612\n$$\n\n---\n\n### Step 2: Compute $-34 + (-612)$\n\n$$\n-34 + (-612) = -34 - 612 = -646\n$$\n\n---\n\n### Step 3: Compute $(-646) - (-63)$\n\nSubtracting a negative is like adding:\n\n$$\n-646 - (-63) = -646 + 63 = -583\n$$\n\n---\n\n### Step 4: Compute $98 - (-583)$\n\n$$\n98 - (-583) = 98 + 583 = 681\n$$\n\n---\n\n### Step 5: Compute $-70 - 681$\n\n$$\n-70 - 681 = -751\n$$\n\n---\n\n### Step 6: Multiply by 70\n\n$$\n70 \\times (-751) = -52,570\n$$\n\n---\n\nAnswer: -52570",
+          "parsed": -52570
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": "Let's solve this step by step:\n\nWe are evaluating:\n\n$$\n(((((-27 \\times ((4 - 37) \\times -9)) // -69) \\mod -76) \\mod 19) \\times 80\n$$\n\n---\n\n### Step 1: Compute (4 - 37)\n\n$$\n4 - 37 = -33\n$$\n\n---\n\n### Step 2: Multiply by -9\n\n$$\n-33 \\times -9 = 297\n$$\n\n---\n\n### Step 3: Multiply by -27\n\n$$\n-27 \\times 297 = -8019\n$$\n\n---\n\n### Step 4: Integer division by -69 (// -69)\n\nWe compute:  \n$$\n-8019 // -69\n$$\n\nFirst, divide:\n\n$$\n8019 \\div 69 \\approx 116.217\n$$\n\nSo $ 69 \\times 116 = 69 \\times 100 = 6900, 69 \\times 16 = 1104 \\Rightarrow 6900 + 1104 = 8004 $\n\n$ 8019 - 8004 = 15 $, so:\n\n$$\n8019 = 69 \\times 116 + 15\n\\Rightarrow -8019 = - (69 \\times 116 + 15) = -69 \\times 116 - 15\n$$\n\nNow, $ -8019 // -69 $: since both numerator and denominator are negative, the result is positive.\n\nWe want the floor division:  \n$$\n-8019 // -69 = \\left\\lfloor \\frac{-8019}{-69} \\right\\rfloor = \\left\\lfloor 116.217 \\right\\rfloor = 116\n$$\n\nWait: But **floor division** in Python rounds **down** (towards -\u221e), not towards zero.\n\nBut since both numbers are negative:\n\n$$\n\\frac{-8019}{-69} = 116.217...\n$$\n\nFloor of 116.217 is 116.\n\nSo:\n\n$$\n-8019 // -69 = 116\n$$\n\n\u2705 So far: 116\n\n---\n\n### Step 5: Now compute (116 % -76)\n\nWe now compute:  \n$$\n116 \\mod -76\n$$\n\nIn Python, the modulus has the sign of the **divisor** (here, negative), and satisfies:\n\n$$\na = (a // b) \\times b + (a \\mod b)\n$$\n\nWe already have:  \nWe want $ 116 \\mod -76 $\n\nFirst, compute $ 116 // -76 $\n\n$ 116 / -76 \\approx -1.526 $, so floor is -2\n\nSo:\n$$\n116 // -76 = -2\n$$\n\nNow:\n$$\n116 \\mod -76 = 116 - (-2) \\times (-76) = 116 - 152 = -36\n$$\n\nWait, that would give:\n$$\n(-2) \\times (-76) = 152\n\\Rightarrow 116 - 152 = -36\n$$\n\nBut modulus should satisfy:\n\n$$\n116 = (-2) \\times (-76) + r = 152 + r \\Rightarrow r = 116 - 152 = -36\n$$\n\nBut remainder should be **non-negative** if modulus is positive, but since divisor is negative, remainder is **negative or zero**, and in range: $ -76 < r \\le 0 $\n\n-36 is in that range.\n\nSo:\n$$\n116 \\mod -76 = -36\n$$\n\n\u2705 So far: -36\n\n---\n\n### Step 6: Now compute (-36) % 19\n\nWe want:\n$$\n-36 \\mod 19\n$$\n\nThis should be **non-negative**, since modulus 19 is positive.\n\nWe find the remainder when -36 is divided by 19.\n\nFirst, divide: $ -36 / 19 \\approx -1.894 $, so floor is -2\n\nSo:\n$$\n-36 // 19 = -2\n$$\n\nThen:\n$$\n-36 \\mod 19 = -36 - (-2) \\times 19 = -36 + 38 = 2\n$$\n\n\u2705 So $ -36 \\mod 19 = 2 $\n\n---\n\n### Step 7: Multiply by 80\n\n$$\n2 \\times 80 = 160\n$$\n\n---\n\nAnswer: 160",
+          "parsed": 160
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-28 \\times \\left( \\left( \\left( (-46\\ \\% -21) \\% 17 \\right) + 78 \\right) \\% 43 \\right)\n$$\n\nWe'll evaluate this step by step, carefully handling the modulo operations, especially with negative numbers.\n\n---\n\n### Step 1: Evaluate $-46\\ \\% -21$\n\nIn programming and mathematics, the modulo operation with negative numbers can be tricky. The general rule is:\n\n$$\na\\ \\% b = a - b \\times \\left\\lfloor \\frac{a}{b} \\right\\rfloor\n$$\n\nBut in many programming languages (like Python), the sign of the result follows the **divisor** if we're dealing with negative operands.\n\nLet\u2019s compute $-46\\ \\%\\ -21$:\n\nWe want the remainder when $-46$ is divided by $-21$.\n\nNote: Modulo with a negative divisor \u2014 the result should have the same sign as the divisor (if following Python's convention). But let\u2019s do it mathematically.\n\nWe want the remainder $r$ such that:\n\n$$\n-46 = (-21) \\times q + r, \\quad \\text{and } 0 \\leq r < |-21| = 21 \\quad \\text{(if we want positive remainder)}\n$$\n\nBut since the divisor is negative, and we want consistency, let's just use the mathematical definition.\n\nActually, better approach: Let\u2019s find $q = \\left\\lfloor \\frac{-46}{-21} \\right\\rfloor = \\left\\lfloor \\frac{46}{21} \\right\\rfloor = \\left\\lfloor 2.190... \\right\\rfloor = 2$\n\nThen:\n\n$$\nr = -46 - (-21) \\times 2 = -46 + 42 = -4\n$$\n\nBut remainder should be non-negative and less than $| -21 | = 21$. So $-4$ is invalid.\n\nWait \u2014 we need to adjust.\n\nWe want:\n\n$$\nr = a - b \\times \\left\\lfloor \\frac{a}{b} \\right\\rfloor\n$$\n\nHere, $a = -46$, $b = -21$\n\n$$\n\\frac{a}{b} = \\frac{-46}{-21} = 2.190...\n$$\n\n$$\n\\left\\lfloor 2.190 \\right\\rfloor = 2\n$$\n\nSo:\n\n$$\nr = -46 - (-21) \\times 2 = -46 + 42 = -4\n$$\n\nNegative remainder? That can't be. Wait \u2014 actually, in modulo operation, the remainder should satisfy $0 \\leq r < |b|$ **only when** b is positive. But if both are negative, we can still define it similarly.\n\nWait \u2014 better idea: let\u2019s just find how many times $-21$ fits into $-46$.\n\n$$\n(-21) \\times 2 = -42 \\quad \\text{(greater than -46)}\n$$\n$$\n(-21) \\times 3 = -63 \\quad \\text{(less than -46)}\n$$\n\nSo the largest multiple of $-21$ less than or equal to $-46$ is $-63$, so $q = 3$\n\nThen:\n\n$$\nr = -46 - (-21 \\times 3) = -46 + 63 = 17\n$$\n\nYes! So:\n\n$$\n-46\\ \\% -21 = 17\n$$\n\nBecause $-46 = (-21) \\times 3 + 17$, and $0 \\leq 17 < 21$\n\n\u2705 So **Step 1 result: 17**\n\n---\n\n### Step 2: $17\\ \\% 17$\n\n$$\n17\\ \\% 17 = 0\n$$\n\n\u2705 Step 2: 0\n\n---\n\n### Step 3: $0 + 78 = 78$\n\n\u2705 Step 3: 78\n\n---\n\n### Step 4: $78\\ \\% 43$\n\n$$\n43 \\times 1 = 43 \\\\\n78 - 43 = 35\n$$\n\nSo:\n\n$$\n78\\ \\% 43 = 35\n$$\n\n\u2705 Step 4: 35\n\n---\n\n### Step 5: Multiply by -28\n\n$$\n-28 \\times 35 = ?\n$$\n\n$$\n28 \\times 35 = 28 \\times (30 + 5) = 840 + 140 = 980\n$$\n\nSo:\n\n$$\n-28 \\times 35 = -980\n$$\n\n\u2705 Final answer: **-980**\n\nAnswer: -980",
+          "parsed": -980
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n((88 + (((-83 + 78) - (-81)) + 19)) \\times -94) \\times 30\n$$\n\n### Step 1: Simplify innermost parentheses\n\nStart with:  \n$$\n-83 + 78 = -5\n$$\n\nNow plug that in:\n\n$$\n((88 + (((-5) - (-81)) + 19)) \\times -94) \\times 30\n$$\n\n### Step 2: Simplify $-5 - (-81)$\n\nSubtracting a negative is like adding:\n\n$$\n-5 + 81 = 76\n$$\n\nNow:\n\n$$\n((88 + (76 + 19)) \\times -94) \\times 30\n$$\n\n### Step 3: $76 + 19 = 95$\n\nNow:\n\n$$\n((88 + 95) \\times -94) \\times 30\n$$\n\n### Step 4: $88 + 95 = 183$\n\nNow:\n\n$$\n(183 \\times -94) \\times 30\n$$\n\n### Step 5: $183 \\times -94$\n\nCalculate that:\n\n$$\n183 \\times 94 = ?\n$$\n\nBreak it down:\n\n$$\n183 \\times 94 = 183 \\times (100 - 6) = 18300 - (183 \\times 6)\n$$\n\n$183 \\times 6 = 1098$\n\nSo:\n\n$$\n18300 - 1098 = 17202\n$$\n\nBut since it's $183 \\times -94$, the result is:\n\n$$\n-17202\n$$\n\nNow:\n\n$$\n(-17202) \\times 30\n$$\n\n### Step 6: $-17202 \\times 30$\n\n$$\n17202 \\times 30 = 516060\n$$\n\nSo with the negative:\n\n$$\n-516060\n$$\n\nAnswer: -516060",
+          "parsed": -516060
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": "We are asked to evaluate the following expression:\n\n$$\n-54 \\times \\left( \\left( \\left( \\left( \\left( -36 + (-94 \\times -12) \\right) \\mod -85 \\right) \\div -88 \\right) - 69 \\right) \\mod 67 \\right)\n$$\n\nWe will simplify step by step, following the order of operations.\n\n---\n\n### Step 1: Compute $-94 \\times -12$\n\n$$\n-94 \\times -12 = 1128\n$$\n\n---\n\n### Step 2: Compute $-36 + 1128$\n\n$$\n-36 + 1128 = 1092\n$$\n\n---\n\n### Step 3: Compute $1092 \\mod -85$\n\nWe need to compute the modulo of a positive number by a negative number.\n\nIn mathematics, the modulo operation $ a \\mod m $ returns the remainder when $ a $ is divided by $ m $, with the remainder having the **same sign as the divisor** in many programming languages (but in mathematics, it's often non-negative). However, since the problem uses negative modulus ($-85$), we need to be careful.\n\nThe result of $ a \\mod m $ for negative $ m $ is defined such that:\n\n$$\na \\mod m = a - m \\times \\left\\lfloor \\frac{a}{m} \\right\\rfloor\n$$\n\nSo compute:\n\n$$\n1092 \\mod -85\n$$\n\nFirst, compute $ \\frac{1092}{-85} \\approx -12.847 $\n\nThen $ \\left\\lfloor \\frac{1092}{-85} \\right\\rfloor = -13 $ (floor goes down)\n\nNow apply the formula:\n\n$$\n1092 - (-85) \\times (-13) = 1092 - 1105 = -13\n$$\n\nBut wait: $ (-85) \\times (-13) = 1105 $\n\nSo:\n\n$$\n1092 - 1105 = -13\n$$\n\nThus:\n\n$$\n1092 \\mod -85 = -13\n$$\n\n\u2705 So this step gives **-13**\n\n---\n\n### Step 4: Compute $ (-13) \\div -88 $ using **floor division** (denoted by //)\n\nWe are told it's **floor division**: $ \\left\\lfloor \\frac{-13}{-88} \\right\\rfloor $\n\n$$\n\\frac{-13}{-88} = \\frac{13}{88} \\approx 0.1477\n$$\n\nFloor of that is $ \\left\\lfloor 0.1477 \\right\\rfloor = 0 $\n\nSo:\n\n$$\n(-13) // (-88) = 0\n$$\n\n---\n\n### Step 5: Subtract 69\n\n$$\n0 - 69 = -69\n$$\n\n---\n\n### Step 6: Compute $-69 \\mod 67$\n\nWe want the remainder when $-69$ is divided by $67$, in the positive range $[0, 66]$.\n\nWe can compute:\n\n$$\n-69 \\div 67 \\approx -1.02985 \\Rightarrow \\left\\lfloor \\frac{-69}{67} \\right\\rfloor = -2\n$$\n\nNow apply:\n\n$$\n-69 \\mod 67 = -69 - 67 \\times (-2) = -69 + 134 = 65\n$$\n\nSo:\n\n$$\n-69 \\mod 67 = 65\n$$\n\n---\n\n### Step 7: Multiply by -54\n\nNow multiply:\n\n$$\n-54 \\times 65 = ?\n$$\n\n$$\n54 \\times 65 = (50 + 4) \\times 65 = 50 \\times 65 + 4 \\times 65 = 3250 + 260 = 3510\n$$\n\nSo:\n\n$$\n-54 \\times 65 = -3510\n$$\n\n---\n\nAnswer: $-3510$\n\nBut let's double-check all steps because sign errors are easy.\n\n---\n\n### Recheck Step-by-Step:\n\n1. $-94 \\times -12 = 1128$: \u2705  \n2. $-36 + 1128 = 1092$: \u2705  \n3. $1092 \\mod -85$:  \n   - $ \\left\\lfloor 1092 / (-85) \\right\\rfloor = \\left\\lfloor -12.847 \\right\\rfloor = -13 $  \n   - $ (-85) \\times (-13) = 1105 $  \n   - $ 1092 - 1105 = -13 $: \u2705  \n4. $-13 // -88$:  \n   - $ (-13) / (-88) = 0.1477 $, floor = 0: \u2705  \n5. $0 - 69 = -69$: \u2705  \n6. $-69 \\mod 67$:  \n   - Add 67 until in range: $-69 + 67 = -2$, $-2 + 67 = 65$: \u2705  \n7. $-54 \\times 65 = -3510$: \u2705  \n\nEverything checks.\n\nAnswer: -3510\n\nAnswer: -3510",
+          "parsed": -3510
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n(((((55 \\times 66) - 70) // 62) // 15) \\% 87) - (-62)) \\times (-82)\n$$\n\nWe'll evaluate this from the inside out.\n\n---\n\n### Step 1: $ 55 \\times 66 $\n\n$$\n55 \\times 66 = 3630\n$$\n\n---\n\n### Step 2: $ 3630 - 70 $\n\n$$\n3630 - 70 = 3560\n$$\n\n---\n\n### Step 3: $ 3560 // 62 $  \n(Integer division \u2014 quotient only, no remainder)\n\n$$\n3560 \\div 62 \\approx 57.419...\n$$\n\nSo,\n$$\n3560 // 62 = 57\n$$\n\n---\n\n### Step 4: $ 57 // 15 $\n\n$$\n57 \\div 15 = 3.8 \\Rightarrow 57 // 15 = 3\n$$\n\n---\n\n### Step 5: $ 3 \\% 87 $\n\nSince 3 < 87,\n$$\n3 \\% 87 = 3\n$$\n\n---\n\n### Step 6: $ 3 - (-62) $\n\n$$\n3 - (-62) = 3 + 62 = 65\n$$\n\n---\n\n### Step 7: $ 65 \\times (-82) $\n\n$$\n65 \\times (-82) = - (65 \\times 82)\n$$\n\nCalculate $ 65 \\times 82 $:\n\n$$\n65 \\times 82 = 65 \\times (80 + 2) = 65 \\times 80 + 65 \\times 2 = 5200 + 130 = 5330\n$$\n\nSo:\n$$\n65 \\times (-82) = -5330\n$$\n\n---\n\nAnswer: -5330",
+          "parsed": -5330
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n(((74 \\times (72 + ((61 // 48) + 82))) \\times -90) // -28) // -70\n$$\n\nNote: The operators `//` denote **integer division** (floor division), and we must follow the order of operations.\n\n---\n\n### Step 1: Evaluate innermost expression \u2014 `61 // 48`\n\n$$\n61 \\div 48 = 1.2708...\n$$\n\nFloor division `//` takes the floor of the division (i.e., the greatest integer less than or equal to the result):\n\n$$\n61 // 48 = 1\n$$\n\n---\n\n### Step 2: Evaluate `(61 // 48) + 82`\n\n$$\n1 + 82 = 83\n$$\n\n---\n\n### Step 3: Evaluate `72 + ((61 // 48) + 82)`\n\n$$\n72 + 83 = 155\n$$\n\n---\n\n### Step 4: Multiply by 74\n\n$$\n74 \\times 155\n$$\n\nLet\u2019s compute that:\n\nBreak it down:\n\n$$\n74 \\times 155 = 74 \\times (150 + 5) = (74 \\times 150) + (74 \\times 5)\n$$\n\n$$\n74 \\times 150 = 74 \\times 15 \\times 10 = (1110) \\times 10 = 11,100\n$$\n\n$$\n74 \\times 5 = 370\n$$\n\n$$\n11,100 + 370 = 11,470\n$$\n\nSo,\n\n$$\n74 \\times 155 = 11,470\n$$\n\n---\n\n### Step 5: Multiply by -90\n\n$$\n11,470 \\times (-90) = -1,032,300\n$$\n\n---\n\n### Step 6: Divide by -28 using integer division (`//`)\n\n$$\n(-1,032,300) // (-28)\n$$\n\nFirst, compute the regular division:\n\n$$\n1,032,300 \\div 28\n$$\n\nLet\u2019s divide:\n\n28 \u00d7 36,000 = 1,008,000  \nSubtract: 1,032,300 - 1,008,000 = 24,300\n\n28 \u00d7 867 = ?\n\n28 \u00d7 800 = 22,400  \n28 \u00d7 67 = 1,876  \n22,400 + 1,876 = 24,276\n\n24,300 - 24,276 = 24\n\nSo,\n\n$$\n1,032,300 \\div 28 = 36,867 + (24/28) \\approx 36,867.857\n$$\n\nSo,\n\n$$\n1,032,300 \\div 28 = 36,867.857...\n$$\n\nBut since both numbers are negative in the original division:\n\n$$\n(-1,032,300) // (-28) = \\text{floor}(1,032,300 / 28) = \\text{floor}(36,867.857...) = 36,867\n$$\n\nBut wait: **floor division of two negatives**:\n\nActually, in Python-style floor division, `a // b` returns the floor of the division.\n\nBut when both numbers are negative, the result is **positive**, and floor division rounds **down**.\n\nBut since:\n\n$$\n-1,032,300 / -28 = +36,867.857...\n$$\n\nThen:\n\n$$\n(-1,032,300) // (-28) = \\text{floor}(36,867.857) = 36,867\n$$\n\nBecause floor goes to the next **lower** integer, but 36,867.857... floors to 36,867.\n\n\u2705 So result is **36,867**\n\n---\n\n### Step 7: Divide that result by -70 using integer division\n\nNow compute:\n\n$$\n36,867 // (-70)\n$$\n\nFirst, compute:\n\n$$\n36,867 \\div 70 \\approx ?\n$$\n\n70 \u00d7 500 = 35,000  \n36,867 - 35,000 = 1,867  \n70 \u00d7 26 = 1,820  \n1,867 - 1,820 = 47\n\nSo:\n\n$$\n36,867 / 70 = 526 + 47/70 \\approx 526.671\n$$\n\nSo:\n\n$$\n36,867 / (-70) = -526.671...\n$$\n\nNow, integer floor division: `36,867 // -70 = floor(-526.671...)`\n\nFloor goes to the next **lower** integer, so floor(-526.671) = **-527**\n\nBecause -527 is less than -526.671.\n\n\u2705 So:\n\n$$\n36,867 // (-70) = -527\n$$\n\n---\n\n### Final Answer:\n\nAnswer: -527",
+          "parsed": -527
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-95 \\times \\left( \\left( \\left(77 \\times (-70 \\mod 94) \\right) \\div 68 \\right) \\mod 18 \\right)\n$$\n\nWe\u2019ll evaluate this step by step, following the order of operations and carefully handling the modulo and integer division.\n\n---\n\n### Step 1: Compute $-70 \\mod 94$\n\nThe modulo operation finds the remainder when $-70$ is divided by $94$. But since $-70$ is negative, we need the **positive remainder** equivalent.\n\nWe can compute:\n\n$$\n-70 \\mod 94 = 94 - (70 \\mod 94) = 94 - 70 = 24\n$$\n\nAlternatively, think of it as: what number between 0 and 93 is congruent to $-70 \\mod 94$?\n\n$$\n-70 + 94 = 24 \\Rightarrow -70 \\equiv 24 \\mod 94\n$$\n\n\u2705 So:  \n$$\n-70 \\mod 94 = 24\n$$\n\n---\n\n### Step 2: Multiply by 77\n\n$$\n77 \\times 24 = ?\n$$\n\nCompute:\n$$\n77 \\times 24 = (70 + 7) \\times 24 = 70 \\times 24 + 7 \\times 24 = 1680 + 168 = 1848\n$$\n\n\u2705 So:\n$$\n77 \\times (-70 \\mod 94) = 1848\n$$\n\n---\n\n### Step 3: Integer division by 68 \u2192 $1848 \\div 68$ (floor division)\n\nWe compute $1848 \\div 68$, and take the **floor** (integer division).\n\nLet\u2019s divide:\n\nFirst, estimate:  \n$68 \\times 27 = ?$  \n$68 \\times 20 = 1360$  \n$68 \\times 7 = 476$  \n$1360 + 476 = 1836$\n\n$1848 - 1836 = 12$, so:\n\n$$\n1848 \\div 68 = 27 \\text{ with remainder } 12\n\\Rightarrow \\left\\lfloor \\frac{1848}{68} \\right\\rfloor = 27\n$$\n\n\u2705 So:\n$$\n(77 \\times (-70 \\mod 94)) \\div 68 = 27 \\quad \\text{(integer division)}\n$$\n\n---\n\n### Step 4: Take mod 18 \u2192 $27 \\mod 18$\n\n$$\n27 \\div 18 = 1 \\text{ remainder } 9\n\\Rightarrow 27 \\mod 18 = 9\n$$\n\n\u2705 So the expression inside becomes:\n\n$$\n\\left( \\left(77 \\times (-70 \\mod 94) \\right) // 68 \\right) \\mod 18 = 9\n$$\n\n---\n\n### Step 5: Multiply by -95\n\n$$\n-95 \\times 9 = -855\n$$\n\nAnswer: -855",
+          "parsed": -855
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n((((-2 \\mod 71) \\mod -20) + 51) \\times 46) + (-83)\n$$\n\nWhich simplifies to:\n\n$$\n((((-2 \\mod 71) \\mod -20) + 51) \\times 46) - 83\n$$\n\nWe\u2019ll evaluate it from the innermost parentheses.\n\n---\n\n### Step 1: Compute $-2 \\mod 71$\n\nIn modular arithmetic, $ a \\mod m $ means the remainder when $ a $ is divided by $ m $, and the result should be in the range $ [0, m) $ if $ m > 0 $.\n\nSo $-2 \\mod 71$:\n\nWe find the smallest non-negative remainder.\n\n$$\n-2 + 71 = 69\n\\Rightarrow -2 \\equiv 69 \\mod 71\n$$\n\nSo:\n$$\n-2 \\mod 71 = 69\n$$\n\n---\n\n### Step 2: Compute $ 69 \\mod -20 $\n\nNow the modulus is **negative**: $-20$\n\nMod with a negative modulus: different programming languages handle this differently, but mathematically, the result should satisfy:\n\n$$\na \\mod m = a - m \\cdot \\left\\lfloor \\frac{a}{m} \\right\\rfloor\n$$\n\nSo compute:\n\n$$\n69 \\mod (-20)\n$$\n\nUsing the formula:\n\n$$\n69 \\div (-20) = -3.45\n\\Rightarrow \\left\\lfloor -3.45 \\right\\rfloor = -4\n$$\n\nThen:\n\n$$\n69 - (-20) \\cdot (-4) = 69 - 80 = -11\n$$\n\nWait! That would be negative. Let's double-check.\n\nWait: formula is:\n\n$$\na \\mod m = a - m \\cdot \\left\\lfloor \\frac{a}{m} \\right\\rfloor\n$$\n\nSo:\n\n$$\n69 \\mod (-20) = 69 - (-20) \\cdot \\left\\lfloor \\frac{69}{-20} \\right\\rfloor\n$$\n\n$$\n\\frac{69}{-20} = -3.45 \\Rightarrow \\left\\lfloor -3.45 \\right\\rfloor = -4\n$$\n\nThen:\n\n$$\n69 - (-20)(-4) = 69 - 80 = 9\n$$\n\nWait: (-20) * (-4) = +80 \u2192 69 - 80 = -11? That can't be.\n\nWait no: formula is:\n\n$$\na \\mod m = a - m \\cdot \\left\\lfloor \\frac{a}{m} \\right\\rfloor\n$$\n\nSo:\n\n= $ 69 - (-20) \\cdot (-4) = 69 - (80) = -11 $? That\u2019s negative.\n\nBut modulus should usually return a value with the **same sign as the modulus**, if we're following floor division.\n\nBut let's think differently.\n\nWhen modulus is negative, the result should be \u2264 0 (since modulus is negative, remainder should be in range (m, 0] if m < 0).\n\nWe want $ 69 \\mod (-20) $\n\nWe find the largest multiple of -20 that is \u2264 69.\n\nMultiples of -20: 0, -20, -40, -60, -80, ...\n\nWhich is \u2264 69? All of them, but we need the one such that:\n\nremainder = 69 - (multiple of -20) \u2208 ( -20, 0 ] if we follow the rule that |remainder| < |m|, and sign matches m.\n\nSo let's divide 69 by -20:\n\n69 \u00f7 (-20) = -3.45\n\nTake floor = -4\n\nMultiply back: -4 \u00d7 (-20) = 80\n\nThen remainder = 69 - 80 = **-11**\n\nWait: -11? But -11 is not in the range ( -20, 0 ]? Wait, -11 is in ( -20, 0 ] \u2014 yes, because -20 < -11 \u2264 0.\n\nActually, yes, -11 is between -20 and 0, so it's valid.\n\nSo:\n$$\n69 \\mod (-20) = -11\n$$\n\nCheck: 69 = (-20)*(-4) + (-11)? \u2192 80 -11 = 69 \u2192 yes.\n\nSo yes, correct.\n\nThus:\n\n$$\n( -2 \\mod 71 ) \\mod (-20) = 69 \\mod (-20) = -11\n$$\n\n---\n\n### Step 3: Add 51\n\n$$\n-11 + 51 = 40\n$$\n\n---\n\n### Step 4: Multiply by 46\n\n$$\n40 \\times 46 = 1840\n$$\n\n---\n\n### Step 5: Add -83 (i.e., subtract 83)\n\n$$\n1840 - 83 = 1757\n$$\n\n---\n\n### Final Answer:\n\nAnswer: 1757",
+          "parsed": 1757
+        },
+        {
+          "index": 20,
+          "gold": 105386,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n82 + (46 - ((81 + (39 * (-32 + (29 % -25)))) * 53))\n\nWe need to evaluate this expression from the innermost parentheses outward.\n\n---\n\n### Step 1: Evaluate (29 % -25)\n\nThe modulo operation:  \n29 % -25 means the remainder when 29 is divided by -25.\n\nIn programming/math, the sign of the result follows the divisor in some contexts, but in mathematics, modulo with negative modulus can be tricky. However, in most standard definitions (especially in math), we compute:\n\na % b = a - b * floor(a / b)\n\nSo:\n\n29 % (-25) = 29 - (-25) * floor(29 / -25)\n\n29 / -25 = -1.16\n\nfloor(-1.16) = -2\n\nSo:\n\n29 % (-25) = 29 - (-25) * (-2) = 29 - 50 = -21\n\nAlternatively, modulo with negative modulus:\n\nIn Python, for example, 29 % -25 = -21.\n\nSo:\n\n29 % -25 = -21\n\n---\n\n### Step 2: Evaluate (-32 + (29 % -25))  \n= -32 + (-21) = -53\n\n---\n\n### Step 3: Evaluate (39 * (-53))  \n= 39 * -53 = -2067\n\n---\n\n### Step 4: Evaluate (81 + (-2067))  \n= 81 - 2067 = -1986\n\n---\n\n### Step 5: Multiply by 53: (-1986) * 53\n\nLet's compute that:\n\n1986 * 53:\n\nFirst, 2000 * 53 = 106,000  \n14 * 53 = 742  \nSo 1986 = 2000 - 14 \u2192 106,000 - 742 = 105,258\n\nSo 1986 * 53 = 105,258  \nThus, -1986 * 53 = -105,258\n\n---\n\n### Step 6: Evaluate (46 - (-105,258))  \n= 46 + 105,258 = 105,304\n\n---\n\n### Step 7: Add 82: 82 + 105,304 = 105,386\n\n---\n\n### Final Answer:\n\nAnswer: 105386",
+          "parsed": 105386
+        },
+        {
+          "index": 21,
+          "gold": 2812,
+          "completion": "We are given the expression:\n\n$$\n(((-64 \\times (28 \\times (-59 - (-46 // -20)))) // -97) // -30) \\times 76\n$$\n\nWe need to evaluate this step by step, paying attention to integer division (`//`), which in most programming languages truncates toward negative infinity (but in mathematics, we usually interpret it as floor division). However, since this looks like a Python-style expression, we'll assume **floor division** (`//`) \u2014 meaning it rounds down to the nearest integer (toward negative infinity).\n\nLet\u2019s evaluate step by step.\n\n---\n\n### Step 1: Compute `-46 // -20`\n\n$$\n-46 \\div -20 = 2.3\n$$\n\nFloor division: `//` rounds **down** (toward negative infinity). But 2.3 rounded down is 2 (since down means toward smaller values, and 2 < 2.3).\n\nWait: **But both numbers are negative, so the result is positive.**  \n$$\n-46 // -20 = \\left\\lfloor \\frac{-46}{-20} \\right\\rfloor = \\left\\lfloor 2.3 \\right\\rfloor = 2\n$$\n\nSo:\n$$\n-46 // -20 = 2\n$$\n\n---\n\n### Step 2: Compute `-59 - (-46 // -20)`\n\nWe just found `-46 // -20 = 2`, so:\n\n$$\n-59 - (2) = -61\n$$\n\nWait! Let's check the expression:\n\n$$\n-59 - (-46 // -20)\n$$\n\nAh! There's a **minus sign before the division**:  \nSo it's:  \n$$\n-59 - ( (-46) // (-20) ) = -59 - (2) = -61\n$$\n\nYes.\n\nSo we have:\n$$\n-59 - ( -46 // -20 ) = -59 - 2 = -61\n$$\n\n---\n\n### Step 3: Multiply by 28\n\n$$\n28 \\times (-61) = -1708\n$$\n\n---\n\n### Step 4: Multiply by -64\n\n$$\n-64 \\times (-1708) = 64 \\times 1708\n$$\n\nLet\u2019s compute that:\n\nBreak it down:\n$$\n64 \\times 1700 = 64 \\times 17 \\times 100 = (1088) \\times 100 = 108,800  \n64 \\times 8 = 512  \n\\text{So } 64 \\times 1708 = 108,800 + 512 = 109,312\n$$\n\nSo:\n$$\n-64 \\times (28 \\times (-61)) = 109,312\n$$\n\n---\n\n### Step 5: First integer division: `// -97`\n\n$$\n109312 // -97\n$$\n\nFirst compute $ 109312 \\div 97 $, then apply the sign.\n\nLet\u2019s divide:\n\nEstimate:  \n$ 97 \\times 1000 = 97,000 $  \n$ 109,312 - 97,000 = 12,312 $  \n$ 97 \\times 120 = 11,640 $  \n$ 12,312 - 11,640 = 672 $  \n$ 97 \\times 6 = 582 $  \n$ 672 - 582 = 90 $  \nSo total: $ 1000 + 120 + 6 = 1126 $, remainder 90\n\nSo:\n$$\n109312 = 97 \\times 1126 + 90\n$$\n\nTherefore:\n$$\n109312 \\div 97 = 1126 + \\frac{90}{97} \\approx 1126.927\n$$\n\nBut we are doing:\n$$\n109312 // -97 = \\left\\lfloor \\frac{109312}{-97} \\right\\rfloor = \\left\\lfloor -1126.927 \\right\\rfloor\n$$\n\nFloor of -1126.927 is **-1127** (since floor goes down \u2014 more negative).\n\nSo:\n$$\n109312 // -97 = -1127\n$$\n\n---\n\n### Step 6: Next division: `// -30`\n\nNow compute:\n$$\n(-1127) // -30\n$$\n\n$ 1127 \\div 30 \\approx 37.566... $\n\nSo $ 1127 = 30 \\times 37 + 17 $ \u2192 $ 30 \\times 37 = 1110 $, remainder 17\n\nSo:\n$$\n-1127 \\div -30 = 37.566...\n$$\n\nBut we are doing floor division:\n$$\n(-1127) // (-30) = \\left\\lfloor \\frac{-1127}{-30} \\right\\rfloor = \\left\\lfloor 37.566... \\right\\rfloor = 37\n$$\n\nBecause the result is positive, floor is just truncating the decimal.\n\nSo:\n$$\n(-1127) // (-30) = 37\n$$\n\n---\n\n### Step 7: Multiply by 76\n\n$$\n37 \\times 76\n$$\n\nBreak it down:\n$$\n37 \\times 70 = 2590  \n37 \\times 6 = 222  \nTotal = 2590 + 222 = 2812\n$$\n\n---\n\n### Final Answer:\n\nAnswer: 2812",
+          "parsed": 2812
+        },
+        {
+          "index": 22,
+          "gold": 458,
+          "completion": "Let's solve the expression step by step:\n\nWe are evaluating:\n\n$$\n(((-25 \\times (-12 + ((58 \\times 1) \\% -15))) + 75) - (-64)) - 31\n$$\n\nWe'll go step by step, following order of operations (PEMDAS), and carefully handling the modulo operation with negative numbers.\n\n---\n\n### Step 1: Simplify innermost expressions\n\n#### $ 58 \\times 1 = 58 $\n\nSo now we have:\n\n$$\n(((-25 \\times (-12 + (58 \\% -15))) + 75) - (-64)) - 31\n$$\n\n---\n\n### Step 2: Compute $ 58 \\% -15 $ (58 mod -15)\n\nModulo with a negative divisor:\n\nThe result of $ a \\% b $ when $ b $ is negative should satisfy:\n\n- $ a = qb + r $\n- $ 0 \\leq r < |b| $ if $ b > 0 $, but when $ b < 0 $, $ r $ satisfies $ 0 \\geq r > -|b| $? Wait \u2014 actually, different languages define it differently, but mathematically, the **modulo operation** should return a remainder with the **same sign as the divisor** in many programming contexts (like Python). But in **standard math**, remainder usually has the same sign as the dividend.\n\nBut let\u2019s clarify using **Python-style modulo**, where the result has the **same sign as the divisor**.\n\nSo $ 58 \\% -15 $:\n\nWe want the remainder when 58 is divided by -15, such that:\n\n$$\n58 = q \\times (-15) + r, \\quad \\text{where } 0 \\leq r < 15 \\text{? No \u2014 if divisor is negative, } r \\text{ should satisfy } -15 < r \\leq 0\n$$\n\nActually, in Python, the result has the **same sign as the divisor**.\n\nSo compute:\n\nHow many times does -15 go into 58?\n\nWe find the floor division: $ 58 // -15 $\n\n- $ 58 / -15 \\approx -3.866 $\n- Floor of that is $ -4 $\n\nThen:\n\n$$\n58 \\% -15 = 58 - (-4) \\times (-15) = 58 - 60 = -2\n$$\n\nYes, because:\n\n- $ -4 \\times -15 = 60 $\n- $ 58 - 60 = -2 $\n- And $ -2 $ has the same sign as $ -15 $, and $ -15 < -2 \\leq 0 $\n\nSo $ 58 \\% -15 = -2 $\n\n\u2705\n\nSo now substitute:\n\n$$\n(((-25 \\times (-12 + (-2))) + 75) - (-64)) - 31\n$$\n\n---\n\n### Step 3: Simplify inside parentheses\n\n$ -12 + (-2) = -14 $\n\nNow:\n\n$$\n(((-25 \\times -14) + 75) - (-64)) - 31\n$$\n\n---\n\n### Step 4: $ -25 \\times -14 = 350 $\n\nNow:\n\n$$\n((350 + 75) - (-64)) - 31\n$$\n\n---\n\n### Step 5: $ 350 + 75 = 425 $\n\n$$\n(425 - (-64)) - 31\n$$\n\nSubtracting a negative is adding:\n\n$ 425 + 64 = 489 $\n\nNow:\n\n$$\n489 - 31 = 458\n$$\n\n---\n\n### Final Answer:\n\nAnswer: 458",
+          "parsed": 458
+        },
+        {
+          "index": 23,
+          "gold": -252,
+          "completion": "Let's solve this step by step:\n\nWe are given the expression:\n\n(17 + (-79 - (74 + (((33 * 90) % 23) + 21)))) + (-92)\n\nWe'll work from the innermost parentheses outward.\n\n---\n\n### Step 1: Compute (33 * 90)\n\n33 * 90 = 2970\n\n---\n\n### Step 2: Compute (2970 % 23)  \nThis is the remainder when 2970 is divided by 23.\n\nLet\u2019s divide 2970 by 23:\n\n23 * 129 = 23 * 130 - 23 = 2990 - 23 = 2967\n\n2970 - 2967 = 3\n\nSo, 2970 % 23 = 3\n\n---\n\n### Step 3: Add 21 to that result\n\n3 + 21 = 24\n\n---\n\n### Step 4: Add that to 74\n\n74 + 24 = 98\n\n---\n\n### Step 5: Now compute -79 - 98\n\n-79 - 98 = -177\n\n---\n\n### Step 6: Add 17 to that\n\n17 + (-177) = -160\n\n---\n\n### Step 7: Add -92\n\n-160 + (-92) = -160 - 92 = -252\n\n---\n\nAnswer: -252",
+          "parsed": -252
+        },
+        {
+          "index": 24,
+          "gold": -764928,
+          "completion": "Let's solve this step by step:\n\nWe are given the expression:\n\n```\n48 * (((((-68 % 38) * -44) * -48) // -68) * 64)\n```\n\nWe'll evaluate it from the innermost parentheses outward.\n\n---\n\n### Step 1: Compute `-68 % 38`\n\nThe `%` operator is the modulo operation. In Python, the result of `a % b` has the same sign as `b` if `b` is positive, and the result is non-negative.\n\nWe compute:\n\n-68 \u00f7 38 = -1.789\u2026 \u2192 floor division goes to -2 (since it's rounded down)\n\nBut for modulo:\n\n`a % b = a - b * floor(a / b)`\n\nSo:\n\n-68 % 38 = -68 - (38 * floor(-68 / 38))\n\n-68 / 38 \u2248 -1.789 \u2192 floor = -2\n\nSo:\n\n-68 % 38 = -68 - (38 * -2) = -68 + 76 = **8**\n\n\u2705 So: `-68 % 38 = 8`\n\n---\n\n### Step 2: Multiply by -44\n\n8 * (-44) = **-352**\n\n---\n\n### Step 3: Multiply by -48\n\n-352 * -48 = **16896**\n\n(positive because negative \u00d7 negative = positive)\n\n---\n\n### Step 4: Integer division by -68\n\n16896 // -68\n\nFirst compute 16896 / -68 = -248.470588...\n\nNow, `//` is floor division \u2192 round down to the next lower integer\n\nSo floor(-248.470588) = **-249**\n\n\u2705 Important: floor goes down, so -248.47 \u2192 -249\n\nSo: 16896 // -68 = **-249**\n\n---\n\n### Step 5: Multiply by 64\n\n-249 * 64\n\nBreak it down:\n\n249 * 64 = (250 - 1) * 64 = 250*64 - 64 = 16,000 - 64 = 15,936\n\nSo -249 * 64 = **-15,936**\n\n---\n\n### Step 6: Multiply by 48\n\nNow compute:\n\n48 * (-15,936) = - (48 * 15,936)\n\nCompute 48 * 15,936:\n\nWe can break it down:\n\n15,936 * 48 = 15,936 * (50 - 2) = 15,936*50 - 15,936*2\n\n15,936 * 50 = 15,936 * 5 * 10 = 79,680 * 10 = 796,800\n\n15,936 * 2 = 31,872\n\nSo: 796,800 - 31,872 = 764,928\n\nWait \u2014 no! This is subtraction, but it should be:\n\nWait: 48 = 50 - 2 \u2192 so:\n\n15,936 * 48 = 15,936*50 - 15,936*2 = 796,800 - 31,872 = **764,928**\n\nSo 48 * (-15,936) = **-764,928**\n\n---\n\nAnswer: -764928",
+          "parsed": -764928
+        },
+        {
+          "index": 25,
+          "gold": -143220,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n((((6 + -26) \\% -68) \\% -84) \\times -93) \\times -77\n$$\n\n### Step 1: Simplify innermost parentheses\n$$\n6 + (-26) = -20\n$$\n\nNow the expression becomes:\n$$\n((( -20 \\% -68 ) \\% -84 ) \\times -93) \\times -77\n$$\n\n---\n\n### Step 2: Compute $-20 \\% -68$\n\nIn modular arithmetic, the modulo operation with a **negative divisor** depends on the programming language, but in **mathematics**, the modulo operation usually returns a result with the **same sign as the divisor**, or it's defined as:\n\n$$\na \\% b = a - b \\times \\left\\lfloor \\frac{a}{b} \\right\\rfloor\n$$\n\nWe'll use the **floored division** definition.\n\nSo:\n$$\n-20 \\% -68 = -20 - (-68) \\times \\left\\lfloor \\frac{-20}{-68} \\right\\rfloor\n$$\n\n$$\n\\frac{-20}{-68} = \\frac{20}{68} \\approx 0.294, \\quad \\left\\lfloor 0.294 \\right\\rfloor = 0\n$$\n\nSo:\n$$\n-20 \\% -68 = -20 - (-68) \\times 0 = -20\n$$\n\n\u2705 So $-20 \\% -68 = -20$\n\nNow the expression is:\n$$\n(( -20 \\% -84 ) \\times -93) \\times -77\n$$\n\n---\n\n### Step 3: Compute $-20 \\% -84$\n\nAgain:\n$$\n-20 \\% -84 = -20 - (-84) \\times \\left\\lfloor \\frac{-20}{-84} \\right\\rfloor\n$$\n\n$$\n\\frac{-20}{-84} = \\frac{20}{84} \\approx 0.238, \\quad \\left\\lfloor 0.238 \\right\\rfloor = 0\n$$\n\nSo:\n$$\n-20 \\% -84 = -20 - (-84) \\times 0 = -20\n$$\n\n\u2705 So result is $-20$\n\nNow expression is:\n$$\n(-20 \\times -93) \\times -77\n$$\n\n---\n\n### Step 4: Multiply $-20 \\times -93$\n\n$$\n-20 \\times -93 = 1860\n$$\n\n(positive because negative \u00d7 negative = positive)\n\nNow:\n$$\n1860 \\times -77\n$$\n\n---\n\n### Step 5: $1860 \\times -77$\n\nBreak it down:\n$$\n1860 \\times 77 = 1860 \\times (70 + 7) = 1860 \\times 70 + 1860 \\times 7\n$$\n\nCompute:\n- $1860 \\times 70 = 1860 \\times 7 \\times 10 = (13,020) \\times 10 = 130,200$\n- $1860 \\times 7 = 13,020$\n\nAdd:\n$$\n130,200 + 13,020 = 143,220\n$$\n\nSo:\n$$\n1860 \\times -77 = -143,220\n$$\n\n---\n\nAnswer: $-143220$\n\nAnswer: -143220",
+          "parsed": -143220
+        },
+        {
+          "index": 26,
+          "gold": 173,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n(((79 + ((-61 + (-9 - -31)) - -62)) // 79) + 96) + 76\n$$\n\nWe will simplify it step by step, starting from the innermost parentheses.\n\n---\n\n### Step 1: Simplify `-9 - -31`\nSubtracting a negative is like adding:\n$$\n-9 - (-31) = -9 + 31 = 22\n$$\n\nNow the expression becomes:\n\n$$\n(((79 + ((-61 + 22) - -62)) // 79) + 96) + 76\n$$\n\n---\n\n### Step 2: Simplify `-61 + 22`\n$$\n-61 + 22 = -39\n$$\n\nNow:\n$$\n(((79 + (-39 - -62)) // 79) + 96) + 76\n$$\n\n---\n\n### Step 3: Simplify `-39 - (-62)`\n$$\n-39 + 62 = 23\n$$\n\nNow:\n$$\n(((79 + 23) // 79) + 96) + 76\n$$\n\n---\n\n### Step 4: Simplify `79 + 23`\n$$\n79 + 23 = 102\n$$\n\nNow:\n$$\n((102 // 79) + 96) + 76\n$$\n\n---\n\n### Step 5: Integer division `102 // 79`\n$$\n102 \\div 79 = 1.291... \\Rightarrow \\text{floor to } 1\n$$\n\nSo:\n$$\n(1 + 96) + 76\n$$\n\n---\n\n### Step 6: `1 + 96 = 97`\n\nThen:\n$$\n97 + 76 = 173\n$$\n\n---\n\nAnswer: 173",
+          "parsed": 173
+        },
+        {
+          "index": 27,
+          "gold": -2345,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n((((-86 // -79) \\% -92) \\times 25) + 19) + -89\n$$\n\nWe'll evaluate this step by step, following the order of operations and understanding how the floor division (`//`) and modulo (`%`) work in Python, especially with negative numbers.\n\n---\n\n### Step 1: Evaluate `-86 // -79`\n\nFirst, compute the floor division:  \n-86 divided by -79 is:\n\n$$\n-86 / -79 = 1.0886...\n$$\n\nFloor division (`//`) rounds **down** to the nearest integer.\n\nRounding down 1.0886... gives:\n\n$$\n-86 // -79 = 1\n$$\n\n(Note: Since both numbers are negative, the result is positive, and floor rounds toward negative infinity. But 1.0886\u2026 floored is 1, since it's the greatest integer \u2264 1.0886.)\n\n\u2705 So:  \n$$\n-86 // -79 = 1\n$$\n\n---\n\n### Step 2: Now compute `(1 % -92)`\n\nWe now compute:  \n$$\n1 \\% -92\n$$\n\nIn Python, the modulo operation with a **negative divisor** returns a result that has the **same sign as the divisor**.\n\nThe rule is:  \n$$\na \\% b = a - b \\times \\left\\lfloor \\frac{a}{b} \\right\\rfloor\n$$\n\nSo:\n$$\n1 \\% -92 = 1 - (-92) \\times \\left\\lfloor \\frac{1}{-92} \\right\\rfloor\n$$\n\n$$\n\\frac{1}{-92} = -0.0108..., \\quad \\left\\lfloor -0.0108... \\right\\rfloor = -1\n$$\n\nSo:\n$$\n1 \\% -92 = 1 - (-92)(-1) = 1 - 92 = -91\n$$\n\n\u2705 So:\n$$\n1 \\% -92 = -91\n$$\n\n---\n\n### Step 3: Multiply by 25\n\n$$\n(-91) \\times 25 = -2275\n$$\n\n\u2705 So far:  \n$$\n((-86 // -79) \\% -92) \\times 25 = -2275\n$$\n\n---\n\n### Step 4: Add 19\n\n$$\n-2275 + 19 = -2256\n$$\n\n---\n\n### Step 5: Add -89\n\n$$\n-2256 + (-89) = -2256 - 89 = -2345\n$$\n\n---\n\n### Final Answer:\n\nAnswer: -2345",
+          "parsed": -2345
+        },
+        {
+          "index": 28,
+          "gold": 140,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n    ((((25 // 41) * 30) - (-77)) // -76) * -70\n\nWe'll evaluate it from the innermost parentheses outward, remembering that `//` is integer (floor) division in programming.\n\n---\n\n### Step 1: Evaluate `25 // 41`\n\n25 divided by 41 is less than 1, so:\n\n    25 // 41 = 0   (floor division)\n\n---\n\n### Step 2: Multiply by 30\n\n    0 * 30 = 0\n\n---\n\n### Step 3: Subtract -77\n\n    0 - (-77) = 0 + 77 = 77\n\n---\n\n### Step 4: Divide by -76 using integer division\n\n    77 // -76\n\nNow, 77 / -76 \u2248 -1.013...\n\nFloor division rounds **down** to the next lower integer.\n\nSo floor(-1.013...) = -2\n\n    77 // -76 = -2\n\n---\n\n### Step 5: Multiply by -70\n\n    -2 * -70 = 140\n\n---\n\n### Final Answer:\n\nAnswer: 140",
+          "parsed": 140
+        },
+        {
+          "index": 29,
+          "gold": 1558,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-41 \\times \\left( \\left( \\left( -74 \\times (52 \\mod -41) \\right) \\div -72 \\right) + (-7) \\right)\n$$\n\nLet\u2019s break this down **step by step**.\n\n---\n\n### Step 1: Compute $ 52 \\mod -41 $\n\nIn modular arithmetic, the result of `a mod b` depends on how the modulus operation is defined, especially when negative numbers are involved.\n\nIn most programming languages (and standard mathematical convention with flooring division), the modulus satisfies:\n\n$$\na \\mod b = a - b \\times \\left\\lfloor \\frac{a}{b} \\right\\rfloor\n$$\n\nSo compute $ 52 \\mod -41 $:\n\n- $ \\frac{52}{-41} \\approx -1.268 $\n- Floor of that is $ -2 $\n- So:\n  $$\n  52 \\mod -41 = 52 - (-41) \\times (-2) = 52 - 82 = -30\n  $$\n\n\u2705 So, $ 52 \\mod -41 = -30 $\n\n> Alternatively, think: how much remains after subtracting as many full copies of -41 as possible while going toward the next lower multiple?\n>\n> The closest multiple of -41 less than or equal to 52 is $ -41 \\times -2 = 82 $? No, that's bigger.\n>\n> Actually, multiples of -41: 0, -41, -82, ...\n>\n> But 52 is positive, so the largest multiple of -41 that is \u2264 52 is 0? Wait, 0 > -41, etc.\n\nWait \u2014 let's do it properly.\n\nWe want $ 52 \\mod -41 $:\n\nWe find $ q = \\left\\lfloor \\frac{52}{-41} \\right\\rfloor = \\left\\lfloor -1.268 \\right\\rfloor = -2 $\n\nThen:\n$$\n52 \\mod -41 = 52 - (-41) \\times (-2) = 52 - 82 = -30\n$$\n\nYes, that's correct.\n\nSo:\n$$\n52 \\mod -41 = -30\n$$\n\n---\n\n### Step 2: Multiply by -74\n\nNow compute:\n$$\n-74 \\times (-30) = 2220\n$$\n\n---\n\n### Step 3: Divide by -72 using **floor division** (//)\n\nThe expression has:\n$$\n( -74 \\times (52 \\mod -41) ) // -72 = 2220 // -72\n$$\n\nFirst compute $ 2220 \\div -72 \\approx -30.833... $\n\nNow, **floor division** means we take the **floor** of that: the greatest integer **less than or equal to** -30.833...\n\nSo:\n$$\n\\left\\lfloor -30.833 \\right\\rfloor = -31\n$$\n\n\u2705 So $ 2220 // -72 = -31 $\n\n---\n\n### Step 4: Add -7\n\nNow compute:\n$$\n-31 + (-7) = -38\n$$\n\n---\n\n### Step 5: Multiply by -41\n\nNow:\n$$\n-41 \\times (-38) = 1558\n$$\n\n---\n\n### Final Answer:\n\nAnswer: 1558",
+          "parsed": 1558
+        },
+        {
+          "index": 30,
+          "gold": -4296,
+          "completion": "Let's break this down step by step:\n\nWe are evaluating:\n\n(-83 - (-60 * (((9 % -94) - -31) + -15))) + -73\n\nWe'll evaluate from the innermost parentheses outward.\n\n---\n\n### Step 1: Evaluate `9 % -94` (modulus operation)\n\nIn Python, the modulus operation `a % b` returns a result with the **same sign as b**.\n\nSo:\n- 9 % -94 \u2192 What is the remainder when 9 is divided by -94?\n\nWe can think of it this way:\n- 9 \u00f7 (-94) is about -0.0957, so the floor division (//) would be -1.\n- Then: `a % b = a - (a // b) * b`\n\nSo:\n- 9 % -94 = 9 - (-1)*(-94) = 9 - 94 = -85\n\nWait \u2014 that doesn't make sense. Let's double-check the rule.\n\nActually, the modulus satisfies:\n`a = (a // b)*b + (a % b)`\n\nWe want `9 % -94`.\n\n- Floor division `9 // -94` is -1 (since it's the floor of -0.0957, i.e., -1).\n- Then: `9 % -94 = 9 - (-1)*(-94) = 9 - 94 = -85`\n\nBut -85 is negative and has the same sign as -94? Wait, -85 is negative, -94 is negative \u2192 same sign, so possible.\n\nBut check: does -1 * (-94) + (-85) = 9?\n- 94 - 85 = 9 \u2192 Yes.\n\nSo `9 % -94 = -85`\n\n\u2705 So:\n9 % -94 = -85\n\n---\n\n### Step 2: (((9 % -94) - -31) + -15)\n\nNow we have:\n((-85) - (-31)) + (-15)\n\nFirst: -85 - (-31) = -85 + 31 = -54\n\nThen: -54 + (-15) = -54 - 15 = -69\n\nSo the inner expression becomes: -69\n\n---\n\n### Step 3: -60 * (that) = -60 * (-69) = ?\n\n-60 * -69 = 60 * 69\n\nCompute:\n60 * 69 = 60*(70 - 1) = 4200 - 60 = 4140\n\n\u2705 So: -60 * (-69) = 4140\n\n---\n\n### Step 4: -83 - (that) = -83 - 4140\n\n= -83 - 4140 = -4223\n\n---\n\n### Step 5: Add -73\n\n-4223 + (-73) = -4223 - 73 = -4296\n\n---\n\n### Final Answer:\n\nAnswer: -4296",
+          "parsed": -4296
+        },
+        {
+          "index": 31,
+          "gold": -100,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n((22 + (8 + (-84 + -65))) - 57) - (-76)\n\nStep 1: Simplify the innermost parentheses:  \n-84 + -65 = -84 - 65 = -149\n\nNow the expression becomes:\n\n((22 + (8 + (-149))) - 57) - (-76)\n\nStep 2: Simplify (8 + (-149)):  \n8 - 149 = -141\n\nNow:\n\n((22 + (-141)) - 57) - (-76)\n\nStep 3: Simplify (22 + (-141)):  \n22 - 141 = -119\n\nNow:\n\n(-119 - 57) - (-76)\n\nStep 4: Simplify (-119 - 57):  \n-119 - 57 = -176\n\nNow:\n\n-176 - (-76)\n\nStep 5: Subtracting a negative is the same as adding:  \n-176 - (-76) = -176 + 76 = -100\n\nFinal answer: -100\n\nAnswer: -100",
+          "parsed": -100
+        },
+        {
+          "index": 32,
+          "gold": -14112,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n(-56 \\times (((74 - (32 // 75)) + (-86)) - (-16))) \\times 63\n$$\n\n### Step 1: Understand the operations\nWe need to evaluate the expression inside out. Note that `//` typically represents **integer division** (floor division) in programming, but in standard math, we might interpret it as regular division unless specified.\n\nBut since the symbol `//` is used (and 32/75 is not an integer), this likely refers to **floor division**.\n\nSo:\n- $ 32 // 75 $: floor division of 32 by 75.\n\nSince $ 32 / 75 = 0.426... $, floor of that is $ 0 $.\n\nSo:\n$$\n32 // 75 = 0\n$$\n\n### Step 2: Replace that in the expression\n\nNow simplify inner expression:\n$$\n74 - (32 // 75) = 74 - 0 = 74\n$$\n\nThen:\n$$\n(74 + (-86)) = 74 - 86 = -12\n$$\n\nThen:\n$$\n(-12) - (-16) = -12 + 16 = 4\n$$\n\nNow:\n$$\n-56 \\times 4 = -224\n$$\n\nThen:\n$$\n-224 \\times 63\n$$\n\nLet\u2019s compute that:\n\nBreak it down:\n$$\n224 \\times 63 = 224 \\times (60 + 3) = 224 \\times 60 + 224 \\times 3\n$$\n$$\n224 \\times 60 = 224 \\times 6 \\times 10 = 1344 \\times 10 = 13,440\n$$\n$$\n224 \\times 3 = 672\n$$\n$$\n13,440 + 672 = 14,112\n$$\n\nSo:\n$$\n-224 \\times 63 = -14,112\n$$\n\nAnswer: -14112",
+          "parsed": -14112
+        },
+        {
+          "index": 33,
+          "gold": 101,
+          "completion": "We are asked to evaluate the expression:\n\n```\n83 + ((-34 + ((84 - ((-73 % -2) * 28)) // -37)) % 28)\n```\n\nWe'll evaluate this step by step, following operator precedence and the behavior of modulo and integer division in programming (assuming Python-like semantics, since `%` and `//` are used).\n\n---\n\n### Step 1: Evaluate `-73 % -2`\n\nIn Python, the modulo operation `a % b` returns a result with the same sign as `b` (the divisor).\n\nSo, `-73 % -2`:\n- First, compute how many times `-2` fits into `-73`.\n- Integer division: `-73 // -2 = 36.5` \u2192 floor to **36** (since both negative, floor division rounds down)\n- But wait: in Python, `-73 // -2` is actually **36** (because -73 / -2 = 36.5, and floor(36.5) = 36)\n- Then: `-73 % -2 = -73 - (-2)*36 = -73 + 72 = -1`\n\nBut wait! This contradicts the rule: **modulo with negative divisor**.\n\nLet\u2019s double-check:\n\nWe want `a % b` where `a = -73`, `b = -2`.\n\nRule: `a % b = a - b * floor(a/b)`\n\n- `a/b = -73 / -2 = 36.5`\n- `floor(36.5) = 36`\n- So: `-73 % -2 = -73 - (-2)*36 = -73 + 72 = -1`\n\nBut in Python, the result of `a % b` must have the **same sign as b**. Here, `b = -2`, so result should be **negative or zero**.\n\n-1 is negative \u2192 correct.\n\nSo:  \n**`-73 % -2 = -1`**\n\n\u2705\n\n---\n\n### Step 2: Multiply that by 28\n\n```\n(-73 % -2) * 28 = (-1) * 28 = -28\n```\n\n---\n\n### Step 3: Evaluate `84 - (-28)`\n\n```\n84 - (-28) = 84 + 28 = 112\n```\n\n---\n\n### Step 4: Integer divide by -37\n\n```\n112 // -37\n```\n\n112 / -37 \u2248 -3.027\n\nIn Python, `//` is floor division \u2192 rounds **down** to the next more negative integer.\n\nSo: floor(-3.027) = **-4**\n\n\u2705 So:  \n`112 // -37 = -4`\n\n---\n\n### Step 5: Compute inner expression\n\n```\n-34 + (-4) = -38\n```\n\n---\n\n### Step 6: Take `% 28` \u2192 `-38 % 28`\n\nWe want the remainder when -38 is divided by 28.\n\nWe compute:  \n- Find how many times 28 fits into -38: -38 / 28 \u2248 -1.357  \n- Floor(-1.357) = -2  \n- Then: `-38 % 28 = -38 - (28 * -2) = -38 + 56 = 18`\n\n\u2705 So: `-38 % 28 = 18`\n\n---\n\n### Step 7: Add to 83\n\n```\n83 + 18 = 101\n```\n\n---\n\n### Final Answer:\n\nAnswer: 101",
+          "parsed": 101
+        },
+        {
+          "index": 34,
+          "gold": -2001,
+          "completion": "We are asked to evaluate the following expression:\n\n$$\n(-69 \\times (-28 - ((-67 + (25 // 49)) // -54))) // -1\n$$\n\nNote: The `//` operator denotes **integer (floor) division** in programming, which means we take the floor of the division result.\n\nWe\u2019ll evaluate step by step, following the order of operations (parentheses, innermost first).\n\n---\n\n### Step 1: Evaluate `25 // 49`\n\n$$\n25 \\div 49 = 0.5102...\n$$\n\nFloor of that is:\n\n$$\n25 // 49 = 0\n$$\n\n---\n\n### Step 2: Evaluate `-67 + (25 // 49)`  \nThat is:\n\n$$\n-67 + 0 = -67\n$$\n\n---\n\n### Step 3: Evaluate `(-67) // -54`\n\nNow compute:\n\n$$\n-67 \\div -54 = 1.2407...\n$$\n\nFloor division: take the **floor** of 1.2407 \u2192 **1**?\n\nWait! **Important**: floor division rounds **down** (towards negative infinity), not toward zero.\n\nBut:\n- $-67 / -54 = 1.2407$, which is positive.\n- Floor of 1.2407 is **1**, since 1 is the greatest integer \u2264 1.2407.\n\nSo:\n\n$$\n-67 // -54 = 1\n$$\n\nWait \u2014 but we have:\n\n$$\n(-67 + (25 // 49)) // -54 = (-67) // -54\n$$\n\nWait! No \u2014 actually, from earlier:\n\nWe computed:\n- $25 // 49 = 0$\n- So: $-67 + 0 = -67$\n- Then: $-67 // -54$\n\nSo yes: $-67 // -54$\n\nNow:\n$$\n-67 / -54 = 1.2407\n$$\nFloor is **1**, so:\n\n$$\n-67 // -54 = 1\n$$\n\nBut let\u2019s verify: floor division in Python (which defines `//`) rounds toward **negative infinity**.\n\nSince $-67 / -54 = 1.24$, which is **positive**, and floor of a positive number is the greatest integer less than or equal to it \u2192 floor(1.24) = 1.\n\n\u2705 So:\n\n$$\n(-67 + (25 // 49)) // -54 = -67 // -54 = 1\n$$\n\n---\n\n### Step 4: Evaluate the outer expression:\n\n$$\n-28 - ((-67 + (25 // 49)) // -54) = -28 - 1 = -29\n$$\n\n---\n\n### Step 5: Multiply by -69\n\n$$\n-69 \\times (-29) = 2001\n$$\n\n---\n\n### Step 6: Divide by -1 (using integer division)\n\n$$\n2001 // -1\n$$\n\nWait \u2014 the outer expression is:\n\n$$\n(...)// -1\n$$\n\nSo:\n\n$$\n2001 // -1 = -2001\n$$\n\nBecause $2001 / -1 = -2001$, and floor of an integer is itself.\n\n---\n\nWait \u2014 but let\u2019s look back at the original expression:\n\nIt is:\n\n$$\n(-69 \\times (-28 - ((-67 + (25 // 49)) // -54))) // -1\n$$\n\nWe computed:\n\n- Inner: $25 // 49 = 0$\n- Then: $-67 + 0 = -67$\n- Then: $-67 // -54 = 1$ (since $-67 / -54 \u2248 1.24$, floor is 1)\n- Then: $-28 - 1 = -29$\n- Then: $-69 \\times -29 = 2001$\n- Then: $2001 // -1 = -2001$\n\nBecause integer division of positive by negative: $2001 // -1 = -2001$\n\n\u2705 Final answer:\n\nAnswer: -2001",
+          "parsed": -2001
+        },
+        {
+          "index": 35,
+          "gold": 110,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n34 + ((((-2 \\times (59 + (-42))) \\mod 54) - (-56))\n$$\n\nLet's simplify step by step.\n\n---\n\n### Step 1: Simplify inside the parentheses\n$$\n59 + (-42) = 59 - 42 = 17\n$$\n\nNow the expression becomes:\n$$\n34 + ((((-2 \\times 17) \\mod 54) - (-56))\n$$\n\n---\n\n### Step 2: Multiply\n$$\n-2 \\times 17 = -34\n$$\n\nNow:\n$$\n34 + ((((-34) \\mod 54) - (-56))\n$$\n\n---\n\n### Step 3: Compute $-34 \\mod 54$\n\nWe want the smallest non-negative remainder.\n\nIn modular arithmetic, $-34 \\mod 54$ means:  \nAdd 54 to -34 until the result is in the range $[0, 53]$:\n$$\n-34 + 54 = 20\n$$\n\nSo:\n$$\n-34 \\mod 54 = 20\n$$\n\nNow:\n$$\n34 + ((20 - (-56))\n$$\n\n---\n\n### Step 4: Subtract a negative\n$$\n20 - (-56) = 20 + 56 = 76\n$$\n\nNow:\n$$\n34 + 76\n$$\n\n---\n\n### Step 5: Final addition\n$$\n34 + 76 = 110\n$$\n\n---\n\nAnswer: 110",
+          "parsed": 110
+        },
+        {
+          "index": 36,
+          "gold": 249,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-26 - \\left(\\left(\\left(\\left(63 // -78\\right) + -2\\right) \\times 60\\right) + -95\\right)\n$$\n\nLet\u2019s break it down step by step.\n\n---\n\n### Step 1: Integer Division \u2014 `63 // -78`\n\nThe `//` operator is **floor division** (integer division). This means we divide and then take the floor of the result.\n\n$$\n63 \\div -78 = -0.807... \n$$\n\nThe **floor** of $-0.807$ is $-1$, because floor goes down to the next lowest integer.\n\nSo:\n$$\n63 // -78 = -1\n$$\n\n---\n\n### Step 2: Add -2\n\n$$\n(-1) + (-2) = -3\n$$\n\n---\n\n### Step 3: Multiply by 60\n\n$$\n-3 \\times 60 = -180\n$$\n\n---\n\n### Step 4: Add -95\n\n$$\n-180 + (-95) = -275\n$$\n\n---\n\n### Step 5: Now compute the outer expression\n\n$$\n-26 - (-275) = -26 + 275 = 249\n$$\n\n---\n\nAnswer: 249",
+          "parsed": 249
+        },
+        {
+          "index": 37,
+          "gold": 1846,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n```\n35 - (58 + ((((40 * -50) + 98) + -50) - -83))\n```\n\n### Step 1: Simplify innermost parentheses\n\nStart with:  \n`40 * -50 = -2000`\n\nNow substitute:\n\n```\n((( -2000 + 98 ) + -50) - -83)\n```\n\nNow compute:\n\n`-2000 + 98 = -1902`\n\nNow:\n\n```\n(( -1902 + -50 ) - -83)\n\u2192 (-1952 - -83)\n```\n\nBut subtracting a negative is adding:\n\n`-1952 + 83 = -1869`\n\nNow the expression becomes:\n\n```\n35 - (58 + (-1869))\n```\n\nNow compute inside the parentheses:\n\n`58 + (-1869) = 58 - 1869 = -1811`\n\nNow:\n\n`35 - (-1811)`\n\nSubtracting a negative is adding:\n\n`35 + 1811 = 1846`\n\nAnswer: 1846",
+          "parsed": 1846
+        },
+        {
+          "index": 38,
+          "gold": 159,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n```\n67 + (((22 * ((-22 // 52) - -93)) % 71) + 56)\n```\n\nWe'll evaluate it from the innermost parentheses outward.\n\n---\n\n### Step 1: Integer Division `(-22 // 52)`\n\nIn Python, `//` is floor division.\n\n-22 \u00f7 52 = -0.423...  \nFloor of that is **-1** (since floor goes toward -\u221e).\n\nSo:\n```\n-22 // 52 = -1\n```\n\n---\n\n### Step 2: `(-1 - -93)`\n\nSubtracting a negative is adding:\n\n```\n-1 - (-93) = -1 + 93 = 92\n```\n\n---\n\n### Step 3: Multiply by 22\n\n```\n22 * 92 = 2024\n```\n\n---\n\n### Step 4: Take modulo 71\n\nNow compute:\n```\n2024 % 71\n```\n\nWe can divide 2024 by 71:\n\n71 \u00d7 28 = 1988  \n2024 - 1988 = 36\n\nSo:\n```\n2024 % 71 = 36\n```\n\n---\n\n### Step 5: Add 56\n\n```\n36 + 56 = 92\n```\n\n---\n\n### Step 6: Add 67\n\n```\n67 + 92 = 159\n```\n\n---\n\nAnswer: 159",
+          "parsed": 159
+        },
+        {
+          "index": 39,
+          "gold": 189,
+          "completion": "We are asked to evaluate the expression:\n\n```\n92 + ((((72 * ((-31 * -70) // -88)) - -82) // -67) - -72)\n```\n\nWe will evaluate this step by step, following the order of operations (parentheses and left-to-right within same precedence).\n\n---\n\n### Step 1: Evaluate innermost parentheses\n\nStart with:\n```\n(-31 * -70)\n```\n\nNegative times negative = positive:\n```\n-31 * -70 = 2170\n```\n\nNow:\n```\n(2170 // -88)\n```\n\nThis is **floor division**. So compute:\n```\n2170 / -88 \u2248 -24.659...\nFloor division rounds down (toward -\u221e), so:\n-24.659... \u2192 floor is -25\n```\n\nSo:\n```\n2170 // -88 = -25\n```\n\n---\n\n### Step 2: Multiply by 72\n\nNow:\n```\n72 * (-25) = -1800\n```\n\nSo far, we have:\n```\n(((( -1800 - (-82) ) // -67 ) - (-72))\n```\n\n---\n\n### Step 3: Subtract -82 \u2192 same as adding 82\n\n```\n-1800 - (-82) = -1800 + 82 = -1718\n```\n\nNow:\n```\n(-1718 // -67)\n```\n\nCompute:\n```\n-1718 / -67 = 1718 / 67 \u2248 25.6418...\nFloor division: floor(25.6418) = 25\n(Because both are negative, result is positive, floor of 25.6418 is 25)\n```\n\nSo:\n```\n-1718 // -67 = 25\n```\n\nNow:\n```\n25 - (-72) = 25 + 72 = 97\n```\n\n---\n\n### Step 4: Add to 92\n\nNow recall the full expression:\n```\n92 + [that whole expression] = 92 + 97 = 189\n```\n\n---\n\nAnswer: 189",
+          "parsed": 189
+        },
+        {
+          "index": 40,
+          "gold": 498,
+          "completion": "Let's break down the expression step by step:\n\nWe are given:\n\n$$\n((81 \\times ((10 - (98 - (57 + 69))) - 30)) + (-87)) + (-63)\n$$\n\n### Step 1: Simplify innermost parentheses\nStart with:\n$$\n57 + 69 = 126\n$$\n\nNow substitute:\n$$\n98 - (57 + 69) = 98 - 126 = -28\n$$\n\nNow:\n$$\n10 - (98 - (57 + 69)) = 10 - (-28) = 10 + 28 = 38\n$$\n\nNow:\n$$\n(38 - 30) = 8\n$$\n\nNow:\n$$\n81 \\times 8 = 648\n$$\n\nNow:\n$$\n648 + (-87) = 648 - 87 = 561\n$$\n\nThen:\n$$\n561 + (-63) = 561 - 63 = 498\n$$\n\nAnswer: 498",
+          "parsed": 498
+        },
+        {
+          "index": 41,
+          "gold": -5348,
+          "completion": "Let's evaluate the expression step by step:\n\n$$\n((2 \\times (-70 - (((-68 \\mod 67) \\times 76) \\times -40))) - 72) \\div -75\n$$\n\nWe are using integer division (`//`), so we'll evaluate step by step carefully, especially with the modulo operation.\n\n---\n\n### Step 1: Compute $-68 \\mod 67$\n\nIn mathematics, the modulo operation should yield a non-negative remainder less than the modulus.\n\nSo,\n$$\n-68 \\mod 67\n$$\n\nWe find the equivalent positive remainder.\n\nWe know:\n$$\n-68 = (-2) \\times 67 + r\n$$\nTry:\n$$\n-68 + 2 \\times 67 = -68 + 134 = 66\n$$\n\nSo,\n$$\n-68 \\equiv 66 \\mod 67\n$$\n\n\u2705 So, $-68 \\mod 67 = 66$\n\n---\n\n### Step 2: Multiply by 76\n\n$$\n66 \\times 76\n$$\n\nBreak it down:\n$$\n66 \\times 76 = (60 + 6)(76) = 60 \\times 76 + 6 \\times 76 = 4560 + 456 = 5016\n$$\n\nSo, $66 \\times 76 = 5016$\n\n---\n\n### Step 3: Multiply by $-40$\n\n$$\n5016 \\times (-40) = -200,640\n$$\n\n---\n\n### Step 4: Now evaluate the inner expression\n\nWe now compute:\n$$\n-70 - (-200,640) = -70 + 200,640 = 200,570\n$$\n\n---\n\n### Step 5: Multiply by 2\n\n$$\n2 \\times 200,570 = 401,140\n$$\n\n---\n\n### Step 6: Subtract 72\n\n$$\n401,140 - 72 = 401,068\n$$\n\n---\n\n### Step 7: Divide by $-75$ using integer division (`//`)\n\nWe compute:\n$$\n401,068 \\div (-75) = -\\frac{401,068}{75}\n$$\n\nFirst, divide:\n$$\n401,068 \\div 75\n$$\n\nEstimate:\n$$\n75 \\times 5000 = 375,000 \\\\\n401,068 - 375,000 = 26,068 \\\\\n75 \\times 347 = ? \\\\\n75 \\times 300 = 22,500 \\\\\n75 \\times 47 = 3,525 \u2192 22,500 + 3,525 = 26,025 \\\\\n26,068 - 26,025 = 43\n$$\n\nSo,\n$$\n401,068 = 75 \\times (5000 + 347) + 43 = 75 \\times 5347 + 43\n$$\n\nThus,\n$$\n401,068 \\div 75 = 5347 + \\frac{43}{75} \\approx 5347.573...\n$$\n\nSo,\n$$\n401,068 // -75 = -5348\n$$\n\nWait: **Integer division (`//`) in Python rounds down (floor division).**\n\nSo:\n$$\n401,068 / -75 = -5347.573...\n$$\n\nFloor of $-5347.573$ is $-5348$\n\n\u2705 So,\n$$\n401,068 // -75 = -5348\n$$\n\n---\n\nAnswer: -5348",
+          "parsed": -5348
+        },
+        {
+          "index": 42,
+          "gold": -3780,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n(((81 - ((-83 - -66) \\% 31)) + 49) + 64) \\times -21\n$$\n\n---\n\n### Step 1: Simplify innermost parentheses\n\n$$\n-83 - (-66) = -83 + 66 = -17\n$$\n\nSo now the expression becomes:\n\n$$\n((81 - (-17 \\% 31)) + 49) + 64) \\times -21\n$$\n\n---\n\n### Step 2: Compute $-17 \\% 31$ (modulus operation)\n\nIn modular arithmetic, negative mod can be computed as:\n\n$$\n-17 \\mod 31 = 31 - (17 \\mod 31) = 31 - 17 = 14\n$$\n\nBecause $-17 + 31 = 14$, and 14 is in the range [0, 30].\n\nSo:\n$$\n-17 \\% 31 = 14\n$$\n\nNow the expression becomes:\n\n$$\n((81 - 14) + 49 + 64) \\times -21\n$$\n\n---\n\n### Step 3: Compute $81 - 14$\n\n$$\n81 - 14 = 67\n$$\n\nNow:\n$$\n(67 + 49 + 64) \\times -21\n$$\n\n---\n\n### Step 4: Add the numbers\n\n$$\n67 + 49 = 116\n$$\n$$\n116 + 64 = 180\n$$\n\n---\n\n### Step 5: Multiply by -21\n\n$$\n180 \\times -21 = -3780\n$$\n\n---\n\nAnswer: -3780",
+          "parsed": -3780
+        },
+        {
+          "index": 43,
+          "gold": 182,
+          "completion": "Let's solve the expression step by step:\n\nExpression:  \n**71 + ((24 - (((76 + 22) // 93) % -39)) + 49)**\n\nWe'll evaluate from the innermost parentheses outward.\n\n---\n\n### Step 1: 76 + 22  \n= 98\n\nNow the expression becomes:  \n71 + ((24 - ((98 // 93) % -39)) + 49)\n\n---\n\n### Step 2: 98 // 93  \n`//` is integer (floor) division.\n\n98 \u00f7 93 \u2248 1.053...  \nFloor of that is **1**\n\nSo:  \n= 1\n\nNow:  \n71 + ((24 - (1 % -39)) + 49)\n\n---\n\n### Step 3: 1 % -39  \nThis is the modulo operation with a negative divisor.\n\nRecall:  \nFor `a % b`, the result has the same sign as `b` in most programming languages (like Python).\n\nSo 1 % -39:  \nWe want the remainder when 1 is divided by -39 such that:  \n`1 = (-39)*q + r`, and `0 \u2264 r < |-39|` is not possible because divisor is negative. But actually, in Python, the result has the sign of the divisor.\n\nCompute it:\n\n1 \u00f7 (-39) = -0.0256..., floor is -1.\n\nSo:  \n`q = -1`  \nThen:  \n`r = 1 - (-39)*(-1) = 1 - 39 = -38`\n\nWait \u2014 no:\n\nWait, formula:  \n`a % b = a - b * floor(a/b)`\n\nSo:\n\n`1 % -39 = 1 - (-39) * floor(1 / -39)`  \n`1 / -39 \u2248 -0.0256`, floor is **-1**\n\nSo:  \n`1 % -39 = 1 - (-39)*(-1) = 1 - 39 = -38`\n\nYes.\n\nSo result is **-38**\n\nNow expression becomes:  \n71 + ((24 - (-38)) + 49)\n\n---\n\n### Step 4: 24 - (-38)  \n= 24 + 38 = **62**\n\nNow:  \n71 + (62 + 49)\n\n---\n\n### Step 5: 62 + 49 = 111\n\n---\n\n### Step 6: 71 + 111 = **182**\n\n---\n\nAnswer: 182",
+          "parsed": 182
+        },
+        {
+          "index": 44,
+          "gold": -44471,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n(2 \\times (-66 \\times (((98 \\times 30) // -17) \\times -74))) // 38\n$$\n\nNote: `//` denotes integer (floor) division.\n\n---\n\n### Step 1: Compute $ 98 \\times 30 $\n\n$$\n98 \\times 30 = 2940\n$$\n\n---\n\n### Step 2: Compute $ 2940 // -17 $\n\nWe need floor division: $ 2940 \\div -17 $\n\nFirst, compute the division:\n\n$$\n2940 \\div 17 \\approx 172.94\n$$\n\nSo $ 2940 \\div -17 \\approx -172.94 $\n\nFloor division rounds **down** to the nearest integer, so:\n\n$$\n2940 // -17 = -173\n$$\n\n(Why? Because $-172.94$ rounded down is $-173$ \u2014 floor goes to the next lower integer.)\n\n---\n\n### Step 3: Multiply by $-74$\n\n$$\n-173 \\times -74 = 173 \\times 74\n$$\n\nCompute $173 \\times 74$:\n\nBreak it down:\n\n$$\n173 \\times 74 = 173 \\times (70 + 4) = 173 \\times 70 + 173 \\times 4\n$$\n\n$$\n173 \\times 70 = 12110\n$$\n$$\n173 \\times 4 = 692\n$$\n$$\n12110 + 692 = 12802\n$$\n\nSo:\n\n$$\n((-173) \\times -74) = 12802\n$$\n\n---\n\n### Step 4: Multiply by $-66$\n\n$$\n-66 \\times 12802\n$$\n\nWe\u2019ll compute $66 \\times 12802$ and then negate.\n\nFirst:\n\n$$\n66 \\times 12802 = (60 + 6) \\times 12802 = 60 \\times 12802 + 6 \\times 12802\n$$\n\n$$\n60 \\times 12802 = 768,120\n$$\n$$\n6 \\times 12802 = 76,812\n$$\n$$\n768,120 + 76,812 = 844,932\n$$\n\nSo:\n\n$$\n-66 \\times 12802 = -844,932\n$$\n\n---\n\n### Step 5: Multiply by 2\n\n$$\n2 \\times (-844,932) = -1,689,864\n$$\n\n---\n\n### Step 6: Divide by 38 using integer division\n\n$$\n-1,689,864 // 38\n$$\n\nFirst compute $1,689,864 \\div 38$, then apply sign and floor.\n\nCompute $1,689,864 \\div 38$:\n\nLet\u2019s divide step by step.\n\nFirst, estimate:\n\n$38 \\times 40,000 = 1,520,000$\n\nSubtract: $1,689,864 - 1,520,000 = 169,864$\n\n$38 \\times 4,000 = 152,000$\n\nSubtract: $169,864 - 152,000 = 17,864$\n\n$38 \\times 400 = 15,200$\n\nSubtract: $17,864 - 15,200 = 2,664$\n\n$38 \\times 70 = 2,660$\n\nSubtract: $2,664 - 2,660 = 4$\n\nSo total is:\n\n$40,000 + 4,000 + 400 + 70 = 44,470$, with remainder 4\n\nSo:\n\n$1,689,864 \\div 38 = 44,470 + \\frac{4}{38} \\approx 44,470.105$\n\nSo $1,689,864 / 38 = 44,470.105$, so floor is 44,470\n\nBut our number is **negative**: $-1,689,864 \\div 38$\n\nSo:\n\n$$\n-1,689,864 \\div 38 = -44,470.105...\n$$\n\nFloor division rounds **down**, so $-44,470.105$ rounds **down** to $-44,471$\n\nBecause floor always goes to the next **lower** integer.\n\nSo:\n\n$$\n-1,689,864 // 38 = -44,471\n$$\n\n---\n\n### Final Answer:\n\nAnswer: -44471",
+          "parsed": -44471
+        },
+        {
+          "index": 45,
+          "gold": -732,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n```\n12 * ((-45 + ((((56 // 60) * 34) % 76) % 99)) + -16)\n```\n\nWe'll evaluate this from the innermost parentheses outward.\n\n---\n\n### Step 1: Evaluate `56 // 60`\n\n`//` is integer (floor) division.\n\n```\n56 // 60 = 0   (since 56 \u00f7 60 = 0.933..., and floor is 0)\n```\n\n---\n\n### Step 2: Multiply by 34\n\n```\n(56 // 60) * 34 = 0 * 34 = 0\n```\n\n---\n\n### Step 3: First modulo 76\n\n```\n0 % 76 = 0\n```\n\n---\n\n### Step 4: Then modulo 99\n\n```\n0 % 99 = 0\n```\n\nSo the entire inner expression `((((56 // 60) * 34) % 76) % 99)` simplifies to `0`.\n\n---\n\n### Step 5: Plug into the next part\n\nNow evaluate:\n\n```\n-45 + 0 = -45\n```\n\nThen:\n\n```\n(-45 + ...) + (-16) = -45 + (-16) = -61\n```\n\nSo the expression inside the outer parentheses is `-61`.\n\n---\n\n### Step 6: Multiply by 12\n\n```\n12 * (-61) = -732\n```\n\n---\n\nAnswer: -732",
+          "parsed": -732
+        },
+        {
+          "index": 46,
+          "gold": 8186,
+          "completion": "Let's solve the expression step by step:\n\nExpression:  \n$$\n-77 + \\left(3 + \\left((-95 - (67 + -44)) \\times -70\\right)\\right)\n$$\n\n### Step 1: Simplify inside the innermost parentheses\nStart with:  \n$$\n67 + (-44) = 67 - 44 = 23\n$$\n\nNow substitute:\n$$\n-95 - (67 + -44) = -95 - 23 = -118\n$$\n\nNow the expression becomes:\n$$\n-77 + \\left(3 + ((-118) \\times -70)\\right)\n$$\n\n### Step 2: Multiply\n$$\n-118 \\times -70 = 118 \\times 70\n$$\n\nCalculate:\n$$\n118 \\times 70 = (100 + 18) \\times 70 = 100 \\times 70 + 18 \\times 70 = 7000 + 1260 = 8260\n$$\n\nSo now the expression is:\n$$\n-77 + (3 + 8260)\n$$\n\n### Step 3: Add inside the parentheses\n$$\n3 + 8260 = 8263\n$$\n\nNow:\n$$\n-77 + 8263 = 8263 - 77 = 8186\n$$\n\nAnswer: 8186",
+          "parsed": 8186
+        },
+        {
+          "index": 47,
+          "gold": -2990,
+          "completion": "Let's solve the expression step by step:\n\nWe are given:\n\n$$\n(-74 - (((-44 // -52) - -51) - 60)) \\times 46\n$$\n\nNote: The operator `//` denotes **integer division** (floor division) in programming, meaning it divides and then rounds **down** to the nearest integer.\n\n---\n\n### Step 1: Evaluate `-44 // -52`\n\nFirst, compute the division:\n\n$$\n-44 \\div -52 = 0.846...\n$$\n\nSince both numbers are negative, the result is positive.\n\nNow apply **floor division** (`//`): floor(0.846) = **0**\n\nSo:\n$$\n-44 // -52 = 0\n$$\n\n---\n\n### Step 2: Plug into the next part:\n\n$$\n(0 - (-51)) = 0 + 51 = 51\n$$\n\n---\n\n### Step 3: Then subtract 60:\n\n$$\n51 - 60 = -9\n$$\n\n---\n\n### Step 4: Now go back to the outer expression:\n\n$$\n-74 - (-9) = -74 + 9 = -65\n$$\n\n---\n\n### Step 5: Multiply by 46:\n\n$$\n-65 \\times 46\n$$\n\nWe compute:\n\n$$\n65 \\times 46 = (60 + 5) \\times 46 = 60 \\times 46 + 5 \\times 46 = 2760 + 230 = 2990\n$$\n\nSo:\n$$\n-65 \\times 46 = -2990\n$$\n\n---\n\nAnswer: -2990",
+          "parsed": -2990
+        },
+        {
+          "index": 48,
+          "gold": 2420,
+          "completion": "Let's evaluate the expression step by step:\n\nWe are given:\n\n```\n(((((98 + -42) // 94) * 56) + 55) % 90) * 44\n```\n\nWe'll evaluate from the innermost parentheses outward.\n\n### Step 1: 98 + (-42)\n```\n98 + (-42) = 98 - 42 = 56\n```\n\nNow the expression becomes:\n```\n((((56 // 94) * 56) + 55) % 90) * 44\n```\n\n### Step 2: 56 // 94\n`//` is integer (floor) division.\n\n56 \u00f7 94 = 0.5957..., so floor of that is **0**\n\nSo:\n```\n56 // 94 = 0\n```\n\nNow:\n```\n(((0 * 56) + 55) % 90) * 44\n```\n\n### Step 3: 0 * 56 = 0\n\nNow:\n```\n((0 + 55) % 90) * 44\n```\n\n### Step 4: 0 + 55 = 55\n\nNow:\n```\n(55 % 90) * 44\n```\n\n### Step 5: 55 % 90\n55 is less than 90, so remainder is 55.\n\nSo:\n```\n55 % 90 = 55\n```\n\nNow:\n```\n55 * 44\n```\n\n### Step 6: 55 * 44\n\nWe compute:\n55 \u00d7 44 = 55 \u00d7 (40 + 4) = 55\u00d740 + 55\u00d74 = 2200 + 220 = 2420\n\nAnswer: 2420",
+          "parsed": 2420
+        },
+        {
+          "index": 49,
+          "gold": -5220,
+          "completion": "We are asked to evaluate the following expression:\n\n$$\n((1 \\times (((91 \\times -52) - 28) - 6)) \\div\\!\\div 53) \\times 58\n$$\n\nNote: The `//` operator denotes **integer division** (i.e., floor division), so we will compute the result step by step, following the order of operations.\n\n---\n\n### Step 1: Compute $ 91 \\times -52 $\n\n$$\n91 \\times -52 = -4732\n$$\n\n---\n\n### Step 2: Subtract 28\n\n$$\n-4732 - 28 = -4760\n$$\n\n---\n\n### Step 3: Subtract 6\n\n$$\n-4760 - 6 = -4766\n$$\n\n---\n\n### Step 4: Multiply by 1\n\n$$\n1 \\times -4766 = -4766\n$$\n\n---\n\n### Step 5: Integer divide by 53: $ -4766 \\div\\!\\div 53 $\n\nWe compute $ -4766 \\div 53 $:\n\nFirst, divide:\n\n$$\n4766 \\div 53 \\approx 90.0\n$$\n\nCheck:  \n$ 53 \\times 90 = 4770 $ \u2192 too big (since 4770 > 4766)  \nTry $ 53 \\times 89 = 53 \\times 90 - 53 = 4770 - 53 = 4717 $\n\nNow:  \n$ 4766 - 4717 = 49 $, so:\n\n$$\n4766 = 53 \\times 89 + 49\n\\Rightarrow -4766 = - (53 \\times 89 + 49) = -53 \\times 89 - 49\n$$\n\nBut for negative numbers, **floor division** rounds **down** to the next lower integer.\n\nSo:\n$$\n-4766 \\div 53 = -\\left\\lceil \\frac{4766}{53} \\right\\rceil \\text{ if not divisible}\n$$\n\nBut better to compute directly:\n\nWe want the largest integer $ q $ such that $ 53q \\leq -4766 $\n\nTry $ q = -90 $:\n\n$$\n53 \\times -90 = -4770\n$$\n\nIs $ -4770 \\leq -4766 $? Yes.\n\nTry $ q = -89 $: $ 53 \\times -89 = -4717 $, and $ -4717 > -4766 $, so too big.\n\nSo floor division: we want the **greatest integer $ q $** such that $ 53q \\leq -4766 $\n\nWe have:\n- $ 53 \\times -90 = -4770 $ \u2192 $ -4770 \\leq -4766 $ \u2192 valid\n- $ 53 \\times -89 = -4717 $ \u2192 $ -4717 > -4766 $ \u2192 not valid\n\nSo $ -4766 // 53 = -90 $? Wait \u2014 check:\n\nWait: $ -4770 < -4766 $, so $ -90 \\times 53 = -4770 $\n\nBut $ -4770 < -4766 $, so $ -90 $ is **too low**? No \u2014 in integer division, we want the **floor**, i.e., the **largest** integer $ q $ such that $ 53q \\leq -4766 $\n\nSo try $ q = -90 $: $ 53 \\times -90 = -4770 \\leq -4766 $? Yes\n\n$ q = -89 $: $ -4717 \\leq -4766 $? No, because $ -4717 > -4766 $\n\nSo the **largest integer $ q $** such that $ 53q \\leq -4766 $ is $ q = -90 $, since $ -4770 \\leq -4766 $, and $ -4717 $ is greater than $ -4766 $\n\nThus:\n\n$$\n-4766 // 53 = -90\n$$\n\nWait \u2014 but $ -4766 - (-4770) = 4 $, so:\n\n$$\n-4766 = 53 \\times (-90) + 4\n$$\n\nYes, because:\n\n$$\n53 \\times (-90) = -4770 \\\\\n-4766 - (-4770) = 4\n$$\n\nSo remainder is 4, which is valid (positive remainder < 53), so yes, quotient is $ -90 $\n\n\u2705 So $ -4766 // 53 = -90 $\n\n---\n\n### Step 6: Multiply by 58\n\n$$\n-90 \\times 58 = ?\n$$\n\nCompute:\n\n$$\n90 \\times 58 = (90 \\times 50) + (90 \\times 8) = 4500 + 720 = 5220\n\\Rightarrow -90 \\times 58 = -5220\n$$\n\n---\n\n### Final Answer:\n\nAnswer: -5220",
+          "parsed": -5220
+        }
+      ],
+      "delta_vs_baseline": 91.78,
+      "delta_ci95": 7.87
+    }
+  ]
+}

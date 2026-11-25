@@ -1,0 +1,415 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+  },
+  "config": {
+    "schema_version": 1,
+    "paper": {
+      "arxiv": "2607.22925",
+      "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+      "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+    },
+    "backend": "openrouter",
+    "models": [
+      "qwen/qwen3-235b-a22b-2507"
+    ],
+    "tasks": [
+      "multiplication",
+      "arithmetic"
+    ],
+    "conditions": [
+      {
+        "name": "baseline",
+        "filler_type": null
+      },
+      {
+        "name": "ste_filler",
+        "filler_type": "ste_dictionary",
+        "filler_tokens": 200
+      },
+      {
+        "name": "cot",
+        "cot": true
+      }
+    ],
+    "notes": "0-shot three-way comparison on 4-digit multiplication and multi-step arithmetic. baseline = no-CoT, no filler; ste_filler = no-CoT with ~200 tokens of ASD-STE100 vocabulary prefilled; cot = full chain-of-thought with no filler. The hypothesis is that ste_filler accuracy is statistically indistinguishable from cot accuracy. The CoT condition uses a separate backend with max_tokens=512 and reasoning enabled; the no-CoT conditions keep max_tokens=32 and reasoning disabled.",
+    "shots": 0,
+    "n_problems": 1000,
+    "seed": 12345,
+    "tokenizer": "tiktoken:o200k_base",
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "max_tokens": 32,
+      "reasoning": false
+    },
+    "prompting": {
+      "prefill": true
+    },
+    "concurrency": 16,
+    "max_samples": 200
+  },
+  "tokenizer": "tiktoken:o200k_base",
+  "n_problems": 1000,
+  "limit": 5,
+  "shots": 0,
+  "seed": 12345,
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    },
+    {
+      "name": "ste_filler",
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens_measured": 199,
+      "calibration": "tokens"
+    },
+    {
+      "name": "cot",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    }
+  ],
+  "cells": [
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 2.2,
+      "n": 5,
+      "n_kept": 5,
+      "n_reasoning_discarded": 0,
+      "accuracy": 0.0,
+      "ci95": 0.0,
+      "accuracy_including_discarded": 0.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 402,
+      "completion_tokens": 53,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "Answer: 9121950",
+          "parsed": 9121950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41458512",
+          "parsed": 41458512
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "Answer: 22637484",
+          "parsed": 22637484
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": " 29728503",
+          "parsed": 29728503
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21587920",
+          "parsed": 21587920
+        }
+      ],
+      "delta_vs_cot": -60.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 1.4,
+      "n": 5,
+      "n_kept": 3,
+      "n_reasoning_discarded": 2,
+      "accuracy": 0.0,
+      "ci95": 0.0,
+      "accuracy_including_discarded": 0.0,
+      "reasoning_rate": 40.0,
+      "prompt_tokens": 505,
+      "completion_tokens": 85,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " -784",
+          "parsed": -784
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -164359",
+          "parsed": -164359
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Answer: -50 - (60 - ((((-56 + -78) % 58) * -21) * -4",
+          "parsed": -50
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": " -104964",
+          "parsed": -104964
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "Answer: -24 * ((-97 - (-23 - (((-37 * 92) % 84) - -3",
+          "parsed": -24
+        }
+      ],
+      "delta_vs_cot": -20.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 1.2,
+      "n": 5,
+      "n_kept": 5,
+      "n_reasoning_discarded": 0,
+      "accuracy": 40.0,
+      "ci95": 42.94,
+      "accuracy_including_discarded": 40.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 1414,
+      "completion_tokens": 57,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "Answer: 9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "Answer: 41457168",
+          "parsed": 41457168
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "Answer: 22638444",
+          "parsed": 22638444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": "Answer: 29738503",
+          "parsed": 29738503
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21584920",
+          "parsed": 21584920
+        }
+      ],
+      "delta_vs_baseline": 40.0,
+      "delta_ci95": 42.94,
+      "delta_vs_cot": -20.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 1.1,
+      "n": 5,
+      "n_kept": 5,
+      "n_reasoning_discarded": 0,
+      "accuracy": 0.0,
+      "ci95": 0.0,
+      "accuracy_including_discarded": 0.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 1518,
+      "completion_tokens": 40,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": "Answer: 1288",
+          "parsed": 1288
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": "Answer: -58051",
+          "parsed": -58051
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Answer: -50",
+          "parsed": -50
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": "Answer: -864192",
+          "parsed": -864192
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "Answer: 192",
+          "parsed": 192
+        }
+      ],
+      "delta_vs_baseline": 0.0,
+      "delta_ci95": 0.0,
+      "delta_vs_cot": -20.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 17.7,
+      "n": 5,
+      "n_kept": 5,
+      "n_reasoning_discarded": 0,
+      "accuracy": 60.0,
+      "ci95": 42.94,
+      "accuracy_including_discarded": 60.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 350,
+      "completion_tokens": 2250,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "To calculate $ 7825 \\times 1166 $, we can break it down step by step.\n\nWe can use the distributive property:\n\n$$\n7825 \\times 1166 = 7825 \\times (1000 + 100 + 60 + 6) = 7825 \\times 1000 + 7825 \\times 100 + 7825 \\times 60 + 7825 \\times 6\n$$\n\nNow compute each term:\n\n1. $ 7825 \\times 1000 = 7,825,000 $\n2. $ 7825 \\times 100 = 782,500 $\n3. $ 7825 \\times 60 = 7825 \\times 6 \\times 10 = 46,950 \\times 10 = 469,500 $\n4. $ 7825 \\times 6 = 46,950 $\n\nNow add them all:\n\n$$\n7,825,000 + 782,500 = 8,607,500\n$$\n$$\n8,607,500 + 469,500 = 9,077,000\n$$\n$$\n9,077,000 + 46,950 = 9,123,950\n$$\n\nSo,\n\n$$\n7825 \\times 1166 = 9,123,950\n$$\n\nAnswer: 9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "We are asked to compute:\n\n$$\n5892 \\times 7036\n$$\n\nWe can solve this step by step using standard multiplication or break it down for easier calculation. Let's use the distributive property:\n\n$$\n5892 \\times 7036 = 5892 \\times (7000 + 36) = 5892 \\times 7000 + 5892 \\times 36\n$$\n\n### Step 1: Compute $5892 \\times 7000$\n\n$$\n5892 \\times 7000 = 5892 \\times 7 \\times 1000\n$$\n\nFirst, $5892 \\times 7$:\n\n$$\n5892 \\times 7 = (5000 + 800 + 90 + 2) \\times 7 = 5000 \\times 7 + 800 \\times 7 + 90 \\times 7 + 2 \\times 7\n$$\n\n$$\n= 35000 + 5600 + 630 + 14 = 41244\n$$\n\nNow multiply by 1000:\n\n$$\n41244 \\times 1000 = 41,244,000\n$$\n\nSo, $5892 \\times 7000 = 41,244,000$\n\n---\n\n### Step 2: Compute $5892 \\times 36$\n\nBreak $36 = 30 + 6$\n\n$$\n5892 \\times 30 = 5892 \\times 3 \\times 10\n$$\n\n$5892 \\times 3 = 17,676$\n\nThen $17,676 \\times 10 = 176,760$\n\nNow $5892 \\times 6$:\n\n$$\n5892 \\times 6 = (5000 \\times 6) + (800 \\times 6) + (90 \\times 6) + (2 \\times 6)\n= 30,000 + 4,",
+          "parsed": 4
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "To calculate $ 4172 \\times 5427 $, we can proceed step by step.\n\nWe can use standard multiplication:\n\nLet's break it down using long multiplication:\n\n```\n       4172\n   \u00d7   5427\n   --------\n      29204   \u2190 4172 \u00d7 7\n     83440    \u2190 4172 \u00d7 20 (shifted one position left)\n    1668800   \u2190 4172 \u00d7 400 (shifted two positions left)\n +20860000   \u2190 4172 \u00d7 5000 (shifted three positions left)\n -----------\n```\n\nNow compute each line:\n\n1. $ 4172 \\times 7 = 29,204 $\n2. $ 4172 \\times 20 = 83,440 $\n3. $ 4172 \\times 400 = 1,668,800 $\n4. $ 4172 \\times 5000 = 20,860,000 $\n\nNow add them up:\n\nStart with:\n- $ 29,204 $\n- $ + 83,440 = 112,644 $\n- $ + 1,668,800 = 1,781,444 $\n- $ + 20,860,000 = 22,641,444 $\n\nSo:\n\n$ 4172 \\times 5427 = 22,641,444 $\n\nAnswer: 22641444",
+          "parsed": 22641444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": "To calculate $ 8147 \\times 3649 $, we can proceed step by step using long multiplication.\n\nLet\u2019s break it down:\n\n### Step 1: Multiply 8147 by 9 (units place of 3649)\n$$\n8147 \\times 9 = 73,323\n$$\n\n### Step 2: Multiply 8147 by 40 (tens place of 3649, i.e., 4 in tens place \u2192 $ 4 \\times 10 $)\n$$\n8147 \\times 4 = 32,588 \\Rightarrow \\text{Shift one place left: } 325,880\n$$\n\n### Step 3: Multiply 8147 by 600 (hundreds place of 3649, i.e., 6 \u00d7 100)\n$$\n8147 \\times 6 = 48,882 \\Rightarrow \\text{Shift two places left: } 4,888,200\n$$\n\n### Step 4: Multiply 8147 by 3000 (thousands place of 3649, i.e., 3 \u00d7 1000)\n$$\n8147 \\times 3 = 24,441 \\Rightarrow \\text{Shift three places left: } 24,441,000\n$$\n\n### Step 5: Add all the partial products\n\nNow add:\n$$\n73,323 + 325,880 + 4,888,200 + 24,441,000\n$$\n\nLet\u2019s add step by step:\n\n1. $ 73,323 + 325,880 = 399,203 $\n2. $ 399,203 + 4,888,200 = 5,287,403 $\n3. $ 5,287,403 + 24,441,000 = 29,728,403 $\n\nSo, the total is:\n$$\n8147 \\times 3649 = ",
+          "parsed": 3649
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": "We need to calculate $ 7112 \\times 3035 $.\n\nLet's break this down step by step.\n\nWe can use standard multiplication:\n\n### Step 1: Write the numbers\n```\n     7112\n   \u00d7 3035\n   -------\n```\n\nWe'll compute it as:\n$$\n7112 \\times 3035 = 7112 \\times (3000 + 30 + 5) = 7112 \\times 3000 + 7112 \\times 30 + 7112 \\times 5\n$$\n\n### Step 2: Compute each part\n\n**1. $ 7112 \\times 3000 $**\n$$\n7112 \\times 3 \\times 1000 = 21336 \\times 1000 = 21,336,000\n$$\n\n**2. $ 7112 \\times 30 $**\n$$\n7112 \\times 3 \\times 10 = 21,336 \\times 10 = 213,360\n$$\n\n**3. $ 7112 \\times 5 $**\n$$\n7000 \\times 5 = 35,000 \\\\\n112 \\times 5 = 560 \\\\\nSo, 35,000 + 560 = 35,560\n$$\n\n### Step 3: Add all parts together\n$$\n21,336,000 + 213,360 = 21,549,360 \\\\\n21,549,360 + 35,560 = 21,584,920\n$$\n\n### Final Answer:\nAnswer: 21584920",
+          "parsed": 21584920
+        }
+      ],
+      "delta_vs_baseline": 60.0,
+      "delta_ci95": 42.94
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 25.7,
+      "n": 5,
+      "n_kept": 5,
+      "n_reasoning_discarded": 0,
+      "accuracy": 20.0,
+      "ci95": 35.06,
+      "accuracy_including_discarded": 20.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 453,
+      "completion_tokens": 2459,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": "We are given the expression:\n\n```\n56 * (((((98 * (-50 - -80)) % -18) // -51) + 23) - 2)\n```\n\nWe will solve this step by step.\n\n---\n\n### Step 1: Simplify innermost parentheses:  \n`-50 - -80`  \nThis is:  \n`-50 + 80 = 30`\n\nSo now:\n```\n56 * ((((98 * 30) % -18) // -51) + 23 - 2)\n```\n\n---\n\n### Step 2: Compute `98 * 30`  \n`98 * 30 = 2940`\n\nNow:\n```\n56 * ((((2940 % -18) // -51) + 23) - 2)\n```\n\n---\n\n### Step 3: Compute `2940 % -18` (modulo with negative divisor)\n\nIn Python, the modulo result takes the sign of the **divisor** when negative.\n\nSo we compute `2940 % -18`.\n\nFirst, divide:  \n`2940 \u00f7 (-18) \u2248 -163.333...`\n\nWe take the **floor division**:  \nFloor of `-163.333` is `-164` (since floor goes to the next lower integer)\n\nThen:  \n`2940 % -18 = 2940 - (-18) * (-164)`  \n= `2940 - (18 * 164)`  \n= `2940 - 2952 = -12`\n\nWait \u2014 that gives negative? But modulo with negative divisor should give result with sign of divisor (negative), and less than zero.\n\nLet\u2019s compute:\n\nWe want `r` such that:\n`2940 = (-18) * q + r`, and `r` has the same sign as `-18` (i.e. negative or zero), and `|r| < 18`.\n\nSo we want a remainder in the range `(-18, 0]` (since divisor is negative).\n\nLet\u2019s do:\n\n`2940 \u00f7 18 = 163.333...`, so `2940 =",
+          "parsed": 2940
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": "Let's solve the expression step by step:\n\nThe expression is:\n\n$$\n(87 - (22 \\times (-90 \\times (-56 + 33)))) - (-14)\n$$\n\n### Step 1: Simplify inside the parentheses\nStart with the innermost expression:\n\n$$\n-56 + 33 = -23\n$$\n\nNow substitute back:\n\n$$\n(87 - (22 \\times (-90 \\times (-23)))) - (-14)\n$$\n\n### Step 2: Multiply $-90 \\times -23$\n\nMultiplying two negative numbers gives a positive:\n\n$$\n-90 \\times -23 = 2070\n$$\n\nNow the expression becomes:\n\n$$\n(87 - (22 \\times 2070)) - (-14)\n$$\n\n### Step 3: Multiply $22 \\times 2070$\n\nLet's compute that:\n\n$$\n22 \\times 2070 = 22 \\times (2000 + 70) = (22 \\times 2000) + (22 \\times 70) = 44,000 + 1,540 = 45,540\n$$\n\nNow substitute:\n\n$$\n(87 - 45,540) - (-14)\n$$\n\n### Step 4: Compute $87 - 45,540$\n\n$$\n87 - 45,540 = -45,453\n$$\n\nNow the expression is:\n\n$$\n-45,453 - (-14)\n$$\n\nSubtracting a negative is like adding:\n\n$$\n-45,453 + 14 = -45,439\n$$\n\n### Final Answer:\n\nAnswer: -45439",
+          "parsed": -45439
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": "Let's solve this step by step:\n\nWe are given the expression:\n\n$$\n-50 - (60 - ((((-56 + -78) \\% 58) \\times -21) \\times -43))\n$$\n\n### Step 1: Simplify inside the innermost parentheses\n\nStart with:  \n$$\n-56 + -78 = -56 - 78 = -134\n$$\n\nNow the expression becomes:\n\n$$\n-50 - (60 - ((((-134 \\% 58) \\times -21) \\times -43))\n$$\n\n### Step 2: Compute $-134 \\% 58$ (modulo operation)\n\nWe need to find $-134 \\mod 58$.\n\nFirst, find how many times 58 fits into 134:\n\n$$\n58 \\times 2 = 116, \\quad 58 \\times 3 = 174 > 134\n$$\n\nSo $134 \\div 58 \\approx 2.31$, meaning $134 = 58 \\times 2 + 18$\n\nThus, $134 \\mod 58 = 18$, so:\n\n$$\n-134 \\mod 58 = ?\n$$\n\nFor negative numbers:  \n$$\n-134 \\mod 58 = 58 - (134 \\mod 58) = 58 - 18 = 40\n$$\n\nBut let's double-check:\n\nWe can write:  \n$-134 = 58 \\times (-3) + x$, such that $0 \\le x < 58$\n\nTry $58 \\times (-3) = -174$, too low  \n$58 \\times (-2) = -116$\n\nThen:  \n$-134 - (-116) = -134 + 116 = -18$ \u2192 not valid\n\nBut standard way:  \nThe modulo operation for negative numbers in most programming/math contexts gives a **non-negative remainder**.\n\nSo:\n\n$$\n-134 \\div 58 = -2.31 \\Rightarrow \\text{floor division gives } -3 \\text{ (in floor division)}\n$$\n\nSo:\n$$\n-13",
+          "parsed": -13
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": "We are asked to evaluate:\n\n$$\n98 \\times \\left( \\left( \\left( \\left( \\left( 80 \\times 74 \\right) - (-71) \\right) \\div (-31) \\right) + (-14) \\right) + 90 \\right)\n$$\n\nLet's simplify step by step.\n\n---\n\n### Step 1: Compute $ 80 \\times 74 $\n\n$$\n80 \\times 74 = 5920\n$$\n\n---\n\n### Step 2: Subtract $-71$, which is the same as adding 71\n\n$$\n5920 - (-71) = 5920 + 71 = 5991\n$$\n\n---\n\n### Step 3: Integer divide by $-31$: $ 5991 \\div (-31) $\n\nWe compute:\n\n$$\n5991 \\div (-31) = -\\left( \\frac{5991}{31} \\right)\n$$\n\nFirst, divide 5991 by 31:\n\n$$\n31 \\times 193 = 31 \\times (200 - 7) = 6200 - 217 = 5983\n$$\n\n$$\n5991 - 5983 = 8\n$$\n\nSo:\n\n$$\n5991 \\div 31 = 193 \\text{ remainder } 8\n$$\n\nThus:\n\n$$\n5991 // (-31) = -194 \\quad \\text{(since integer division truncates toward zero? Wait \u2014 in Python, it floors for negative results. Let's be careful.)}\n$$\n\nWait: in **integer division (//)**, it **floors** the result (rounds down), not truncates.\n\nSo:\n\n$$\n\\frac{5991}{-31} = -193.258... \\Rightarrow \\text{floor toward } -\\infty \\Rightarrow -194\n$$\n\nBut let's confirm:\n\n$$\n-31 \\times 193 = -5983 \\quad \\text{and } 5991 = -(-5983 + ?) \u2192 better to compute directly.\n$$\n\nWe have:\n\n$$\n",
+          "parsed": -5983
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": "We are asked to evaluate the expression:\n\n$$\n-24 \\times \\left((-97 - (-23 - (((-37 \\times 92) \\mod 84) - (-33)))) - 35\\right)\n$$\n\nWe'll simplify this step by step, following the order of operations (PEMDAS), especially focusing on the innermost parentheses and modular arithmetic.\n\n---\n\n### Step 1: Compute $-37 \\times 92$\n\n$$\n-37 \\times 92 = -3404\n$$\n\n---\n\n### Step 2: Compute $(-3404) \\mod 84$\n\nWe need to compute $-3404 \\mod 84$. Remember, modulo with negative numbers:\n\n$$\na \\mod m = a - m \\cdot \\left\\lfloor \\frac{a}{m} \\right\\rfloor\n$$\n\nBut it's easier to find the smallest non-negative residue.\n\nFirst, divide:\n\n$$\n3404 \\div 84 \\approx 40.5238 \\Rightarrow 84 \\times 40 = 3360\n$$\n\nSo:\n\n$$\n3404 - 3360 = 44 \\Rightarrow 3404 \\equiv 44 \\mod 84\n\\Rightarrow -3404 \\equiv -44 \\mod 84\n$$\n\nNow convert $-44 \\mod 84$ to positive:\n\n$$\n-44 + 84 = 40 \\Rightarrow -3404 \\equiv 40 \\mod 84\n$$\n\n\u2705 So:\n$$\n(-37 \\times 92) \\mod 84 = 40\n$$\n\n---\n\n### Step 3: Plug into the expression\n\nNow we go to:\n\n$$\n((-37 \\times 92) \\mod 84) - (-33) = 40 - (-33) = 40 + 33 = 73\n$$\n\n---\n\n### Step 4: Next layer\n\nNow compute:\n\n$$\n-23 - 73 = -96\n$$\n\n---\n\n### Step 5: Next layer\n\n$$\n-97 - (-96) = -97 + 96 = -1\n$$\n\n---\n\n### Step 6: Subtract ",
+          "parsed": 6
+        }
+      ],
+      "delta_vs_baseline": 20.0,
+      "delta_ci95": 35.06
+    }
+  ]
+}

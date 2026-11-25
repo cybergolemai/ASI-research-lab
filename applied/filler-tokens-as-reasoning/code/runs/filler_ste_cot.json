@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+  },
+  "backend": "openrouter",
+  "models": [
+    "qwen/qwen3-235b-a22b-2507"
+  ],
+  "tasks": [
+    "multiplication",
+    "arithmetic"
+  ],
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null
+    },
+    {
+      "name": "ste_filler",
+      "filler_type": "ste_dictionary",
+      "filler_tokens": 200
+    },
+    {
+      "name": "cot",
+      "cot": true
+    }
+  ],
+  "notes": "0-shot three-way comparison on 4-digit multiplication and multi-step arithmetic. baseline = no-CoT, no filler; ste_filler = no-CoT with ~200 tokens of ASD-STE100 vocabulary prefilled; cot = full chain-of-thought with no filler. The hypothesis is that ste_filler accuracy is statistically indistinguishable from cot accuracy. The CoT condition uses a separate backend with max_tokens=512 and reasoning enabled; the no-CoT conditions keep max_tokens=32 and reasoning disabled.",
+  "shots": 0,
+  "n_problems": 1000,
+  "seed": 12345,
+  "tokenizer": "tiktoken:o200k_base",
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 32,
+    "reasoning": false
+  },
+  "prompting": {
+    "prefill": true
+  },
+  "concurrency": 16,
+  "max_samples": 200,
+  "cache": "~/.cache/nanochat/filler_ste_cot_cache.jsonl"
+}

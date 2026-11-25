@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "sections": ["4.1", "4.2", "A.2", "A.3", "A.4"],
+    "table": "Table 10 0-shot rows (n=100 in the paper); Figure 1 0-shot bar"
+  },
+  "backend": "openrouter",
+  "models": [
+    "qwen/qwen3-235b-a22b-2507"
+  ],
+  "tasks": ["multiplication"],
+  "conditions": [
+    { "name": "baseline", "filler_type": null },
+    { "name": "counting_1_100", "filler_type": "counting", "filler_words": 100 }
+  ],
+  "notes": "0-shot diagnostic child of the 10-shot baseline. Same tasks, problems, filler and prompts as the parent; only the few-shot count changes (10 -> 0) and arithmetic is dropped. Table 10 reports Qwen3-235B 4-digit multiplication at 0-shot as 57.3% baseline and 60.9% counting unmasked (+3.6pp), but that row is n=100. This run uses N=1000 for a tighter interval.",
+  "shots": 0,
+  "n_problems": 1000,
+  "seed": 12345,
+  "tokenizer": "tiktoken:o200k_base",
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 32,
+    "reasoning": false
+  },
+  "prompting": {
+    "prefill": true,
+    "no_think": {
+      "qwen/*": true
+    }
+  },
+  "concurrency": 16,
+  "max_samples": 200,
+  "cache": "~/.cache/nanochat/filler_eval_cache.jsonl",
+  "expected_from_paper": {
+    "qwen/qwen3-235b-a22b-2507": {
+      "multiplication": { "baseline": 57.3, "counting_1_100": 60.9, "delta": 3.6 }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+<signal name="accuracy" label="Accuracy" unit="%" digits="1" better="higher" />
+<signal name="ci95" label="95% CI" unit="pp" digits="1" />
+<signal name="answer_rate" label="Produced a number" unit="%" digits="1" />
+<signal name="explicit_rate" label="Wrote the Answer cue" unit="%" digits="1" />
+<signal name="mult_baseline" label="Mult baseline" unit="%" digits="1" />
+<signal name="mult_filler" label="Mult STE 200" unit="%" digits="1" />
+<signal name="mult_delta" label="Mult STE Δ vs baseline" unit="pp" digits="1" sign="true" />
+<signal name="cell_acc" label="Last finished cell" unit="%" digits="1" better="higher" />
+<signal name="cell_ci" label="Last cell 95% CI" unit="pp" digits="1" />
+<view headline="mult_delta cell_acc">
+  <text>Recovery grid: 2 Qwen3-2507 models × 8 conditions × 2 tasks, 1,000 problems each. Headline reads the last finished cell until the 235B pass closes and `mult_delta` appears. The table is the whole grid. **cot_128** and **cot_256** score ~0 by design — the trace is truncated before its `Answer:` cue, which `explicit_rate` shows directly.</text>
+  <table name="cells" columns="model task condition max_tokens accuracy ci95 explicit_rate" />
+  <stats of="cell_acc mult_delta" vs="final" />
+</view>

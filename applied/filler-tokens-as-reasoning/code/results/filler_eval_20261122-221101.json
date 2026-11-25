@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "paper": {},
+  "config": {
+    "schema_version": 1,
+    "backend": "mock",
+    "models": [
+      "mock/model"
+    ],
+    "tasks": [
+      "multiplication",
+      "arithmetic"
+    ],
+    "conditions": [
+      {
+        "name": "baseline",
+        "filler_type": null
+      },
+      {
+        "name": "counting_1_100",
+        "filler_type": "counting",
+        "filler_words": 100
+      }
+    ],
+    "shots": 10,
+    "n_problems": 120,
+    "seed": 12345,
+    "tokenizer": "tiktoken:o200k_base",
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "max_tokens": 32,
+      "seed": 0
+    },
+    "prompting": {
+      "prefill": true
+    },
+    "concurrency": 8,
+    "max_samples": 3
+  },
+  "tokenizer": "tiktoken:o200k_base",
+  "n_problems": 120,
+  "limit": null,
+  "shots": 10,
+  "seed": 12345,
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    },
+    {
+      "name": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens_measured": 199,
+      "calibration": "words"
+    }
+  ],
+  "cells": [
+    {
+      "model": "mock/model",
+      "backend": "mock",
+      "task": "multiplication",
+      "condition": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 120,
+      "n_kept": 120,
+      "n_reasoning_discarded": 0,
+      "accuracy": 29.17,
+      "ci95": 8.13,
+      "accuracy_including_discarded": 29.17,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": " 9123975",
+          "parsed": 9123975
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41456173",
+          "parsed": 41456173
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": " 22641444",
+          "parsed": 22641444
+        }
+      ]
+    },
+    {
+      "model": "mock/model",
+      "backend": "mock",
+      "task": "arithmetic",
+      "condition": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 120,
+      "n_kept": 120,
+      "n_reasoning_discarded": 0,
+      "accuracy": 40.0,
+      "ci95": 8.77,
+      "accuracy_including_discarded": 40.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " 1206",
+          "parsed": 1206
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -45427",
+          "parsed": -45427
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": " 36090",
+          "parsed": 36090
+        }
+      ]
+    },
+    {
+      "model": "mock/model",
+      "backend": "mock",
+      "task": "multiplication",
+      "condition": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 120,
+      "n_kept": 120,
+      "n_reasoning_discarded": 0,
+      "accuracy": 45.83,
+      "ci95": 8.92,
+      "accuracy_including_discarded": 45.83,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": " 9123975",
+          "parsed": 9123975
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41456173",
+          "parsed": 41456173
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": " 22641444",
+          "parsed": 22641444
+        }
+      ],
+      "delta_vs_baseline": 16.66,
+      "delta_ci95": 12.07
+    },
+    {
+      "model": "mock/model",
+      "backend": "mock",
+      "task": "arithmetic",
+      "condition": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 120,
+      "n_kept": 120,
+      "n_reasoning_discarded": 0,
+      "accuracy": 56.67,
+      "ci95": 8.87,
+      "accuracy_including_discarded": 56.67,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " 1206",
+          "parsed": 1206
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -45427",
+          "parsed": -45427
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": " 36090",
+          "parsed": 36090
+        }
+      ],
+      "delta_vs_baseline": 16.67,
+      "delta_ci95": 12.47
+    }
+  ],
+  "warnings": [
+    "mock backend: results exercise the harness and are not scientific"
+  ]
+}

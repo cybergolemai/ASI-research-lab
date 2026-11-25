@@ -1,0 +1,79 @@
+axis,condition,level,model,paired,paired_ci95,paired_n,r2,se,task,unit,value
+params_total_log,baseline,0,,28.999999999999996,6.889834621057869,200,,1.9568494438337731,multiplication,pp/decade,29.207187596334865
+params_active_log,baseline,0,,28.999999999999996,6.889834621057869,200,,2.1061452879858895,multiplication,pp/decade,31.435520359105368
+params_total_10b,baseline,0,,28.999999999999996,6.889834621057869,200,,0.08485435268803246,multiplication,pp/10B total,1.2665036674816628
+params_active_10b,baseline,0,,28.999999999999996,6.889834621057869,200,,0.9279526804653817,multiplication,pp/10B active,13.850267379679146
+params_total_log,ste_100,100,,38.0,7.024411704833009,200,,2.006792439038479,multiplication,pp/decade,36.53717676143821
+params_active_log,ste_100,100,,38.0,7.024411704833009,200,,2.159898633369586,multiplication,pp/decade,39.324743615251506
+params_total_10b,ste_100,100,,38.0,7.024411704833009,200,,0.08702001777931007,multiplication,pp/10B total,1.5843520782396092
+params_active_10b,ste_100,100,,38.0,7.024411704833009,200,,0.9516360233084977,multiplication,pp/10B active,17.326203208556155
+params_total_log,ste_filler,200,,36.5,6.971654165909638,200,,2.0459986461327113,multiplication,pp/decade,42.40116809352087
+params_active_log,ste_filler,200,,36.5,6.971654165909638,200,,2.202096038280586,multiplication,pp/decade,45.636122220168396
+params_total_10b,ste_filler,200,,36.5,6.971654165909638,200,,0.08872010632460782,multiplication,pp/10B total,1.8386308068459656
+params_active_10b,ste_filler,200,,36.5,6.971654165909638,200,,0.9702279007156309,multiplication,pp/10B active,20.106951871657753
+params_total_log,ste_500,500,,41.5,7.25657712408467,200,,2.0025651399172726,multiplication,pp/decade,40.37132494010765
+params_active_log,ste_500,500,,41.5,7.25657712408467,200,,2.1553488167482358,multiplication,pp/decade,43.45141424154332
+params_total_10b,ste_500,500,,41.5,7.25657712408467,200,,0.08683671050869762,multiplication,pp/10B total,1.7506112469437651
+params_active_10b,ste_500,500,,41.5,7.25657712408467,200,,0.9496314063651692,multiplication,pp/10B active,19.144385026737968
+params_total_log,cot_128,128,,0.0,0.0,200,,0.0,multiplication,pp/decade,0.0
+params_total_log,cot_256,256,,0.5,0.98,200,,0.5136450005761952,multiplication,pp/decade,-0.3383071922355389
+params_total_log,cot_512,512,,-14.000000000000002,8.1063305493222,200,,2.4012122728410303,multiplication,pp/decade,-9.02152512628104
+params_total_log,cot,2048,,0.5,2.598414282580743,200,,0.7216717017102963,multiplication,pp/decade,-1.5787668970991722
+params_total_log,baseline,0,,2.0,2.7648853420664423,200,,1.009772090648798,arithmetic,pp/decade,1.263013517679345
+params_active_log,baseline,0,,2.0,2.7648853420664423,200,,1.0868116284373093,arithmetic,pp/decade,1.3593738533667181
+params_total_10b,baseline,0,,2.0,2.7648853420664423,200,,0.043786484128578405,arithmetic,pp/10B total,0.05476772616136918
+params_active_10b,baseline,0,,2.0,2.7648853420664423,200,,0.47884149755584404,arithmetic,pp/10B active,0.5989304812834223
+params_total_log,ste_100,100,,1.0,1.96,200,,0.8384366672823453,arithmetic,pp/decade,0.676614384471078
+params_active_log,ste_100,100,,1.0,1.96,200,,0.9024043426722145,arithmetic,pp/decade,0.7282359928750278
+params_total_10b,ste_100,100,,1.0,1.96,200,,0.036356910796760386,arithmetic,pp/10B total,0.029339853300733503
+params_active_10b,ste_100,100,,1.0,1.96,200,,0.3975929549699197,arithmetic,pp/10B active,0.3208556149732621
+params_total_log,ste_filler,200,,1.0,1.96,200,,0.8065611186185552,arithmetic,pp/decade,0.766829635733888
+params_active_log,ste_filler,200,,1.0,1.96,200,,0.8680968813436211,arithmetic,pp/decade,0.8253341252583645
+params_total_10b,ste_filler,200,,1.0,1.96,200,,0.03497469968339915,arithmetic,pp/10B total,0.03325183374083128
+params_active_10b,ste_filler,200,,1.0,1.96,200,,0.38247733076230617,arithmetic,pp/10B active,0.3636363636363635
+params_total_log,ste_500,500,,3.0,2.3701510670001626,200,,0.8649442666346998,arithmetic,pp/decade,1.3419518625343045
+params_active_log,ste_500,500,,3.0,2.3701510670001626,200,,0.9309343124395368,arithmetic,pp/decade,1.4443347192021383
+params_total_10b,ste_500,500,,3.0,2.3701510670001626,200,,0.03750635292244126,arithmetic,pp/10B total,0.058190709046454764
+params_active_10b,ste_500,500,,3.0,2.3701510670001626,200,,0.4101630573603871,arithmetic,pp/10B active,0.6363636363636364
+params_total_log,cot_128,128,,0.0,0.0,200,,0.0,arithmetic,pp/decade,0.0
+params_total_log,cot_256,256,,-1.0,3.1037004984243564,200,,0.8079553480405394,arithmetic,pp/decade,-1.9170740893347207
+params_total_log,cot_512,512,,-3.0,6.0419245494549605,200,,2.4696560573851722,arithmetic,pp/decade,-6.2022985243182145
+params_total_log,cot,2048,,3.0,4.1473280130996635,200,,1.0702945931120933,arithmetic,pp/decade,2.8192266019628245
+ste_length,baseline->ste_100,50.0,qwen/qwen3-235b-a22b-2507,,,,,2.157698845191085,multiplication,pp/100 tokens,6.5
+ste_length,ste_100->ste_filler,150.0,qwen/qwen3-235b-a22b-2507,,,,,2.211586100038661,multiplication,pp/100 tokens,5.699999999999996
+ste_length,ste_filler->ste_500,350.0,qwen/qwen3-235b-a22b-2507,,,,,0.7407824370852052,multiplication,pp/100 tokens,-1.0
+ste_length_linear,0-500,250,qwen/qwen3-235b-a22b-2507,,,,0.39114345076701973,nan,multiplication,pp/100 tokens,1.5541608779683203
+ste_length,baseline->ste_100,50.0,qwen/qwen3-235b-a22b-2507,,,,,0.8518574897484221,arithmetic,pp/100 tokens,-1.2999999999999994
+ste_length,ste_100->ste_filler,150.0,qwen/qwen3-235b-a22b-2507,,,,,0.7576487665651662,arithmetic,pp/100 tokens,-0.13000000000000034
+ste_length,ste_filler->ste_500,350.0,qwen/qwen3-235b-a22b-2507,,,,,0.26243430872054874,arithmetic,pp/100 tokens,0.20666666666666672
+ste_length_linear,0-500,250,qwen/qwen3-235b-a22b-2507,,,,0.038063643644302814,nan,arithmetic,pp/100 tokens,-0.04918271765828315
+ste_length,baseline->ste_100,50.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,1.2338291794173433,multiplication,pp/100 tokens,0.0
+ste_length,ste_100->ste_filler,150.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,1.2519975708979474,multiplication,pp/100 tokens,0.5
+ste_length,ste_filler->ste_500,350.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.40912584908176586,multiplication,pp/100 tokens,-0.40000000000000036
+ste_length_linear,0-500,250,qwen/qwen3-30b-a3b-instruct-2507,,,,0.4305374298330066,nan,multiplication,pp/100 tokens,-0.15333039416353073
+ste_length,baseline->ste_100,50.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.7930514824992201,arithmetic,pp/100 tokens,-0.7799999999999998
+ste_length,ste_100->ste_filler,150.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.7002260597672556,arithmetic,pp/100 tokens,-0.20999999999999994
+ste_length,ste_filler->ste_500,350.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.23094211152065244,arithmetic,pp/100 tokens,0.036666666666666625
+ste_length_linear,0-500,250,qwen/qwen3-30b-a3b-instruct-2507,,,,0.38375794817598585,nan,arithmetic,pp/100 tokens,-0.11115840102817155
+cot_cap,cot_128->cot_256,192.0,qwen/qwen3-235b-a22b-2507,,,,,0.235172193877551,multiplication,pp/100 cap tokens,0.703125
+cot_cap,cot_256->cot_512,384.0,qwen/qwen3-235b-a22b-2507,,,,,0.6152160072445916,multiplication,pp/100 cap tokens,23.3984375
+cot_cap,cot_512->cot,1280.0,qwen/qwen3-235b-a22b-2507,,,,,0.10619541845434403,multiplication,pp/100 cap tokens,2.369791666666667
+cot_realized_linear,128-2048,369.4845,qwen/qwen3-235b-a22b-2507,,,,0.9066489093546636,nan,multiplication,pp/100 realized tokens,16.521107532308818
+cot_cap,cot_128->cot_256,192.0,qwen/qwen3-235b-a22b-2507,,,,,0.3268494897959183,arithmetic,pp/100 cap tokens,1.40625
+cot_cap,cot_256->cot_512,384.0,qwen/qwen3-235b-a22b-2507,,,,,0.619827852187751,arithmetic,pp/100 cap tokens,13.828125000000002
+cot_cap,cot_512->cot,1280.0,qwen/qwen3-235b-a22b-2507,,,,,0.10660139604844014,arithmetic,pp/100 cap tokens,3.8606770833333335
+cot_realized_linear,128-2048,403.52575,qwen/qwen3-235b-a22b-2507,,,,0.9266021519007964,nan,arithmetic,pp/100 realized tokens,14.208296485119767
+cot_cap,cot_128->cot_256,192.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.26705994897959184,multiplication,pp/100 cap tokens,0.9375
+cot_cap,cot_256->cot_512,384.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.5873660977942485,multiplication,pp/100 cap tokens,26.406249999999996
+cot_cap,cot_512->cot,1280.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.09836657669001704,multiplication,pp/100 cap tokens,1.9401041666666665
+cot_realized_linear,128-2048,332.213,qwen/qwen3-30b-a3b-instruct-2507,,,,0.863664328843554,nan,multiplication,pp/100 realized tokens,23.589430172697444
+cot_cap,cot_128->cot_256,192.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.4544005102040816,arithmetic,pp/100 cap tokens,2.734375
+cot_cap,cot_256->cot_512,384.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.6526682556941071,arithmetic,pp/100 cap tokens,15.3125
+cot_cap,cot_512->cot,1280.0,qwen/qwen3-30b-a3b-instruct-2507,,,,,0.11306175605355863,arithmetic,pp/100 cap tokens,3.33984375
+cot_realized_linear,128-2048,380.14525000000003,qwen/qwen3-30b-a3b-instruct-2507,,,,0.9257239402929716,nan,arithmetic,pp/100 realized tokens,15.764454573626722
+cross_partial,baseline->ste_100,50.0,,,,,,2.8029405343700304,multiplication,pp/100 tokens per decade,-7.329989165103344
+cross_partial,ste_100->ste_filler,150.0,,,,,,2.8658901502602805,multiplication,pp/100 tokens per decade,-5.863991332082671
+cross_partial,ste_filler->ste_500,350.0,,,,,,0.9543105480798849,multiplication,pp/100 tokens per decade,0.6766143844710775
+cross_partial,baseline->ste_100,50.0,,,,,,1.3124845599460477,arithmetic,pp/100 tokens per decade,0.5863991332082671
+cross_partial,ste_100->ste_filler,150.0,,,,,,1.1634074450125982,arithmetic,pp/100 tokens per decade,-0.09021525126280994
+cross_partial,ste_filler->ste_500,350.0,,,,,,0.39421785044023194,arithmetic,pp/100 tokens per decade,-0.19170740893347218

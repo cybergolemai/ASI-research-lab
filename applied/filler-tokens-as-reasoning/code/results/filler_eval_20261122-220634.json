@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "sections": [
+      "4.1",
+      "5.2",
+      "A.2",
+      "A.3",
+      "A.4"
+    ],
+    "table": "Table 1 counting-filler row; Figure 1 10-shot baseline"
+  },
+  "config": {
+    "schema_version": 1,
+    "paper": {
+      "arxiv": "2607.22925",
+      "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+      "sections": [
+        "4.1",
+        "5.2",
+        "A.2",
+        "A.3",
+        "A.4"
+      ],
+      "table": "Table 1 counting-filler row; Figure 1 10-shot baseline"
+    },
+    "backend": "openrouter",
+    "models": [
+      "qwen/qwen3-235b-a22b-2507"
+    ],
+    "tasks": [
+      "multiplication",
+      "arithmetic"
+    ],
+    "conditions": [
+      {
+        "name": "baseline",
+        "filler_type": null
+      },
+      {
+        "name": "counting_1_100",
+        "filler_type": "counting",
+        "filler_words": 100
+      }
+    ],
+    "notes": "Table 1 uses counting tokens 1-100, which Appendix A.4 says tokenizes to ~200 tokens across models, so the filler is specified by word count rather than token count. Use filler_tokens instead to reproduce the n-token sweep in Figure 1.",
+    "shots": 10,
+    "n_problems": 1000,
+    "seed": 12345,
+    "tokenizer": "tiktoken:o200k_base",
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "max_tokens": 32,
+      "reasoning": false
+    },
+    "prompting": {
+      "prefill": true,
+      "no_think": {
+        "qwen/*": true
+      }
+    },
+    "concurrency": 16,
+    "max_samples": 200,
+    "expected_from_paper": {
+      "qwen/qwen3-235b-a22b-2507": {
+        "multiplication": {
+          "baseline": 69.6,
+          "counting_1_100": 69.2,
+          "delta": -0.4
+        },
+        "arithmetic": {
+          "baseline": 11.0,
+          "counting_1_100": 9.7,
+          "delta": -1.3
+        }
+      }
+    }
+  },
+  "tokenizer": "tiktoken:o200k_base",
+  "n_problems": 1000,
+  "limit": 3,
+  "shots": 10,
+  "seed": 12345,
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    },
+    {
+      "name": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens_measured": 199,
+      "calibration": "words"
+    }
+  ],
+  "cells": [
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 2.3,
+      "n": 3,
+      "n_kept": 3,
+      "n_reasoning_discarded": 0,
+      "accuracy": 66.67,
+      "ci95": 53.34,
+      "accuracy_including_discarded": 66.67,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 1302,
+      "completion_tokens": 35,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "Answer: 9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "Answer: 41456112",
+          "parsed": 41456112
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "Answer: 22638744",
+          "parsed": 22638744
+        }
+      ]
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "multiplication",
+      "condition": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 2.7,
+      "n": 3,
+      "n_kept": 3,
+      "n_reasoning_discarded": 0,
+      "accuracy": 66.67,
+      "ci95": 53.34,
+      "accuracy_including_discarded": 66.67,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 10938,
+      "completion_tokens": 26,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": "9123950",
+          "parsed": 9123950
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": "41456112",
+          "parsed": 41456112
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": "22636344",
+          "parsed": 22636344
+        }
+      ],
+      "delta_vs_baseline": 0.0,
+      "delta_ci95": 75.43
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 1.6,
+      "n": 3,
+      "n_kept": 3,
+      "n_reasoning_discarded": 0,
+      "accuracy": 66.67,
+      "ci95": 53.34,
+      "accuracy_including_discarded": 66.67,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 1825,
+      "completion_tokens": 23,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 71,
+          "completion": "Answer: 71",
+          "parsed": 71
+        },
+        {
+          "index": 1,
+          "gold": 1176,
+          "completion": "Answer: 1176",
+          "parsed": 1176
+        },
+        {
+          "index": 2,
+          "gold": -45439,
+          "completion": "Answer: 45617",
+          "parsed": 45617
+        }
+      ]
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "openrouter",
+      "task": "arithmetic",
+      "condition": "counting_1_100",
+      "filler_type": "counting",
+      "filler_words": 100,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 1.2,
+      "n": 3,
+      "n_kept": 3,
+      "n_reasoning_discarded": 0,
+      "accuracy": 66.67,
+      "ci95": 53.34,
+      "accuracy_including_discarded": 66.67,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 11461,
+      "completion_tokens": 17,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 71,
+          "completion": "71",
+          "parsed": 71
+        },
+        {
+          "index": 1,
+          "gold": 1176,
+          "completion": "1176",
+          "parsed": 1176
+        },
+        {
+          "index": 2,
+          "gold": -45439,
+          "completion": "Answer: 45605",
+          "parsed": 45605
+        }
+      ],
+      "delta_vs_baseline": 0.0,
+      "delta_ci95": 75.43
+    }
+  ]
+}

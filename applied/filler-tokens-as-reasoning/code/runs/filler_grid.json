@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "note": "Grid extension: accuracy recovery across model size, STE filler length and chain-of-thought token cap. Not a paper replication."
+  },
+  "backend": "openrouter",
+  "models": [
+    "qwen/qwen3-235b-a22b-2507",
+    "qwen/qwen3-30b-a3b-instruct-2507"
+  ],
+  "tasks": [
+    "multiplication",
+    "arithmetic"
+  ],
+  "conditions": [
+    {"name": "baseline", "filler_type": null},
+    {"name": "ste_100", "filler_type": "ste_dictionary", "filler_tokens": 100},
+    {"name": "ste_filler", "filler_type": "ste_dictionary", "filler_tokens": 200},
+    {"name": "ste_500", "filler_type": "ste_dictionary", "filler_tokens": 500},
+    {"name": "cot_128", "cot": true, "max_tokens": 128},
+    {"name": "cot_256", "cot": true, "max_tokens": 256},
+    {"name": "cot_512", "cot": true, "max_tokens": 512},
+    {"name": "cot", "cot": true, "max_tokens": 2048}
+  ],
+  "reference_condition": "cot",
+  "primary_condition": "ste_filler",
+  "notes": "0-shot, N=1000, paired seed 12345. Two Qwen3-2507 models (235B-A22B and 30B-A3B) x {baseline, STE 100/200/500 tokens} and four CoT caps {128, 256, 512, 2048}. The four CoT conditions must each use their own max_tokens; the harness builds one backend per (max_tokens, reasoning) pair. baseline/ste_filler/cot on the 235B model are already in the shared response cache from run dbcdb225 and are replayed at zero API cost.",
+  "shots": 0,
+  "n_problems": 1000,
+  "seed": 12345,
+  "tokenizer": "tiktoken:o200k_base",
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "max_tokens": 32,
+    "reasoning": false
+  },
+  "prompting": {
+    "prefill": true
+  },
+  "concurrency": 16,
+  "max_samples": 200,
+  "request": {
+    "timeout": 90,
+    "deadline": 240,
+    "retries": 2,
+    "note": "hard 240s wall-clock deadline per attempt; 3 attempts + 7s backoff = 12.5 min worst case, under the 20m stall rule"
+  },
+  "cache": "~/.cache/nanochat/filler_ste_cot_cache.jsonl",
+  "model_geometry": {
+    "qwen/qwen3-235b-a22b-2507": {"total_params_b": 235, "active_params_b": 22, "layers": 94, "kv_heads": 4, "head_dim": 128},
+    "qwen/qwen3-30b-a3b-instruct-2507": {"total_params_b": 30.5, "active_params_b": 3.3, "layers": 48, "kv_heads": 4, "head_dim": 128}
+  }
+}

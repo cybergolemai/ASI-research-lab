@@ -1,0 +1,958 @@
+{
+  "schema_version": 1,
+  "paper": {
+    "arxiv": "2607.22925",
+    "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+    "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+  },
+  "config": {
+    "schema_version": 1,
+    "paper": {
+      "arxiv": "2607.22925",
+      "title": "Not All LLM Reasoning is Visible in the Chain-of-Thought",
+      "note": "Harness extension, not a paper replication. Tests whether replacing reasoning with an ASD-STE100 controlled-vocabulary filler preserves answer quality relative to full chain-of-thought."
+    },
+    "backend": "mock",
+    "models": [
+      "qwen/qwen3-235b-a22b-2507"
+    ],
+    "tasks": [
+      "multiplication",
+      "arithmetic"
+    ],
+    "conditions": [
+      {
+        "name": "baseline",
+        "filler_type": null
+      },
+      {
+        "name": "ste_filler",
+        "filler_type": "ste_dictionary",
+        "filler_tokens": 200
+      },
+      {
+        "name": "cot",
+        "cot": true
+      }
+    ],
+    "notes": "0-shot three-way comparison on 4-digit multiplication and multi-step arithmetic. baseline = no-CoT, no filler; ste_filler = no-CoT with ~200 tokens of ASD-STE100 vocabulary prefilled; cot = full chain-of-thought with no filler. The hypothesis is that ste_filler accuracy is statistically indistinguishable from cot accuracy. The CoT condition uses a separate backend with max_tokens=512 and reasoning enabled; the no-CoT conditions keep max_tokens=32 and reasoning disabled.",
+    "shots": 0,
+    "n_problems": 20,
+    "seed": 12345,
+    "tokenizer": "tiktoken:o200k_base",
+    "sampling": {
+      "temperature": 1.0,
+      "top_p": 0.95,
+      "max_tokens": 32,
+      "reasoning": false
+    },
+    "prompting": {
+      "prefill": true
+    },
+    "concurrency": 4,
+    "max_samples": 200
+  },
+  "tokenizer": "tiktoken:o200k_base",
+  "n_problems": 20,
+  "limit": 20,
+  "shots": 0,
+  "seed": 12345,
+  "conditions": [
+    {
+      "name": "baseline",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    },
+    {
+      "name": "ste_filler",
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens_measured": 199,
+      "calibration": "tokens"
+    },
+    {
+      "name": "cot",
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens_measured": 0,
+      "calibration": null
+    }
+  ],
+  "cells": [
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "multiplication",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 20.0,
+      "ci95": 17.53,
+      "accuracy_including_discarded": 20.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": " 9123975",
+          "parsed": 9123975
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41456173",
+          "parsed": 41456173
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": " 22641444",
+          "parsed": 22641444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": " 29728419",
+          "parsed": 29728419
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21584920",
+          "parsed": 21584920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": " 42706828",
+          "parsed": 42706828
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": " 15655441",
+          "parsed": 15655441
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": " 17001013",
+          "parsed": 17001013
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": " 75194462",
+          "parsed": 75194462
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": " 34515624",
+          "parsed": 34515624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": " 14975999",
+          "parsed": 14975999
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": " 9354840",
+          "parsed": 9354840
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": " 41396547",
+          "parsed": 41396547
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": " 11796096",
+          "parsed": 11796096
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": " 9449343",
+          "parsed": 9449343
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": " 73128216",
+          "parsed": 73128216
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": " 1171104",
+          "parsed": 1171104
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": " 14474260",
+          "parsed": 14474260
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": " 14977917",
+          "parsed": 14977917
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": " 21300674",
+          "parsed": 21300674
+        }
+      ],
+      "delta_vs_cot": 0.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "arithmetic",
+      "condition": "baseline",
+      "cot": false,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 25.0,
+      "ci95": 18.98,
+      "accuracy_including_discarded": 25.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " 1206",
+          "parsed": 1206
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -45427",
+          "parsed": -45427
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": " 36090",
+          "parsed": 36090
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": " -11553",
+          "parsed": -11553
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": " 892",
+          "parsed": 892
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": " -176149",
+          "parsed": -176149
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": " 177",
+          "parsed": 177
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": " -62",
+          "parsed": -62
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": " 171",
+          "parsed": 171
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": " -1790",
+          "parsed": -1790
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": " 61506",
+          "parsed": 61506
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": " -52512",
+          "parsed": -52512
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": " 160",
+          "parsed": 160
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": " -62",
+          "parsed": -62
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": " -516060",
+          "parsed": -516060
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": " -3425",
+          "parsed": -3425
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": " -5330",
+          "parsed": -5330
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": " -457",
+          "parsed": -457
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": " -854",
+          "parsed": -854
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": " 1825",
+          "parsed": 1825
+        }
+      ],
+      "delta_vs_cot": 0.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "multiplication",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 35.0,
+      "ci95": 20.9,
+      "accuracy_including_discarded": 35.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": " 9123975",
+          "parsed": 9123975
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41456173",
+          "parsed": 41456173
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": " 22641444",
+          "parsed": 22641444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": " 29728403",
+          "parsed": 29728403
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21584920",
+          "parsed": 21584920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": " 42706828",
+          "parsed": 42706828
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": " 15655441",
+          "parsed": 15655441
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": " 17000930",
+          "parsed": 17000930
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": " 75194462",
+          "parsed": 75194462
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": " 34515624",
+          "parsed": 34515624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": " 14975999",
+          "parsed": 14975999
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": " 9354840",
+          "parsed": 9354840
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": " 41396547",
+          "parsed": 41396547
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": " 11796096",
+          "parsed": 11796096
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": " 9449343",
+          "parsed": 9449343
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": " 73128216",
+          "parsed": 73128216
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": " 1171104",
+          "parsed": 1171104
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": " 14474190",
+          "parsed": 14474190
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": " 14977917",
+          "parsed": 14977917
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": " 21300674",
+          "parsed": 21300674
+        }
+      ],
+      "delta_vs_baseline": 15.0,
+      "delta_ci95": 27.28,
+      "delta_vs_cot": 15.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "arithmetic",
+      "condition": "ste_filler",
+      "cot": false,
+      "filler_type": "ste_dictionary",
+      "filler_words": 198,
+      "filler_tokens": 199,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 50.0,
+      "ci95": 21.91,
+      "accuracy_including_discarded": 50.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " 1206",
+          "parsed": 1206
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -45427",
+          "parsed": -45427
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": " 36090",
+          "parsed": 36090
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": " -11553",
+          "parsed": -11553
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": " 892",
+          "parsed": 892
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": " -176149",
+          "parsed": -176149
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": " 177",
+          "parsed": 177
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": " -113",
+          "parsed": -113
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": " 171",
+          "parsed": 171
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": " -1790",
+          "parsed": -1790
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": " 61506",
+          "parsed": 61506
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": " -52570",
+          "parsed": -52570
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": " 160",
+          "parsed": 160
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": " -62",
+          "parsed": -62
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": " -516060",
+          "parsed": -516060
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": " -3510",
+          "parsed": -3510
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": " -5330",
+          "parsed": -5330
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": " -527",
+          "parsed": -527
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": " -854",
+          "parsed": -854
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": " 1757",
+          "parsed": 1757
+        }
+      ],
+      "delta_vs_baseline": 25.0,
+      "delta_ci95": 28.99,
+      "delta_vs_cot": 25.0
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "multiplication",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 20.0,
+      "ci95": 17.53,
+      "accuracy_including_discarded": 20.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 9123950,
+          "completion": " 9123975",
+          "parsed": 9123975
+        },
+        {
+          "index": 1,
+          "gold": 41456112,
+          "completion": " 41456173",
+          "parsed": 41456173
+        },
+        {
+          "index": 2,
+          "gold": 22641444,
+          "completion": " 22641444",
+          "parsed": 22641444
+        },
+        {
+          "index": 3,
+          "gold": 29728403,
+          "completion": " 29728419",
+          "parsed": 29728419
+        },
+        {
+          "index": 4,
+          "gold": 21584920,
+          "completion": " 21584920",
+          "parsed": 21584920
+        },
+        {
+          "index": 5,
+          "gold": 42706761,
+          "completion": " 42706828",
+          "parsed": 42706828
+        },
+        {
+          "index": 6,
+          "gold": 15655360,
+          "completion": " 15655441",
+          "parsed": 15655441
+        },
+        {
+          "index": 7,
+          "gold": 17000930,
+          "completion": " 17001013",
+          "parsed": 17001013
+        },
+        {
+          "index": 8,
+          "gold": 75194400,
+          "completion": " 75194462",
+          "parsed": 75194462
+        },
+        {
+          "index": 9,
+          "gold": 34515624,
+          "completion": " 34515624",
+          "parsed": 34515624
+        },
+        {
+          "index": 10,
+          "gold": 14975990,
+          "completion": " 14975999",
+          "parsed": 14975999
+        },
+        {
+          "index": 11,
+          "gold": 9354800,
+          "completion": " 9354840",
+          "parsed": 9354840
+        },
+        {
+          "index": 12,
+          "gold": 41396496,
+          "completion": " 41396547",
+          "parsed": 41396547
+        },
+        {
+          "index": 13,
+          "gold": 11796045,
+          "completion": " 11796096",
+          "parsed": 11796096
+        },
+        {
+          "index": 14,
+          "gold": 9449280,
+          "completion": " 9449343",
+          "parsed": 9449343
+        },
+        {
+          "index": 15,
+          "gold": 73128169,
+          "completion": " 73128216",
+          "parsed": 73128216
+        },
+        {
+          "index": 16,
+          "gold": 1171104,
+          "completion": " 1171104",
+          "parsed": 1171104
+        },
+        {
+          "index": 17,
+          "gold": 14474190,
+          "completion": " 14474260",
+          "parsed": 14474260
+        },
+        {
+          "index": 18,
+          "gold": 14977850,
+          "completion": " 14977917",
+          "parsed": 14977917
+        },
+        {
+          "index": 19,
+          "gold": 21300594,
+          "completion": " 21300674",
+          "parsed": 21300674
+        }
+      ],
+      "delta_vs_baseline": 0.0,
+      "delta_ci95": 24.79
+    },
+    {
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "backend": "mock",
+      "task": "arithmetic",
+      "condition": "cot",
+      "cot": true,
+      "filler_type": null,
+      "filler_words": 0,
+      "filler_tokens": 0,
+      "prefill": true,
+      "seconds": 0.0,
+      "n": 20,
+      "n_kept": 20,
+      "n_reasoning_discarded": 0,
+      "accuracy": 25.0,
+      "ci95": 18.98,
+      "accuracy_including_discarded": 25.0,
+      "reasoning_rate": 0.0,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "samples": [
+        {
+          "index": 0,
+          "gold": 1176,
+          "completion": " 1206",
+          "parsed": 1206
+        },
+        {
+          "index": 1,
+          "gold": -45439,
+          "completion": " -45427",
+          "parsed": -45427
+        },
+        {
+          "index": 2,
+          "gold": 36010,
+          "completion": " 36090",
+          "parsed": 36090
+        },
+        {
+          "index": 3,
+          "gold": -11564,
+          "completion": " -11553",
+          "parsed": -11553
+        },
+        {
+          "index": 4,
+          "gold": 864,
+          "completion": " 892",
+          "parsed": 892
+        },
+        {
+          "index": 5,
+          "gold": -176149,
+          "completion": " -176149",
+          "parsed": -176149
+        },
+        {
+          "index": 6,
+          "gold": 121,
+          "completion": " 177",
+          "parsed": 177
+        },
+        {
+          "index": 7,
+          "gold": -113,
+          "completion": " -62",
+          "parsed": -62
+        },
+        {
+          "index": 8,
+          "gold": 171,
+          "completion": " 171",
+          "parsed": 171
+        },
+        {
+          "index": 9,
+          "gold": -1800,
+          "completion": " -1790",
+          "parsed": -1790
+        },
+        {
+          "index": 10,
+          "gold": 61487,
+          "completion": " 61506",
+          "parsed": 61506
+        },
+        {
+          "index": 11,
+          "gold": -52570,
+          "completion": " -52512",
+          "parsed": -52512
+        },
+        {
+          "index": 12,
+          "gold": 160,
+          "completion": " 160",
+          "parsed": 160
+        },
+        {
+          "index": 13,
+          "gold": -140,
+          "completion": " -62",
+          "parsed": -62
+        },
+        {
+          "index": 14,
+          "gold": -516060,
+          "completion": " -516060",
+          "parsed": -516060
+        },
+        {
+          "index": 15,
+          "gold": -3510,
+          "completion": " -3425",
+          "parsed": -3425
+        },
+        {
+          "index": 16,
+          "gold": -5330,
+          "completion": " -5330",
+          "parsed": -5330
+        },
+        {
+          "index": 17,
+          "gold": -527,
+          "completion": " -457",
+          "parsed": -457
+        },
+        {
+          "index": 18,
+          "gold": -855,
+          "completion": " -854",
+          "parsed": -854
+        },
+        {
+          "index": 19,
+          "gold": 1757,
+          "completion": " 1825",
+          "parsed": 1825
+        }
+      ],
+      "delta_vs_baseline": 0.0,
+      "delta_ci95": 26.84
+    }
+  ],
+  "warnings": [
+    "mock backend: results exercise the harness and are not scientific"
+  ]
+}

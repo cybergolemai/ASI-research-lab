@@ -1,0 +1,53 @@
+{
+  "plan": [
+    {"phase": "setup", "of": 1, "unit": "step"},
+    {"phase": "qwen3_235b_a22b_2507__baseline__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__baseline__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_100__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_100__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_filler__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_filler__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_500__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__ste_500__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_128__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_128__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_256__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_256__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_512__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot_512__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_235b_a22b_2507__cot__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__baseline__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__baseline__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_100__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_100__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_filler__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_filler__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_500__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__ste_500__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_128__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_128__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_256__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_256__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_512__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot_512__arithmetic", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot__multiplication", "of": 1000, "unit": "questions"},
+    {"phase": "qwen3_30b_a3b_instru__cot__arithmetic", "of": 1000, "unit": "questions"}
+  ],
+  "rules": [
+    {
+      "name": "stalled",
+      "does": "stop",
+      "text": "Stop when no question has finished for 20 minutes. One question is retried at most 3 times against a 240s wall-clock deadline, so 12.5 minutes of silence is the worst a stuck request can cause; silence past 20 minutes means the API is not responding at all.",
+      "when": {"kind": "noProgress", "seconds": 1200}
+    }
+  ],
+  "brief": {
+    "question": "How much accuracy do model size, STE filler length and chain-of-thought token cap each buy, and where does a budget-matched CoT break down?",
+    "healthy": "32 cells, one printed line each, advancing in plan order. Every cell already in the response cache replays in seconds, so the 30 finished cells cost nothing; only the remaining 30B cot cells do real work. A cot cell at cap 2048 takes 5-40 minutes per task.",
+    "noise": "Cell CIs are +-1 to +-3pp at 1,000 problems. Accuracy near 0 with explicit_rate near 0 for cot_128 and cot_256 is the expected truncation result, not a failure. A minute of silence inside a 2048-token cot cell is one slow batch at concurrency 16.",
+    "worth_a_flag": "An exception, a traceback, repeated timeouts, or a stage that stops advancing while later cells have not started.",
+    "decided": "cot_128 and cot_256 are expected near 0: the 128/256-token budget is spent mid-derivation and the trace never reaches its Answer cue. Judge them by explicit_rate. Long silences inside the final 2048-token cot cells are expected."
+  },
+  "watch": {"minGapS": 180, "maxGapS": 1800}
+}
